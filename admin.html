@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>KCET — Admin Dashboard</title>
+  <title>KCET — Admin Control Center</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="common.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -17,952 +17,1558 @@
       --deep:    #001f5b;
       --ice:     #e8f2ff;
       --white:   #ffffff;
-      --glass:   rgba(255,255,255,0.72);
-      --glass2:  rgba(255,255,255,0.5);
       --muted:   #5a6a8a;
-      --border:  rgba(26,107,255,0.15);
-      --shadow:  0 8px 32px rgba(0,47,163,0.10);
-      --shadow-lg: 0 20px 60px rgba(0,47,163,0.16);
+      --border:  rgba(26,107,255,0.13);
+      --shadow:  0 4px 24px rgba(0,47,163,0.09);
+      --shadow-lg: 0 16px 48px rgba(0,47,163,0.14);
+      --green: #00c77a;
+      --red:   #ff4757;
+      --amber: #ffa600;
+      --purple: #7c5cfc;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
-      background: #f0f6ff;
+      background: #eef4ff;
       color: #1a2540;
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
-    /* ── BACKGROUND ── */
+    /* ── BG ── */
     .bg-layer {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse 60% 50% at 0% 0%, rgba(0,63,163,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 60% at 100% 100%, rgba(0,170,255,0.10) 0%, transparent 70%),
-        #f0f6ff;
+        radial-gradient(ellipse 70% 50% at 0% 0%, rgba(0,63,163,0.10) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 100% 100%, rgba(0,170,255,0.09) 0%, transparent 70%),
+        #eef4ff;
     }
     .bg-grid {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(26,107,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(26,107,255,0.04) 1px, transparent 1px);
-      background-size: 48px 48px;
+        linear-gradient(rgba(26,107,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26,107,255,0.035) 1px, transparent 1px);
+      background-size: 52px 52px;
     }
 
     /* ── HEADER ── */
     header {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--border);
-      box-shadow: 0 2px 20px rgba(0,47,163,0.07);
+      box-shadow: 0 2px 18px rgba(0,47,163,0.06);
       padding: 0 32px;
-      height: 68px;
+      height: 64px;
       display: flex; align-items: center; justify-content: space-between;
     }
-
-    .header-left {
-      display: flex; align-items: center; gap: 14px;
-    }
-    .header-logo {
-      width: 40px; height: 40px;
-      background: linear-gradient(135deg, var(--royal), var(--sky));
-      border-radius: 12px;
+    .h-left { display: flex; align-items: center; gap: 13px; }
+    .h-logo {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--deep), var(--sky));
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Playfair Display', serif;
-      font-size: 17px; font-weight: 900;
-      color: white;
-      box-shadow: 0 4px 14px rgba(26,107,255,0.35);
-    }
-    .header-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px; font-weight: 700;
-      color: var(--royal);
-      letter-spacing: 0.3px;
-    }
-    .header-sub {
-      font-size: 11px; color: var(--muted);
-      letter-spacing: 1.5px; text-transform: uppercase;
-      margin-top: 1px;
-    }
-
-    .header-right {
-      display: flex; align-items: center; gap: 16px;
-    }
-
-    .admin-chip {
-      display: flex; align-items: center; gap: 7px;
-      background: var(--ice);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 6px 14px;
-      font-size: 12px; font-weight: 600;
-      color: var(--royal);
-    }
-    .admin-chip::before {
-      content: '';
-      width: 7px; height: 7px;
-      background: #00d68f;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #00d68f;
-      animation: pulse-dot 2s ease-in-out infinite;
-    }
-    @keyframes pulse-dot {
-      0%,100% { opacity:1; transform:scale(1); }
-      50%      { opacity:0.5; transform:scale(0.7); }
-    }
-
-    .btn-logout {
-      display: flex; align-items: center; gap: 7px;
-      background: linear-gradient(135deg, #ff4d4d, #c0392b);
-      color: white; border: none; border-radius: 10px;
-      padding: 8px 18px; font-size: 13px; font-weight: 600;
-      cursor: pointer; font-family: 'DM Sans', sans-serif;
-      box-shadow: 0 4px 14px rgba(220,50,50,0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .btn-logout:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(220,50,50,0.35);
-    }
-
-    /* ── HERO STRIP ── */
-    .hero {
-      position: relative; z-index: 1;
-      background: linear-gradient(135deg, var(--deep) 0%, var(--royal) 60%, #1a6bff 100%);
-      padding: 36px 40px 28px;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-    .hero-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(70px);
-      opacity: 0.3;
-    }
-    .hero-orb1 { width:300px; height:300px; background:#0091ff; top:-100px; right:-60px; }
-    .hero-orb2 { width:200px; height:200px; background:#003fa3; bottom:-80px; left:30%; }
-
-    .hero-content { position: relative; z-index: 1; }
-    .hero-greeting {
-      font-size: 12px; letter-spacing: 3px; text-transform: uppercase;
-      color: rgba(255,255,255,0.5); margin-bottom: 8px;
-    }
-    .hero-heading {
-      font-family: 'Playfair Display', serif;
-      font-size: 30px; font-weight: 900;
-      color: #fff; line-height: 1.2;
-    }
-    .hero-heading span { color: var(--accent); }
-
-    .kpi-row {
-      display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;
-    }
-    .kpi {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 14px;
-      padding: 14px 22px;
-      min-width: 120px;
-      animation: kpiIn 0.5s ease both;
-    }
-    .kpi:nth-child(1){ animation-delay:.1s }
-    .kpi:nth-child(2){ animation-delay:.2s }
-    .kpi:nth-child(3){ animation-delay:.3s }
-    @keyframes kpiIn {
-      from { opacity:0; transform:translateY(16px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-    .kpi-val {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px; font-weight: 700; color: #fff;
-    }
-    .kpi-label {
-      font-size: 11px; color: rgba(255,255,255,0.5);
-      text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px;
-    }
-
-    /* ── MAIN GRID ── */
-    main {
-      position: relative; z-index: 1;
-      max-width: 1160px; margin: 32px auto;
-      padding: 0 24px 40px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(330px,1fr));
-      gap: 22px;
-    }
-
-    /* ── CARD ── */
-    .card {
-      background: var(--glass);
-      border: 1px solid rgba(255,255,255,0.9);
-      border-radius: 22px;
-      padding: 28px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(16px);
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
-      animation: cardIn 0.6s ease both;
-    }
-    .card:nth-child(1){ animation-delay: .15s }
-    .card:nth-child(2){ animation-delay: .25s }
-    .card:nth-child(3){ animation-delay: .35s }
-    @keyframes cardIn {
-      from { opacity:0; transform:translateY(24px); }
-      to   { opacity:1; transform:translateY(0); }
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    /* Card header */
-    .card-header {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 22px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .card-icon {
-      width: 42px; height: 42px;
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
+      font-size: 16px; font-weight: 900; color: white;
+      box-shadow: 0 4px 12px rgba(26,107,255,0.3);
       flex-shrink: 0;
     }
-    .icon-blue  { background: linear-gradient(135deg, #1a6bff22, #1a6bff44); }
-    .icon-green { background: linear-gradient(135deg, #00d68f22, #00d68f44); }
-    .icon-amber { background: linear-gradient(135deg, #ffa60022, #ffa60044); }
+    .h-title { font-family:'Playfair Display',serif; font-size:19px; font-weight:700; color:var(--royal); }
+    .h-sub   { font-size:10px; color:var(--muted); letter-spacing:1.8px; text-transform:uppercase; margin-top:1px; }
 
-    .card-title-wrap {}
-    .card-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 15px; font-weight: 700;
-      color: var(--royal);
+    .h-right { display:flex; align-items:center; gap:12px; }
+
+    /* batch filter tabs */
+    .batch-tabs { display:flex; gap:4px; background:var(--ice); border-radius:10px; padding:4px; }
+    .batch-tab {
+      padding:5px 16px; border-radius:7px; border:none;
+      font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+      cursor:pointer; transition:.2s; color:var(--muted); background:transparent;
     }
-    .card-desc {
-      font-size: 11px; color: var(--muted);
-      margin-top: 2px; letter-spacing: 0.3px;
+    .batch-tab.active { background:white; color:var(--royal); box-shadow:0 2px 8px rgba(0,47,163,0.12); }
+
+    .refresh-btn {
+      display:flex; align-items:center; gap:6px;
+      background:var(--ice); border:1px solid var(--border);
+      border-radius:9px; padding:7px 14px;
+      font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+      color:var(--royal); cursor:pointer; transition:.2s;
     }
+    .refresh-btn:hover { background:white; box-shadow:var(--shadow); }
+    .refresh-btn.spinning svg { animation:spin 0.8s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+
+    .admin-chip {
+      display:flex; align-items:center; gap:7px;
+      background:var(--ice); border:1px solid var(--border);
+      border-radius:100px; padding:6px 14px;
+      font-size:11px; font-weight:600; color:var(--royal);
+    }
+    .admin-chip::before {
+      content:''; width:7px; height:7px;
+      background:#00c77a; border-radius:50%;
+      box-shadow:0 0 6px #00c77a;
+      animation:pd 2s ease-in-out infinite;
+    }
+    @keyframes pd { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+
+    .btn-logout {
+      display:flex; align-items:center; gap:6px;
+      background:linear-gradient(135deg,#ff4d4d,#c0392b);
+      color:white; border:none; border-radius:9px;
+      padding:7px 16px; font-size:12px; font-weight:600;
+      cursor:pointer; font-family:'DM Sans',sans-serif;
+      box-shadow:0 4px 12px rgba(220,50,50,0.25);
+      transition:.2s;
+    }
+    .btn-logout:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(220,50,50,0.35); }
+
+    /* ── HERO ── */
+    .hero {
+      position:relative; z-index:1;
+      background:linear-gradient(135deg, var(--deep) 0%, var(--royal) 55%, #1a6bff 100%);
+      padding:32px 36px 26px; overflow:hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+      background-size:44px 44px;
+    }
+    .hero-orb { position:absolute; border-radius:50%; filter:blur(70px); opacity:.25; }
+    .hero-orb1 { width:320px;height:320px;background:#0091ff;top:-100px;right:-60px; }
+    .hero-orb2 { width:200px;height:200px;background:#003fa3;bottom:-70px;left:35%; }
+
+    .hero-inner { position:relative; z-index:1; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+    .hero-text {}
+    .hero-tag { font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:6px; }
+    .hero-heading { font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:#fff;line-height:1.2; }
+    .hero-heading span { color:var(--accent); }
+    .hero-date { font-size:11px;color:rgba(255,255,255,.4);margin-top:6px; }
+
+    /* ── KPI STRIP ── */
+    .kpi-strip {
+      position:relative; z-index:1;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+      gap:0;
+      background:white;
+      border-bottom:1px solid var(--border);
+      box-shadow:0 4px 20px rgba(0,47,163,0.07);
+    }
+    .kpi-cell {
+      padding:18px 20px;
+      border-right:1px solid var(--border);
+      animation:kpiIn .5s ease both;
+      position:relative; overflow:hidden;
+      cursor:default;
+      transition:background .2s;
+    }
+    .kpi-cell:last-child { border-right:none; }
+    .kpi-cell:hover { background:var(--ice); }
+    .kpi-cell::before {
+      content:''; position:absolute; bottom:0; left:0; right:0;
+      height:3px; border-radius:0;
+    }
+    .kpi-blue::before   { background:var(--sky); }
+    .kpi-green::before  { background:var(--green); }
+    .kpi-red::before    { background:var(--red); }
+    .kpi-amber::before  { background:var(--amber); }
+    .kpi-purple::before { background:var(--purple); }
+    .kpi-teal::before   { background:#00c8c8; }
+    .kpi-navy::before   { background:var(--deep); }
+    .kpi-rose::before   { background:#ff6b8a; }
+
+    @keyframes kpiIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    .kpi-icon { font-size:20px; margin-bottom:6px; }
+    .kpi-val {
+      font-family:'Playfair Display',serif;
+      font-size:28px; font-weight:900; color:var(--royal);
+      line-height:1;
+    }
+    .kpi-label { font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px; }
+
+    /* ── NAV TABS ── */
+    .nav-tabs-wrap {
+      position:relative;z-index:1;
+      background:white; border-bottom:1px solid var(--border);
+      padding:0 32px;
+      display:flex; gap:2px;
+    }
+    .nav-tab {
+      padding:14px 22px; border:none; background:none;
+      font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+      color:var(--muted); cursor:pointer;
+      border-bottom:2px solid transparent;
+      transition:.2s; display:flex; align-items:center; gap:6px;
+      white-space:nowrap;
+    }
+    .nav-tab:hover { color:var(--royal); }
+    .nav-tab.active { color:var(--sky); border-bottom-color:var(--sky); }
+    .nav-badge {
+      font-size:10px;font-weight:700;
+      background:var(--red); color:white;
+      border-radius:100px; padding:1px 7px;
+      min-width:18px; text-align:center;
+    }
+    .nav-badge.green { background:var(--green); }
+    .nav-badge.amber { background:var(--amber); }
+
+    /* ── CONTENT PANELS ── */
+    .content { position:relative;z-index:1; max-width:1300px; margin:0 auto; padding:24px 24px 50px; }
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* ── SECTION TITLE ── */
+    .section-head {
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:18px; flex-wrap:wrap; gap:12px;
+    }
+    .section-title {
+      font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:var(--royal);
+    }
+    .section-sub { font-size:12px;color:var(--muted);margin-top:2px; }
+
+    /* ── CARDS ── */
+    .card {
+      background:white; border:1px solid rgba(255,255,255,.9);
+      border-radius:18px; padding:22px 24px;
+      box-shadow:var(--shadow);
+      transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+      animation:cardIn .5s ease both;
+    }
+    .card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+    @keyframes cardIn { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+    .card-head {
+      display:flex; align-items:center; gap:10px;
+      margin-bottom:18px; padding-bottom:14px;
+      border-bottom:1px solid var(--border);
+    }
+    .card-icon {
+      width:38px;height:38px;border-radius:11px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:17px;flex-shrink:0;
+    }
+    .ic-blue   {background:linear-gradient(135deg,#1a6bff1a,#1a6bff33)}
+    .ic-green  {background:linear-gradient(135deg,#00c77a1a,#00c77a33)}
+    .ic-amber  {background:linear-gradient(135deg,#ffa6001a,#ffa60033)}
+    .ic-red    {background:linear-gradient(135deg,#ff47571a,#ff475733)}
+    .ic-purple {background:linear-gradient(135deg,#7c5cfc1a,#7c5cfc33)}
+    .ic-teal   {background:linear-gradient(135deg,#00c8c81a,#00c8c833)}
+
+    .card-title { font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--royal); }
+    .card-desc  { font-size:11px;color:var(--muted);margin-top:2px; }
+
+    /* grid layouts */
+    .g2 { display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px; }
+    .g3 { display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px; }
+
+    /* ── TRACKING TABLE ── */
+    .track-table-wrap {
+      border-radius:14px; overflow:hidden;
+      border:1px solid var(--border);
+      box-shadow:0 2px 12px rgba(0,47,163,.05);
+    }
+    .track-table {
+      width:100%; border-collapse:collapse;
+      font-size:12.5px;
+    }
+    .track-table thead th {
+      background:var(--royal); color:white;
+      padding:11px 14px; text-align:left;
+      font-size:10.5px; letter-spacing:1px;
+      text-transform:uppercase; font-weight:600;
+      white-space:nowrap;
+    }
+    .track-table tbody tr { border-bottom:1px solid var(--border); transition:background .15s; }
+    .track-table tbody tr:last-child { border-bottom:none; }
+    .track-table tbody tr:hover { background:var(--ice); }
+    .track-table td { padding:10px 14px; color:#1a2540; vertical-align:middle; }
+
+    /* ── PILLS / BADGES ── */
+    .pill {
+      display:inline-flex;align-items:center;gap:4px;
+      padding:3px 10px;border-radius:100px;
+      font-size:10.5px;font-weight:700;
+    }
+    .pill::before { content:'';width:5px;height:5px;border-radius:50%; }
+    .pill-green  { background:rgba(0,199,122,.12);color:#006b45; }
+    .pill-green::before  { background:#00c77a; }
+    .pill-red    { background:rgba(255,71,87,.10);color:#a00; }
+    .pill-red::before    { background:#ff4757; }
+    .pill-amber  { background:rgba(255,166,0,.12);color:#7a4a00; }
+    .pill-amber::before  { background:#ffa600; }
+    .pill-blue   { background:rgba(26,107,255,.10);color:#003fa3; }
+    .pill-blue::before   { background:#1a6bff; }
+    .pill-purple { background:rgba(124,92,252,.10);color:#4a2ab0; }
+    .pill-purple::before { background:#7c5cfc; }
+
+    /* ── PROGRESS BAR ── */
+    .prog-wrap { background:#eef4ff;border-radius:100px;height:8px;overflow:hidden; }
+    .prog-bar  { height:100%;border-radius:100px;transition:width 1s cubic-bezier(.4,0,.2,1); }
+    .prog-label{ display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px; }
+
+    /* ── SEARCH BAR ── */
+    .search-wrap { position:relative; }
+    .search-wrap input {
+      width:240px; padding:8px 12px 8px 34px;
+      border:1.5px solid var(--border); border-radius:9px;
+      background:var(--ice); color:#1a2540;
+      font-family:'DM Sans',sans-serif; font-size:12px;
+      outline:none; transition:.2s;
+    }
+    .search-wrap input:focus { border-color:var(--sky); background:white; box-shadow:0 0 0 3px rgba(26,107,255,.1); }
+    .search-wrap svg { position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.35; }
 
     /* ── FORM ELEMENTS ── */
-    .field { margin-bottom: 14px; }
-    .field label {
-      display: block;
-      font-size: 11px; font-weight: 600;
-      color: var(--muted); letter-spacing: 1.5px;
-      text-transform: uppercase; margin-bottom: 6px;
-    }
-
+    .field { margin-bottom:14px; }
+    .field label { display:block;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px; }
     select, input[type=file] {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: 11px;
-      background: rgba(255,255,255,0.8);
-      color: #1a2540;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      cursor: pointer;
+      width:100%; padding:9px 13px;
+      border:1.5px solid var(--border); border-radius:10px;
+      background:rgba(255,255,255,.8); color:#1a2540;
+      font-family:'DM Sans',sans-serif; font-size:13px;
+      outline:none; transition:.2s; cursor:pointer;
     }
-    select:focus, input[type=file]:focus {
-      border-color: var(--sky);
-      box-shadow: 0 0 0 3px rgba(26,107,255,0.1);
-    }
-    input[type=file] {
-      padding: 8px 10px;
-      font-size: 12px;
-      color: var(--muted);
-    }
+    select:focus,input[type=file]:focus { border-color:var(--sky); box-shadow:0 0 0 3px rgba(26,107,255,.1); }
+    input[type=file] { padding:7px 10px;font-size:11px;color:var(--muted); }
 
-    /* ── DIVIDER ── */
-    .divider {
-      border: none;
-      border-top: 1px dashed var(--border);
-      margin: 16px 0;
-    }
+    .divider { border:none;border-top:1px dashed var(--border);margin:14px 0; }
 
-    /* ── BUTTON STYLES ── */
-    .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-
+    /* ── BUTTONS ── */
+    .btn-row { display:flex;flex-wrap:wrap;gap:8px;margin-top:10px; }
     .btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 9px 16px;
-      border-radius: 10px; border: none;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px; font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-      letter-spacing: 0.3px;
-      position: relative; overflow: hidden;
+      display:inline-flex;align-items:center;gap:6px;
+      padding:9px 16px; border-radius:9px; border:none;
+      font-family:'DM Sans',sans-serif; font-size:12px; font-weight:600;
+      cursor:pointer; transition:.15s; position:relative; overflow:hidden;
     }
     .btn::after {
-      content: '';
-      position: absolute; top: -50%; left: -80%;
-      width: 50%; height: 200%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-      transform: skewX(-20deg);
-      transition: left 0.4s;
+      content:''; position:absolute;top:-50%;left:-80%;
+      width:50%;height:200%;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
+      transform:skewX(-20deg); transition:left .4s;
     }
-    .btn:hover::after { left: 160%; }
-    .btn:hover { transform: translateY(-2px); }
-    .btn:active { transform: translateY(1px); }
+    .btn:hover::after { left:160%; }
+    .btn:hover { transform:translateY(-2px); }
+    .btn:active { transform:translateY(1px); }
 
-    /* Primary */
-    .btn-primary {
-      background: linear-gradient(135deg, var(--sky), var(--royal));
-      color: white;
-      box-shadow: 0 4px 14px rgba(26,107,255,0.3);
-    }
-    .btn-primary:hover { box-shadow: 0 8px 22px rgba(26,107,255,0.4); }
+    .btn-primary { background:linear-gradient(135deg,var(--sky),var(--royal));color:white;box-shadow:0 4px 12px rgba(26,107,255,.28); }
+    .btn-outline  { background:rgba(26,107,255,.07);color:var(--sky);border:1.5px solid rgba(26,107,255,.22); }
+    .btn-success  { background:linear-gradient(135deg,#00b87a,#007050);color:white;box-shadow:0 4px 12px rgba(0,176,122,.28); }
+    .btn-danger   { background:linear-gradient(135deg,#ff4d4d,#c0392b);color:white;box-shadow:0 4px 12px rgba(220,50,50,.22); }
+    .btn-amber    { background:linear-gradient(135deg,#ffa600,#d97800);color:white;box-shadow:0 4px 12px rgba(255,166,0,.28); }
+    .btn-sm { padding:6px 12px;font-size:11px; }
 
-    /* Outline */
-    .btn-outline {
-      background: rgba(26,107,255,0.07);
-      color: var(--sky);
-      border: 1.5px solid rgba(26,107,255,0.25);
+    /* ── FILE UPLOAD ── */
+    .file-drop {
+      display:flex;align-items:center;gap:10px;
+      background:rgba(26,107,255,.04);
+      border:1.5px dashed rgba(26,107,255,.22);
+      border-radius:10px; padding:12px 14px; cursor:pointer;
+      transition:.2s; position:relative;
     }
-    .btn-outline:hover { background: rgba(26,107,255,0.12); }
+    .file-drop:hover { background:rgba(26,107,255,.08);border-color:rgba(26,107,255,.45); }
+    .file-drop input { display:none; }
+    .file-fname { font-size:11px;color:var(--sky);min-height:14px;margin-top:4px; }
 
-    /* Success */
-    .btn-success {
-      background: linear-gradient(135deg, #00b87a, #008055);
-      color: white;
-      box-shadow: 0 4px 14px rgba(0,184,122,0.3);
-    }
-
-    /* Danger */
-    .btn-danger {
-      background: linear-gradient(135deg, #ff4d4d, #c0392b);
-      color: white;
-      box-shadow: 0 4px 14px rgba(220,50,50,0.25);
-    }
-    .btn-danger:hover { box-shadow: 0 8px 20px rgba(220,50,50,0.35); }
-
-    /* Amber */
-    .btn-amber {
-      background: linear-gradient(135deg, #ffa600, #e07b00);
-      color: white;
-      box-shadow: 0 4px 14px rgba(255,166,0,0.3);
-    }
-
-    /* ── STATUS MESSAGES ── */
-    .status-box {
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 12px; font-weight: 600;
-      display: none;
-    }
-    .status-box.show { display: block; }
-    .status-success {
-      background: rgba(0,214,143,0.12);
-      border: 1px solid rgba(0,214,143,0.3);
-      color: #006b45;
-    }
-    .status-error {
-      background: rgba(255,77,77,0.1);
-      border: 1px solid rgba(255,77,77,0.25);
-      color: #a00;
-    }
-    .status-info {
-      background: rgba(26,107,255,0.08);
-      border: 1px solid rgba(26,107,255,0.2);
-      color: var(--royal);
-    }
+    /* ── STATUS BOX ── */
+    .status-box { margin-top:12px;padding:10px 14px;border-radius:9px;font-size:12px;font-weight:600;display:none; }
+    .status-box.show { display:block; }
+    .s-success { background:rgba(0,199,122,.10);border:1px solid rgba(0,199,122,.28);color:#005f38; }
+    .s-error   { background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.22);color:#a00; }
+    .s-info    { background:rgba(26,107,255,.07);border:1px solid rgba(26,107,255,.18);color:var(--royal); }
 
     /* ── TOAST ── */
     #toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: rgba(0,31,91,0.95);
-      color: white; padding: 13px 24px;
-      border-radius: 100px; font-size: 13px; font-weight: 500;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-      backdrop-filter: blur(10px);
-      z-index: 9999;
-      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
-      opacity: 0;
-      pointer-events: none;
+      position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+      background:rgba(0,25,70,.95);color:white;padding:12px 24px;
+      border-radius:100px;font-size:13px;font-weight:500;
+      box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(10px);
+      z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+      opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;
     }
-    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    #toast.show { transform:translateX(-50%) translateY(0);opacity:1; }
 
-    /* ── LOCK STATUS PILL ── */
-    .lock-status {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 100px;
-      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
-      margin-top: 10px;
+    /* ── FACULTY TRACKING GRID ── */
+    .faculty-grid {
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;
     }
-    .lock-open  { background: rgba(0,214,143,0.12); color:#006b45; border:1px solid rgba(0,214,143,0.3); }
-    .lock-closed{ background: rgba(255,77,77,0.1);  color:#900;    border:1px solid rgba(255,77,77,0.3);  }
+    .faculty-card {
+      background:white;border:1px solid var(--border);border-radius:14px;
+      padding:16px;position:relative;overflow:hidden;
+      transition:.2s;
+    }
+    .faculty-card:hover { transform:translateY(-2px);box-shadow:var(--shadow); }
+    .faculty-card .fc-top { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px; }
+    .fc-avatar {
+      width:38px;height:38px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:white;
+      flex-shrink:0;
+    }
+    .fc-name { font-size:12.5px;font-weight:600;color:var(--royal);margin-bottom:2px; }
+    .fc-id   { font-size:10px;color:var(--muted); }
+    .fc-venue{ font-size:10px;color:var(--muted);margin-top:2px; }
+    .fc-prog { margin-top:10px; }
+    .fc-prog-label { display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px; }
+    .fc-bar-wrap { background:#eef4ff;border-radius:100px;height:6px;overflow:hidden; }
+    .fc-bar { height:100%;border-radius:100px;background:linear-gradient(90deg,var(--sky),var(--accent));transition:width 1s; }
 
-    /* ── FILE INPUT CUSTOM ── */
-    .file-label {
-      display: flex; align-items: center; gap: 10px;
-      background: rgba(26,107,255,0.04);
-      border: 1.5px dashed rgba(26,107,255,0.25);
-      border-radius: 11px;
-      padding: 12px 14px;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-      position: relative;
+    .fc-footer { display:flex;justify-content:space-between;align-items:center;margin-top:10px; }
+    .fc-count  { font-size:11px;color:var(--muted); }
+    .fc-status-dot {
+      width:8px;height:8px;border-radius:50%;
     }
-    .file-label:hover {
-      background: rgba(26,107,255,0.08);
-      border-color: rgba(26,107,255,0.5);
+    .fc-done   { background:#00c77a;box-shadow:0 0 5px #00c77a; }
+    .fc-partial{ background:#ffa600;box-shadow:0 0 5px #ffa600; }
+    .fc-none   { background:#ff4757;box-shadow:0 0 5px #ff4757; }
+    .faculty-card.card-done   { border-color:rgba(0,199,122,.3);background:rgba(0,199,122,.03); }
+    .faculty-card.card-partial{ border-color:rgba(255,166,0,.3);background:rgba(255,166,0,.02); }
+    .faculty-card.card-none   { border-color:rgba(255,71,87,.25);background:rgba(255,71,87,.02); }
+
+    /* ── VENUE CARDS ── */
+    .venue-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px; }
+    .venue-card {
+      background:white;border:1px solid var(--border);border-radius:16px;
+      padding:20px;transition:.2s;position:relative;overflow:hidden;
     }
-    .file-label input { display: none; }
-    .file-icon { font-size: 18px; }
-    .file-text { font-size: 12px; color: var(--muted); }
-    .file-text strong { display: block; font-size: 12px; color: var(--royal); }
-    .file-name-display {
-      margin-top: 5px;
-      font-size: 11px; color: var(--sky);
-      min-height: 15px;
+    .venue-card:hover { transform:translateY(-3px);box-shadow:var(--shadow-lg); }
+    .venue-card::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:4px;
+      border-radius:16px 16px 0 0;
+    }
+    .vc-done    { border-color:rgba(0,199,122,.3); }
+    .vc-done::before    { background:linear-gradient(90deg,#00c77a,#00aaff); }
+    .vc-partial { border-color:rgba(255,166,0,.3); }
+    .vc-partial::before { background:linear-gradient(90deg,#ffa600,#ff6b2b); }
+    .vc-none    { border-color:rgba(255,71,87,.25); }
+    .vc-none::before    { background:linear-gradient(90deg,#ff4757,#ff6b8a); }
+
+    .vc-name  { font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--royal);margin-bottom:4px; }
+    .vc-meta  { font-size:11px;color:var(--muted);margin-bottom:14px; }
+    .vc-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px; }
+    .vc-stat  { background:var(--ice);border-radius:9px;padding:8px;text-align:center; }
+    .vc-stat-val  { font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--royal); }
+    .vc-stat-lab  { font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:2px; }
+
+    /* ── PENDING STUDENTS TABLE ── */
+    .pending-badge {
+      display:inline-flex;align-items:center;gap:5px;
+      background:rgba(255,71,87,.08);color:#a00;
+      border:1px solid rgba(255,71,87,.22);
+      border-radius:100px;padding:4px 12px;
+      font-size:11px;font-weight:600;
     }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      main { grid-template-columns: 1fr; padding: 0 14px 30px; }
-      .hero { padding: 24px 20px 20px; }
-      .hero-heading { font-size: 22px; }
-      header { padding: 0 16px; }
-      .header-sub, .admin-chip { display: none; }
-      .kpi-row { gap: 12px; }
+    /* ── SUMMARY DONUT (CSS only) ── */
+    .donut-wrap { display:flex;align-items:center;gap:20px; }
+    .donut {
+      width:80px;height:80px;border-radius:50%;flex-shrink:0;
+      background:conic-gradient(var(--green) 0% var(--pct,0%), #eef4ff var(--pct,0%) 100%);
+      display:flex;align-items:center;justify-content:center;
+      position:relative;
     }
+    .donut-inner {
+      width:56px;height:56px;background:white;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--royal);
+    }
+    .donut-legend { flex:1; }
+    .dl-item { display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:6px; }
+    .dl-dot  { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+
+    /* Responsive */
+    @media(max-width:768px) {
+      header { padding:0 14px; }
+      .h-sub,.admin-chip,.batch-tabs { display:none; }
+      .nav-tabs-wrap { padding:0 8px;overflow-x:auto; }
+      .content { padding:14px 12px 40px; }
+      .kpi-strip { grid-template-columns:repeat(2,1fr); }
+      .hero { padding:20px 16px 18px; }
+      .hero-heading { font-size:20px; }
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align:center;padding:48px 20px;color:var(--muted);
+    }
+    .empty-state .es-icon { font-size:40px;margin-bottom:12px; }
+    .empty-state .es-title { font-size:16px;font-weight:600;color:var(--royal);margin-bottom:6px; }
+    .empty-state .es-sub { font-size:13px; }
+
+    /* Loader Skeleton */
+    .skel { background:linear-gradient(90deg,#eef4ff 25%,#ddeaff 50%,#eef4ff 75%);background-size:200% 100%;animation:skel 1.5s infinite; border-radius:6px; }
+    @keyframes skel { from{background-position:200% 0} to{background-position:-200% 0} }
   </style>
 </head>
 <body>
 
 <div class="bg-layer"></div>
 <div class="bg-grid"></div>
-
-<!-- ── TOAST ── -->
 <div id="toast"></div>
 
-<!-- ── HEADER ── -->
+<!-- ══ HEADER ══ -->
 <header>
-  <div class="header-left">
-    <div class="header-logo">K</div>
+  <div class="h-left">
+    <div class="h-logo">K</div>
     <div>
-      <div class="header-title">KCET</div>
-      <div class="header-sub">Admin Dashboard</div>
+      <div class="h-title">KCET Admin</div>
+      <div class="h-sub">Seminar Control Center</div>
     </div>
   </div>
-  <div class="header-right">
+  <div class="h-right">
+    <div class="batch-tabs">
+      <button class="batch-tab active" onclick="switchBatch('FN',this)">FN</button>
+      <button class="batch-tab" onclick="switchBatch('AN',this)">AN</button>
+    </div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadDashboard()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Refresh
+    </button>
     <div class="admin-chip">Administrator</div>
     <button class="btn-logout" id="logoutBtn">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Logout
     </button>
   </div>
 </header>
 
-<!-- ── HERO ── -->
+<!-- ══ HERO ══ -->
 <div class="hero">
   <div class="hero-orb hero-orb1"></div>
   <div class="hero-orb hero-orb2"></div>
-  <div class="hero-content">
-    <div class="hero-greeting">Welcome back, Administrator</div>
-    <div class="hero-heading">Seminar <span>Mark Management</span><br>Control Panel</div>
-    <div class="kpi-row">
-      <div class="kpi">
-        <div class="kpi-val" id="kpi1">—</div>
-        <div class="kpi-label">Active Batches</div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-tag">Seminar Day — Live Tracking</div>
+      <div class="hero-heading">Admin <span>Control Center</span></div>
+      <div class="hero-date" id="heroDate"></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:12px;padding:10px 18px;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;" id="heroLockFN">—</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-top:2px;">FN Status</div>
       </div>
-      <div class="kpi">
-        <div class="kpi-val" id="kpi2">—</div>
-        <div class="kpi-label">Departments</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-val" id="kpi3">—</div>
-        <div class="kpi-label">Mark Entries</div>
+      <div style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);border-radius:12px;padding:10px 18px;text-align:center;">
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;" id="heroLockAN">—</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;margin-top:2px;">AN Status</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── CARDS ── -->
-<main>
-
-  <!-- LOCK/UNLOCK CARD -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-icon icon-blue">🔒</div>
-      <div class="card-title-wrap">
-        <div class="card-title">Lock / Unlock Marks Entry</div>
-        <div class="card-desc">Control mark submission by batch</div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Select Batch</label>
-      <select id="batchSelect">
-        <option value="">— Choose Batch —</option>
-        <option value="FN">FN (Forenoon)</option>
-        <option value="AN">AN (Afternoon)</option>
-      </select>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn btn-success" onclick="toggleLock('Open')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
-        Unlock Entry
-      </button>
-      <button class="btn btn-danger" onclick="toggleLock('Closed')">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
-        Lock Entry
-      </button>
-    </div>
-
-    <div id="status" class="status-box"></div>
+<!-- ══ KPI STRIP ══ -->
+<div class="kpi-strip">
+  <div class="kpi-cell kpi-blue" style="animation-delay:.05s">
+    <div class="kpi-icon">👥</div>
+    <div class="kpi-val" id="kTotal">—</div>
+    <div class="kpi-label">Total Students</div>
   </div>
+  <div class="kpi-cell kpi-green" style="animation-delay:.1s">
+    <div class="kpi-icon">✅</div>
+    <div class="kpi-val" id="kPresent">—</div>
+    <div class="kpi-label">Present</div>
+  </div>
+  <div class="kpi-cell kpi-red" style="animation-delay:.15s">
+    <div class="kpi-icon">❌</div>
+    <div class="kpi-val" id="kAbsent">—</div>
+    <div class="kpi-label">Absent</div>
+  </div>
+  <div class="kpi-cell kpi-amber" style="animation-delay:.2s">
+    <div class="kpi-icon">⏳</div>
+    <div class="kpi-val" id="kPending">—</div>
+    <div class="kpi-label">Marks Pending</div>
+  </div>
+  <div class="kpi-cell kpi-purple" style="animation-delay:.25s">
+    <div class="kpi-icon">🏛️</div>
+    <div class="kpi-val" id="kVenues">—</div>
+    <div class="kpi-label">Total Venues</div>
+  </div>
+  <div class="kpi-cell kpi-teal" style="animation-delay:.3s">
+    <div class="kpi-icon">👨‍🏫</div>
+    <div class="kpi-val" id="kFaculty">—</div>
+    <div class="kpi-label">Total Faculty</div>
+  </div>
+  <div class="kpi-cell kpi-navy" style="animation-delay:.35s">
+    <div class="kpi-icon">🎓</div>
+    <div class="kpi-val" id="kDepts">—</div>
+    <div class="kpi-label">Departments</div>
+  </div>
+  <div class="kpi-cell kpi-rose" style="animation-delay:.4s">
+    <div class="kpi-icon">📝</div>
+    <div class="kpi-val" id="kEntries">—</div>
+    <div class="kpi-label">Mark Entries</div>
+  </div>
+</div>
 
-  <!-- UPLOAD CARD -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-icon icon-green">📁</div>
-      <div class="card-title-wrap">
-        <div class="card-title">Upload Data Sheets</div>
-        <div class="card-desc">Import student & faculty data</div>
-      </div>
-    </div>
+<!-- ══ NAV TABS ══ -->
+<div class="nav-tabs-wrap">
+  <button class="nav-tab active" onclick="showPanel('overview',this)">📊 Overview</button>
+  <button class="nav-tab" onclick="showPanel('faculty',this)">
+    👨‍🏫 Faculty Tracking
+    <span class="nav-badge" id="badgeFacultyPending">0</span>
+  </button>
+  <button class="nav-tab" onclick="showPanel('venue',this)">
+    🏛️ Venue Tracking
+    <span class="nav-badge amber" id="badgeVenuePending">0</span>
+  </button>
+  <button class="nav-tab" onclick="showPanel('pending',this)">
+    ⏳ Pending Students
+    <span class="nav-badge" id="badgePendingStudents">0</span>
+  </button>
+  <button class="nav-tab" onclick="showPanel('manage',this)">⚙️ Manage</button>
+  <button class="nav-tab" onclick="showPanel('reports',this)">📄 Reports</button>
+</div>
 
-    <div class="field">
-      <label>Download Templates</label>
-      <div class="btn-row">
-        <button class="btn btn-outline" onclick="downloadStaticTemplate('student')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Student Template
-        </button>
-        <button class="btn btn-outline" onclick="downloadStaticTemplate('faculty')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Faculty Template
-        </button>
-      </div>
-    </div>
+<!-- ══ CONTENT ══ -->
+<div class="content">
 
-    <hr class="divider">
+  <!-- ████ OVERVIEW ████ -->
+  <div class="panel active" id="panel-overview">
+    <div class="g2" style="margin-bottom:18px;">
 
-    <div class="field">
-      <label>Student Details Sheet</label>
-      <label class="file-label">
-        <span class="file-icon">📊</span>
-        <div class="file-text">
-          <strong>Choose student file</strong>
-          .xlsx · .xls · .csv
+      <!-- Completion Progress -->
+      <div class="card" style="animation-delay:.1s">
+        <div class="card-head">
+          <div class="card-icon ic-blue">📈</div>
+          <div><div class="card-title">Overall Completion</div><div class="card-desc">Marks entry progress across all venues</div></div>
         </div>
-        <input type="file" id="studentSheet" accept=".xlsx,.xls,.csv" onchange="showFileName(this,'studentName')">
-      </label>
-      <div class="file-name-display" id="studentName"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="uploadSheet('studentSheet','uploadStudentSheet')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="17" x2="12" y2="6"/><path d="M20 17v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
-          Upload Students
-        </button>
+        <div id="overallProgress"></div>
       </div>
-    </div>
 
-    <div class="field">
-      <label>Faculty Login Details Sheet</label>
-      <label class="file-label">
-        <span class="file-icon">👥</span>
-        <div class="file-text">
-          <strong>Choose faculty file</strong>
-          .xlsx · .xls · .csv
+      <!-- Quick Stats -->
+      <div class="card" style="animation-delay:.15s">
+        <div class="card-head">
+          <div class="card-icon ic-green">🗂️</div>
+          <div><div class="card-title">Department Summary</div><div class="card-desc">Students per department</div></div>
         </div>
-        <input type="file" id="facultySheet" accept=".xlsx,.xls,.csv" onchange="showFileName(this,'facultyName')">
-      </label>
-      <div class="file-name-display" id="facultyName"></div>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="uploadSheet('facultySheet','uploadFacultySheet')">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="17 11 12 6 7 11"/><line x1="12" y1="17" x2="12" y2="6"/><path d="M20 17v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2"/></svg>
-          Upload Faculty
-        </button>
+        <div id="deptSummary"></div>
       </div>
     </div>
 
-    <div id="uploadStatus" class="status-box"></div>
-  </div>
-
-  <!-- REPORTS CARD -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-icon icon-amber">📄</div>
-      <div class="card-title-wrap">
-        <div class="card-title">Download Reports</div>
-        <div class="card-desc">Generate departmental mark reports</div>
+    <div class="g3">
+      <!-- Faculty Done vs Pending -->
+      <div class="card" style="animation-delay:.2s">
+        <div class="card-head">
+          <div class="card-icon ic-teal">✅</div>
+          <div><div class="card-title">Faculty Done</div><div class="card-desc">Completed all mark entries</div></div>
+        </div>
+        <div id="overviewFacultyDone"></div>
       </div>
-    </div>
 
-    <div class="field">
-      <label>Select Department</label>
-      <select id="deptSelect">
-        <option value="ALL">All Departments</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>Select Batch</label>
-      <select id="reportBatch">
-        <option value="FN">FN (Forenoon)</option>
-        <option value="AN">AN (Afternoon)</option>
-      </select>
-    </div>
-
-    <hr class="divider">
-
-    <div class="field">
-      <label>Department Report</label>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="downloadDeptReport()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          PDF
-        </button>
-        <button class="btn btn-outline" onclick="downloadDeptReportCSV()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          CSV
-        </button>
+      <div class="card" style="animation-delay:.25s">
+        <div class="card-head">
+          <div class="card-icon ic-red">⚠️</div>
+          <div><div class="card-title">Faculty Pending</div><div class="card-desc">Yet to complete entries</div></div>
+        </div>
+        <div id="overviewFacultyPending"></div>
       </div>
-    </div>
 
-    <div class="field">
-      <label>Total (Consolidated) Report</label>
-      <div class="btn-row">
-        <button class="btn btn-amber" onclick="downloadTotalDeptReport()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          Total PDF
-        </button>
-        <button class="btn btn-outline" onclick="downloadTotalDeptReportCSV()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Total CSV
-        </button>
+      <div class="card" style="animation-delay:.3s">
+        <div class="card-head">
+          <div class="card-icon ic-amber">🏛️</div>
+          <div><div class="card-title">Venue Status</div><div class="card-desc">Completion by venue</div></div>
+        </div>
+        <div id="overviewVenueStatus"></div>
       </div>
     </div>
   </div>
 
-</main>
+  <!-- ████ FACULTY TRACKING ████ -->
+  <div class="panel" id="panel-faculty">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Faculty Mark Entry Tracking</div>
+        <div class="section-sub">Real-time status of all faculty assigned to this batch</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search faculty..." id="facultySearch" oninput="filterFaculty()">
+        </div>
+        <select id="facultyFilter" onchange="filterFaculty()" style="width:auto;padding:8px 12px;font-size:12px;">
+          <option value="all">All Status</option>
+          <option value="done">✅ Completed</option>
+          <option value="partial">⚡ Partial</option>
+          <option value="none">❌ Not Started</option>
+        </select>
+      </div>
+    </div>
 
-<!-- ════════════════════ SCRIPT (ALL ORIGINAL LOGIC PRESERVED) ════════════════════ -->
+    <!-- Summary row -->
+    <div style="display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;" id="facultySummaryRow"></div>
+
+    <!-- Faculty cards grid -->
+    <div class="faculty-grid" id="facultyGrid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="es-icon">⏳</div><div class="es-title">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ████ VENUE TRACKING ████ -->
+  <div class="panel" id="panel-venue">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Venue-wise Tracking</div>
+        <div class="section-sub">Mark entry completion status per examination venue</div>
+      </div>
+    </div>
+    <div class="venue-grid" id="venueGrid">
+      <div class="empty-state" style="grid-column:1/-1"><div class="es-icon">⏳</div><div class="es-title">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- ████ PENDING STUDENTS ████ -->
+  <div class="panel" id="panel-pending">
+    <div class="section-head">
+      <div>
+        <div class="section-title">Pending Mark Entries</div>
+        <div class="section-sub">Students whose marks have not been entered yet</div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search student..." id="pendingSearch" oninput="filterPending()">
+        </div>
+        <select id="pendingDeptFilter" onchange="filterPending()" style="width:auto;padding:8px 12px;font-size:12px;">
+          <option value="all">All Depts</option>
+        </select>
+      </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div class="track-table-wrap" style="border-radius:18px;border:none;">
+        <table class="track-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student ID</th>
+              <th>Student Name</th>
+              <th>Team</th>
+              <th>Department</th>
+              <th>Venue</th>
+              <th>Assigned Faculty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="pendingTableBody">
+            <tr><td colspan="8" style="text-align:center;padding:30px;color:var(--muted);">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ████ MANAGE ████ -->
+  <div class="panel" id="panel-manage">
+    <div class="g2">
+      <!-- Lock/Unlock -->
+      <div class="card" style="animation-delay:.1s">
+        <div class="card-head">
+          <div class="card-icon ic-blue">🔒</div>
+          <div><div class="card-title">Lock / Unlock Marks Entry</div><div class="card-desc">Control mark submission by batch</div></div>
+        </div>
+        <div class="field">
+          <label>Select Batch</label>
+          <select id="batchSelect">
+            <option value="">— Choose Batch —</option>
+            <option value="FN">FN (Forenoon)</option>
+            <option value="AN">AN (Afternoon)</option>
+          </select>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-success" onclick="toggleLock('Open')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
+            Unlock Entry
+          </button>
+          <button class="btn btn-danger" onclick="toggleLock('Closed')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0"/></svg>
+            Lock Entry
+          </button>
+        </div>
+        <div id="status" class="status-box"></div>
+      </div>
+
+      <!-- Upload -->
+      <div class="card" style="animation-delay:.15s">
+        <div class="card-head">
+          <div class="card-icon ic-green">📁</div>
+          <div><div class="card-title">Upload Data Sheets</div><div class="card-desc">Import student & faculty records</div></div>
+        </div>
+        <div class="field">
+          <label>Download Templates</label>
+          <div class="btn-row">
+            <button class="btn btn-outline btn-sm" onclick="downloadStaticTemplate('student')">⬇ Student Template</button>
+            <button class="btn btn-outline btn-sm" onclick="downloadStaticTemplate('faculty')">⬇ Faculty Template</button>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label>Student Details Sheet</label>
+          <label class="file-drop">
+            <span style="font-size:18px;">📊</span>
+            <div style="font-size:12px;color:var(--muted);"><strong style="color:var(--royal);display:block;">Choose student file</strong>.xlsx · .xls · .csv</div>
+            <input type="file" id="studentSheet" accept=".xlsx,.xls,.csv" onchange="showFileName(this,'studentFN')">
+          </label>
+          <div class="file-fname" id="studentFN"></div>
+          <div class="btn-row"><button class="btn btn-primary btn-sm" onclick="uploadSheet('studentSheet','uploadStudentSheet')">⬆ Upload Students</button></div>
+        </div>
+        <div class="field">
+          <label>Faculty Login Sheet</label>
+          <label class="file-drop">
+            <span style="font-size:18px;">👥</span>
+            <div style="font-size:12px;color:var(--muted);"><strong style="color:var(--royal);display:block;">Choose faculty file</strong>.xlsx · .xls · .csv</div>
+            <input type="file" id="facultySheet" accept=".xlsx,.xls,.csv" onchange="showFileName(this,'facultyFN')">
+          </label>
+          <div class="file-fname" id="facultyFN"></div>
+          <div class="btn-row"><button class="btn btn-primary btn-sm" onclick="uploadSheet('facultySheet','uploadFacultySheet')">⬆ Upload Faculty</button></div>
+        </div>
+        <div id="uploadStatus" class="status-box"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ████ REPORTS ████ -->
+  <div class="panel" id="panel-reports">
+    <div class="card" style="animation-delay:.1s">
+      <div class="card-head">
+        <div class="card-icon ic-amber">📄</div>
+        <div><div class="card-title">Download Reports</div><div class="card-desc">Generate & export departmental mark reports</div></div>
+      </div>
+      <div class="g2">
+        <div>
+          <div class="field">
+            <label>Select Department</label>
+            <select id="deptSelect"></select>
+          </div>
+          <div class="field">
+            <label>Select Batch</label>
+            <select id="reportBatch">
+              <option value="FN">FN (Forenoon)</option>
+              <option value="AN">AN (Afternoon)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="field">
+            <label>Department Report</label>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="downloadDeptReport()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF
+              </button>
+              <button class="btn btn-outline" onclick="downloadDeptReportCSV()">⬇ CSV</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Total (Consolidated) Report</label>
+            <div class="btn-row">
+              <button class="btn btn-amber" onclick="downloadTotalDeptReport()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Total PDF
+              </button>
+              <button class="btn btn-outline" onclick="downloadTotalDeptReportCSV()">⬇ Total CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- ══════════════════════ SCRIPT ══════════════════════ -->
 <script>
+/* ═══════════════════════════════════════════════════
+   GLOBAL STATE
+═══════════════════════════════════════════════════ */
+let currentBatch = 'FN';
+let allStudents = [];
+let allMarks    = [];
+let allFaculty  = [];
+let pendingAll  = [];
 
-/* ── UI HELPERS ── */
-function showToast(msg, duration=3000) {
+const colors = ['#1a6bff','#00c77a','#ff4757','#ffa600','#7c5cfc','#00c8c8','#ff6b8a','#003fa3'];
+
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+setupLogout();
+
+document.getElementById('heroDate').textContent =
+  new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadDashboard();
+});
+
+/* ═══════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════ */
+function showToast(msg, duration=3200) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.innerHTML = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration);
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), duration);
 }
 
 function setStatus(id, msg, type='info') {
   const el = document.getElementById(id);
   el.textContent = msg;
-  el.className = `status-box show status-${type}`;
+  el.className = `status-box show s-${type}`;
 }
 
-function showFileName(input, displayId) {
-  const el = document.getElementById(displayId);
-  el.textContent = input.files[0] ? '📎 ' + input.files[0].name : '';
+function showFileName(input, id) {
+  document.getElementById(id).textContent = input.files[0] ? '📎 '+input.files[0].name : '';
 }
 
-/* ── LOGOUT ── */
-setupLogout();
-
-/* ── NORMALIZE (original) ── */
-const normalize = v => String(v || "").trim().toLowerCase();
-
-function sortByStudentID(arr) {
-  return arr.sort((a, b) => {
-    const idA = (a.Student_ID || "").toString().toLowerCase();
-    const idB = (b.Student_ID || "").toString().toLowerCase();
-    return idA.localeCompare(idB, undefined, { numeric: true });
-  });
+function animateCount(el, target) {
+  if(isNaN(target) || target < 0) { el.textContent = target; return; }
+  let cur = 0;
+  const step = Math.ceil(target/30);
+  const t = setInterval(()=>{
+    cur = Math.min(cur+step, target);
+    el.textContent = cur;
+    if(cur>=target) clearInterval(t);
+  },30);
 }
 
-function addPageNumbers(doc) {
-  const pageCount = doc.internal.getNumberOfPages();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(9);
-    doc.setFont("times", "normal");
-    doc.text(`Page ${i} of ${pageCount}`, pageWidth / 2, pageHeight - 20, { align: "center" });
-  }
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
 }
 
-async function getLogoData() {
-  const logoUrl = "logo.jpeg";
+function switchBatch(batch, btn) {
+  currentBatch = batch;
+  document.querySelectorAll('.batch-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadDashboard();
+}
+
+/* ═══════════════════════════════════════════════════
+   MAIN DATA LOADER
+═══════════════════════════════════════════════════ */
+async function loadDashboard() {
+  const rb = document.getElementById('refreshBtn');
+  rb.classList.add('spinning');
+  showToast('⏳ Loading dashboard data...');
+
   try {
-    const resp = await fetch(logoUrl);
-    if (!resp.ok) throw new Error("Logo not found");
-    const blob = await resp.blob();
-    const bitmap = await createImageBitmap(blob);
-    const canvas = document.createElement("canvas");
-    canvas.width = bitmap.width; canvas.height = bitmap.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(bitmap, 0, 0);
-    return canvas.toDataURL("image/jpeg");
-  } catch (e) {
-    console.warn("Logo load failed:", e);
-    return null;
+    // Parallel fetch
+    const [studentsRaw, marksRaw] = await Promise.all([
+      postData('getStudents', { venue:'ALL', batch:currentBatch }),
+      postData('getMarks',    { batch:currentBatch })
+    ]);
+
+    allStudents = Array.isArray(studentsRaw) ? studentsRaw : [];
+    allMarks    = Array.isArray(marksRaw)    ? marksRaw    : (marksRaw?.data || []);
+
+    // Normalize keys
+    allStudents = allStudents.map(s=>({
+      TeamID:       s.TeamID||s.teamid||s.team_id||'',
+      Student1_ID:  s.Student1_ID||s.student1_id||'',
+      Student1_Name:s.Student1_Name||s.student1_name||'',
+      Student2_ID:  s.Student2_ID||s.student2_id||'',
+      Student2_Name:s.Student2_Name||s.student2_name||'',
+      Dept:         s.Dept||s.dept||'',
+      Venue:        s.Venue||s.venue||'',
+      Batch:        s.Batch||s.batch||'',
+      Title:        s.Title||s.title||''
+    }));
+
+    // Build faculty list from marks
+    const facultyMap = {};
+    allMarks.forEach(m=>{
+      const fid = (m.Faculty_ID||'').trim();
+      if(!fid) return;
+      if(!facultyMap[fid]) facultyMap[fid] = { Faculty_ID:fid, Venue:m.Venue||'', entries:0, students:new Set() };
+      facultyMap[fid].entries++;
+      facultyMap[fid].students.add((m.Student_ID||'').trim());
+    });
+    allFaculty = Object.values(facultyMap);
+
+    // Also get lock status for both batches
+    const [lockFN, lockAN] = await Promise.all([
+      postData('getLockStatus',{batch:'FN'}),
+      postData('getLockStatus',{batch:'AN'})
+    ]);
+    const lFN = lockFN?.status||'Open';
+    const lAN = lockAN?.status||'Open';
+    document.getElementById('heroLockFN').textContent = lFN==='Open'?'🔓 Open':'🔒 Locked';
+    document.getElementById('heroLockFN').style.color  = lFN==='Open'?'#00ff8a':'#ff7777';
+    document.getElementById('heroLockAN').textContent = lAN==='Open'?'🔓 Open':'🔒 Locked';
+    document.getElementById('heroLockAN').style.color  = lAN==='Open'?'#00ff8a':'#ff7777';
+
+    computeAndRender();
+    showToast('✅ Dashboard refreshed!');
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Failed to load data. Check connection.');
   }
+  rb.classList.remove('spinning');
 }
 
-/* ── TOGGLE LOCK (original logic) ── */
-async function toggleLock(status) {
-  const batch = document.getElementById("batchSelect").value;
-  if (!batch) {
-    showToast('⚠️ Please select a batch first!');
+/* ═══════════════════════════════════════════════════
+   COMPUTE ALL STATS & RENDER
+═══════════════════════════════════════════════════ */
+function computeAndRender() {
+  // Flat student list
+  const studentList = [];
+  allStudents.forEach(t=>{
+    if(t.Student1_ID) studentList.push({ id:t.Student1_ID, name:t.Student1_Name, team:t.TeamID, dept:t.Dept, venue:t.Venue });
+    if(t.Student2_ID) studentList.push({ id:t.Student2_ID, name:t.Student2_Name, team:t.TeamID, dept:t.Dept, venue:t.Venue });
+  });
+
+  // Set of entered student IDs
+  const enteredIDs = new Set(allMarks.map(m=>(m.Student_ID||'').trim()));
+  const absentIDs  = new Set(allMarks.filter(m=>String(m.Total).toLowerCase()==='absent').map(m=>(m.Student_ID||'').trim()));
+  const presentCount = allMarks.filter(m=>String(m.Total).toLowerCase()!=='absent').length;
+  const absentCount  = absentIDs.size;
+  const totalEnrolled = studentList.length;
+  const pendingCount  = studentList.filter(s=>!enteredIDs.has(s.id)).length;
+
+  // Venues
+  const venues = [...new Set(studentList.map(s=>s.venue).filter(Boolean))];
+  // Depts
+  const depts  = [...new Set(studentList.map(s=>s.dept).filter(Boolean))];
+
+  // Faculty from mark sheet + students sheet
+  // Venue faculty map from marks
+  const venueFacultyMap = {};
+  allMarks.forEach(m=>{
+    const v=(m.Venue||'').trim();
+    if(!v) return;
+    if(!venueFacultyMap[v]) venueFacultyMap[v]=new Set();
+    venueFacultyMap[v].add((m.Faculty_ID||'').trim());
+  });
+
+  // Unique faculty
+  const uniqueFacultyIDs = new Set(allMarks.map(m=>(m.Faculty_ID||'').trim()).filter(Boolean));
+
+  // KPIs
+  animateCount(document.getElementById('kTotal'),   totalEnrolled);
+  animateCount(document.getElementById('kPresent'), presentCount);
+  animateCount(document.getElementById('kAbsent'),  absentCount);
+  animateCount(document.getElementById('kPending'), pendingCount);
+  animateCount(document.getElementById('kVenues'),  venues.length);
+  animateCount(document.getElementById('kFaculty'), uniqueFacultyIDs.size);
+  animateCount(document.getElementById('kDepts'),   depts.length);
+  animateCount(document.getElementById('kEntries'), allMarks.length);
+
+  // ── RENDER OVERVIEW ──
+  renderOverview(studentList, enteredIDs, depts, venues, venueFacultyMap);
+
+  // ── FACULTY TRACKING ──
+  renderFacultyTracking(studentList, enteredIDs);
+
+  // ── VENUE TRACKING ──
+  renderVenueTracking(studentList, enteredIDs, venueFacultyMap);
+
+  // ── PENDING STUDENTS ──
+  pendingAll = studentList.filter(s=>!enteredIDs.has(s.id));
+  renderPendingStudents(pendingAll);
+
+  // populate dept dropdown for reports & pending filter
+  populateDeptDropdown(depts);
+  populatePendingDeptFilter(depts);
+}
+
+/* ═══════════════════════════════════════════════════
+   OVERVIEW
+═══════════════════════════════════════════════════ */
+function renderOverview(studentList, enteredIDs, depts, venues, venueFacultyMap) {
+  const totalEnrolled = studentList.length;
+  const entered = enteredIDs.size;
+  const pct = totalEnrolled ? Math.round(entered/totalEnrolled*100) : 0;
+
+  // Overall Progress
+  document.getElementById('overallProgress').innerHTML = `
+    <div class="donut-wrap" style="margin-bottom:20px;">
+      <div class="donut" style="--pct:${pct}%">
+        <div class="donut-inner">${pct}%</div>
+      </div>
+      <div class="donut-legend">
+        <div class="dl-item"><div class="dl-dot" style="background:#00c77a"></div>${entered} entries submitted</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#ff4757"></div>${totalEnrolled-entered} students pending</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#eef4ff;border:1px solid #ccc"></div>${totalEnrolled} total enrolled</div>
+      </div>
+    </div>
+    <div class="prog-label"><span>Overall Entry Completion</span><span>${pct}%</span></div>
+    <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:linear-gradient(90deg,#1a6bff,#00aaff)"></div></div>
+    <div style="display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;">
+      ${venues.map(v=>{
+        const vStudents = studentList.filter(s=>s.venue===v);
+        const vEntered  = vStudents.filter(s=>enteredIDs.has(s.id)).length;
+        const vPct      = vStudents.length ? Math.round(vEntered/vStudents.length*100):0;
+        return `<div style="flex:1;min-width:120px;">
+          <div class="prog-label"><span style="font-size:10px;">${v}</span><span>${vPct}%</span></div>
+          <div class="prog-wrap"><div class="prog-bar" style="width:${vPct}%;background:${vPct===100?'#00c77a':vPct>50?'#ffa600':'#ff4757'}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  // Dept Summary
+  document.getElementById('deptSummary').innerHTML = depts.map((d,i)=>{
+    const dStu  = studentList.filter(s=>s.dept===d);
+    const dEnt  = dStu.filter(s=>enteredIDs.has(s.id)).length;
+    const dPct  = dStu.length ? Math.round(dEnt/dStu.length*100):0;
+    const col   = colors[i%colors.length];
+    return `<div style="margin-bottom:12px;">
+      <div class="prog-label">
+        <span style="font-weight:600;color:var(--royal);">${d}</span>
+        <span style="color:${col};font-weight:700;">${dEnt}/${dStu.length}</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${dPct}%;background:${col}"></div></div>
+    </div>`;
+  }).join('') || '<div class="empty-state"><div class="es-icon">📭</div><div class="es-sub">No data yet</div></div>';
+
+  // Faculty done/pending lists for overview
+  const facultyStudentMap = {};
+  allStudents.forEach(t=>{
+    [t.Student1_ID,t.Student2_ID].filter(Boolean).forEach(sid=>{
+      // Find which faculty is assigned via marks
+    });
+  });
+
+  // Group marks by faculty
+  const fMarks = {};
+  allMarks.forEach(m=>{
+    const fid=(m.Faculty_ID||'').trim();
+    if(!fid) return;
+    if(!fMarks[fid]) fMarks[fid]={venue:m.Venue||'',count:0};
+    fMarks[fid].count++;
+  });
+
+  // Faculty per venue from students
+  const venueStudentCount = {};
+  studentList.forEach(s=>{ venueStudentCount[s.venue]=(venueStudentCount[s.venue]||0)+1; });
+
+  const facList = Object.entries(fMarks).map(([fid,d])=>({ fid, venue:d.venue, count:d.count }));
+  const venueTotals = {};
+  studentList.forEach(s=>{ venueTotals[s.venue]=(venueTotals[s.venue]||0)+1; });
+
+  // Faculty done = those with entry count >= their assigned students
+  // Simple heuristic: if venue is complete, faculty is done
+  const doneFac    = facList.filter(f=>{ const vt=venueTotals[f.venue]||999; return f.count>=vt; });
+  const pendFac    = facList.filter(f=>{ const vt=venueTotals[f.venue]||999; return f.count<vt; });
+
+  // Update nav badges
+  document.getElementById('badgeFacultyPending').textContent = pendFac.length;
+  document.getElementById('badgeFacultyPending').className = 'nav-badge' + (pendFac.length===0?' green':'');
+
+  const pendingVenues = venues.filter(v=>{
+    const vs=studentList.filter(s=>s.venue===v).length;
+    const ve=studentList.filter(s=>s.venue===v&&enteredIDs.has(s.id)).length;
+    return ve<vs;
+  });
+  document.getElementById('badgeVenuePending').textContent = pendingVenues.length;
+  document.getElementById('badgePendingStudents').textContent = studentList.filter(s=>!enteredIDs.has(s.id)).length;
+
+  // Overview faculty done list
+  document.getElementById('overviewFacultyDone').innerHTML = facList.length===0
+    ? '<div class="empty-state"><div class="es-icon">📭</div><div class="es-sub">No data yet</div></div>'
+    : facList.map(f=>{
+        const vt = venueTotals[f.venue]||'?';
+        const isDone = f.count>=vt;
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--royal);">${f.fid}</div>
+            <div style="font-size:10px;color:var(--muted);">Venue: ${f.venue} · ${f.count}/${vt} entries</div>
+          </div>
+          <span class="pill ${isDone?'pill-green':'pill-amber'}">${isDone?'Done':'Partial'}</span>
+        </div>`;
+      }).filter((_,i)=>{ return Object.entries(fMarks)[i]&&fMarks[Object.keys(fMarks)[i]].count >= (venueTotals[Object.values(fMarks)[i]?.venue]||999); }).join('')
+      || facList.filter(f=>f.count>=(venueTotals[f.venue]||999)).map(f=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div><div style="font-size:12px;font-weight:600;color:var(--royal);">${f.fid}</div><div style="font-size:10px;color:var(--muted);">Venue: ${f.venue}</div></div>
+          <span class="pill pill-green">✅ Done</span>
+        </div>`).join('') || '<div style="font-size:13px;color:var(--muted);padding:10px 0;">No faculty completed yet</div>';
+
+  // Simpler: just list all faculty with status
+  document.getElementById('overviewFacultyDone').innerHTML = facList.length===0
+    ? '<div style="font-size:13px;color:var(--muted);">No mark data yet</div>'
+    : facList.map(f=>{
+        const vt=venueTotals[f.venue]||0;
+        const isDone=vt>0&&f.count>=vt;
+        const isPartial=f.count>0&&!isDone;
+        return `<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--royal);">${f.fid}</div>
+            <div style="font-size:10px;color:var(--muted);">${f.venue} · ${f.count}/${vt} entries</div>
+          </div>
+          <span class="pill ${isDone?'pill-green':isPartial?'pill-amber':'pill-red'}">${isDone?'Done':isPartial?'Partial':'Not Started'}</span>
+        </div>`;
+      }).join('');
+
+  document.getElementById('overviewFacultyPending').innerHTML = facList.filter(f=>{
+    const vt=venueTotals[f.venue]||0; return f.count<vt;
+  }).map(f=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--royal);">${f.fid}</div>
+        <div style="font-size:10px;color:var(--muted);">${f.venue} — ${(venueTotals[f.venue]||0)-f.count} remaining</div>
+      </div>
+      <span class="pill pill-red">⚠️ Pending</span>
+    </div>`).join('') || '<div style="font-size:13px;color:#006b45;padding:10px 0;">🎉 All faculty completed!</div>';
+
+  // Venue overview
+  document.getElementById('overviewVenueStatus').innerHTML = venues.map(v=>{
+    const vs=studentList.filter(s=>s.venue===v).length;
+    const ve=studentList.filter(s=>s.venue===v&&enteredIDs.has(s.id)).length;
+    const pct=vs?Math.round(ve/vs*100):0;
+    return `<div style="margin-bottom:12px;">
+      <div class="prog-label"><span style="font-weight:600;">${v}</span><span>${pct}%</span></div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${pct===100?'#00c77a':pct>60?'#ffa600':'#ff4757'}"></div></div>
+      <div style="font-size:10px;color:var(--muted);margin-top:3px;">${ve} entered · ${vs-ve} pending</div>
+    </div>`;
+  }).join('') || '<div class="empty-state"><div class="es-sub">No venue data</div></div>';
+}
+
+/* ═══════════════════════════════════════════════════
+   FACULTY TRACKING
+═══════════════════════════════════════════════════ */
+function renderFacultyTracking(studentList, enteredIDs) {
+  const venueTotals = {};
+  studentList.forEach(s=>{ venueTotals[s.venue]=(venueTotals[s.venue]||0)+1; });
+
+  const fMarks = {};
+  allMarks.forEach(m=>{
+    const fid=(m.Faculty_ID||'').trim();
+    if(!fid) return;
+    if(!fMarks[fid]) fMarks[fid]={ fid, venue:m.Venue||'', entries:0, students:new Set() };
+    fMarks[fid].entries++;
+    fMarks[fid].students.add((m.Student_ID||'').trim());
+  });
+
+  window._allFacultyData = Object.values(fMarks).map((f,i)=>{
+    const vt = venueTotals[f.venue]||0;
+    const pct= vt>0?Math.round(f.entries/vt*100):0;
+    const status = pct>=100?'done':pct>0?'partial':'none';
+    return { ...f, vt, pct, status, colorIdx:i%colors.length };
+  });
+
+  // Summary pill row
+  const done    = window._allFacultyData.filter(f=>f.status==='done').length;
+  const partial = window._allFacultyData.filter(f=>f.status==='partial').length;
+  const none    = window._allFacultyData.filter(f=>f.status==='none').length;
+  document.getElementById('facultySummaryRow').innerHTML = `
+    <div class="pill pill-green" style="padding:6px 14px;font-size:12px;">✅ Completed: ${done}</div>
+    <div class="pill pill-amber" style="padding:6px 14px;font-size:12px;">⚡ Partial: ${partial}</div>
+    <div class="pill pill-red"   style="padding:6px 14px;font-size:12px;">❌ Not Started: ${none}</div>
+  `;
+
+  renderFacultyCards(window._allFacultyData);
+}
+
+function renderFacultyCards(data) {
+  const grid = document.getElementById('facultyGrid');
+  if(!data.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">📭</div><div class="es-title">No Faculty Data</div><div class="es-sub">No mark entries found for this batch</div></div>`;
     return;
   }
-  await postData("setLock", { batch, status });
-  const msg = `Marks entry for ${batch} batch is now ${status === 'Open' ? '✅ Unlocked' : '🔒 Locked'}`;
-  setStatus('status', msg, status === 'Open' ? 'success' : 'error');
-  showToast(msg);
+  grid.innerHTML = data.map(f=>{
+    const dotClass = f.status==='done'?'fc-done':f.status==='partial'?'fc-partial':'fc-none';
+    const cardClass= f.status==='done'?'card-done':f.status==='partial'?'card-partial':'card-none';
+    const initials = f.fid.substring(0,2).toUpperCase();
+    const avatarColor = colors[f.colorIdx];
+    return `<div class="faculty-card ${cardClass}">
+      <div class="fc-top">
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div class="fc-avatar" style="background:linear-gradient(135deg,${avatarColor},${avatarColor}99);">${initials}</div>
+          <div>
+            <div class="fc-name">${f.fid}</div>
+            <div class="fc-venue">📍 ${f.venue||'—'}</div>
+          </div>
+        </div>
+        <div class="fc-status-dot ${dotClass}"></div>
+      </div>
+      <div class="fc-prog">
+        <div class="fc-prog-label">
+          <span>Entries</span>
+          <span>${f.entries}/${f.vt}</span>
+        </div>
+        <div class="fc-bar-wrap">
+          <div class="fc-bar" style="width:${f.pct}%;background:${f.status==='done'?'linear-gradient(90deg,#00c77a,#00aaff)':f.status==='partial'?'linear-gradient(90deg,#ffa600,#ff6b2b)':'linear-gradient(90deg,#ff4757,#ff6b8a)'}"></div>
+        </div>
+      </div>
+      <div class="fc-footer">
+        <div class="fc-count">${f.pct}% complete</div>
+        <span class="pill ${f.status==='done'?'pill-green':f.status==='partial'?'pill-amber':'pill-red'}">${f.status==='done'?'Done':f.status==='partial'?'Partial':'Pending'}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-/* ── DOWNLOAD TEMPLATES (original) ── */
-function downloadStaticTemplate(type) {
-  let csvContent = "";
-  if (type === "student") {
-    csvContent = `TeamID,Student1_ID,Student1_Name,Student2_ID,Student2_Name,Dept,Title,Venue,Batch\nT001,22CS001,Anushaa P S,22CS002,Anu,CSE,AI-Based Traffic Control,Hall-1,FN`;
-  } else if (type === "faculty") {
-    csvContent = `Faculty_ID,Name,Password,Role,Venue,Batch\nF001,Dr. xxx,pass123,Faculty,Hall-1,FN`;
+function filterFaculty() {
+  const q     = document.getElementById('facultySearch').value.toLowerCase();
+  const filter= document.getElementById('facultyFilter').value;
+  let data    = window._allFacultyData||[];
+  if(filter!=='all') data = data.filter(f=>f.status===filter);
+  if(q) data = data.filter(f=>f.fid.toLowerCase().includes(q)||f.venue.toLowerCase().includes(q));
+  renderFacultyCards(data);
+}
+
+/* ═══════════════════════════════════════════════════
+   VENUE TRACKING
+═══════════════════════════════════════════════════ */
+function renderVenueTracking(studentList, enteredIDs, venueFacultyMap) {
+  const venues = [...new Set(studentList.map(s=>s.venue).filter(Boolean))];
+
+  document.getElementById('venueGrid').innerHTML = venues.map(v=>{
+    const vStu    = studentList.filter(s=>s.venue===v);
+    const vEnt    = vStu.filter(s=>enteredIDs.has(s.id));
+    const vAbs    = vEnt.filter(s=>{ const m=allMarks.find(m=>(m.Student_ID||'').trim()===s.id); return m&&String(m.Total).toLowerCase()==='absent'; });
+    const vPres   = vEnt.length - vAbs.length;
+    const vPend   = vStu.length - vEnt.length;
+    const pct     = vStu.length?Math.round(vEnt.length/vStu.length*100):0;
+    const facInVenue = venueFacultyMap[v]?.size || 0;
+    const status  = pct===100?'vc-done':pct>0?'vc-partial':'vc-none';
+
+    const depts   = [...new Set(vStu.map(s=>s.dept).filter(Boolean))];
+
+    return `<div class="venue-card ${status}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+        <div class="vc-name">${v}</div>
+        <span class="pill ${pct===100?'pill-green':pct>0?'pill-amber':'pill-red'}">${pct}%</span>
+      </div>
+      <div class="vc-meta">🎓 ${depts.join(', ')||'—'} · 👨‍🏫 ${facInVenue} faculty</div>
+      <div class="vc-stats">
+        <div class="vc-stat"><div class="vc-stat-val">${vStu.length}</div><div class="vc-stat-lab">Total</div></div>
+        <div class="vc-stat" style="background:rgba(0,199,122,.08);"><div class="vc-stat-val" style="color:#006b45;">${vPres}</div><div class="vc-stat-lab">Present</div></div>
+        <div class="vc-stat" style="background:rgba(255,71,87,.07);"><div class="vc-stat-val" style="color:#a00;">${vAbs.length}</div><div class="vc-stat-lab">Absent</div></div>
+      </div>
+      <div class="prog-label"><span>Entry Completion</span><span>${vEnt.length}/${vStu.length}</span></div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${pct===100?'#00c77a':pct>60?'#ffa600':'#ff4757'}"></div></div>
+      ${vPend>0?`<div style="margin-top:10px;"><span class="pending-badge">⏳ ${vPend} students pending</span></div>`:'<div style="margin-top:10px;font-size:11px;color:#006b45;font-weight:600;">🎉 All entries complete!</div>'}
+    </div>`;
+  }).join('') || `<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🏛️</div><div class="es-title">No Venue Data</div><div class="es-sub">No students registered for this batch</div></div>`;
+}
+
+/* ═══════════════════════════════════════════════════
+   PENDING STUDENTS
+═══════════════════════════════════════════════════ */
+function renderPendingStudents(data) {
+  const tbody = document.getElementById('pendingTableBody');
+  if(!data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="es-icon">🎉</div><div class="es-title">All marks entered!</div><div class="es-sub">No pending students for this batch.</div></div></td></tr>`;
+    return;
   }
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const a = document.createElement("a");
+
+  // Build venue→faculty map from marks
+  const vfMap = {};
+  allMarks.forEach(m=>{ const v=(m.Venue||'').trim(); if(v) vfMap[v]=(vfMap[v]||new Set()).add((m.Faculty_ID||'').trim()); });
+
+  tbody.innerHTML = data.map((s,i)=>{
+    const facStr = vfMap[s.venue]?[...vfMap[s.venue]].join(', '):'—';
+    return `<tr>
+      <td style="color:var(--muted);font-size:11px;">${i+1}</td>
+      <td style="font-weight:600;color:var(--royal);">${s.id}</td>
+      <td>${s.name||'—'}</td>
+      <td><span class="pill pill-blue">${s.team||'—'}</span></td>
+      <td>${s.dept||'—'}</td>
+      <td><span class="pill pill-purple">${s.venue||'—'}</span></td>
+      <td style="font-size:11px;color:var(--muted);">${facStr}</td>
+      <td><span class="pill pill-red">⏳ Pending</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterPending() {
+  const q = document.getElementById('pendingSearch').value.toLowerCase();
+  const d = document.getElementById('pendingDeptFilter').value;
+  let data = pendingAll;
+  if(d!=='all') data = data.filter(s=>s.dept===d);
+  if(q) data = data.filter(s=>s.id.toLowerCase().includes(q)||s.name.toLowerCase().includes(q)||s.venue.toLowerCase().includes(q));
+  renderPendingStudents(data);
+}
+
+function populatePendingDeptFilter(depts) {
+  const sel = document.getElementById('pendingDeptFilter');
+  sel.innerHTML = '<option value="all">All Depts</option>';
+  depts.forEach(d=>{ const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o); });
+}
+
+/* ═══════════════════════════════════════════════════
+   DEPT DROPDOWN (Reports)
+═══════════════════════════════════════════════════ */
+function populateDeptDropdown(depts) {
+  const sel = document.getElementById('deptSelect');
+  sel.innerHTML = '<option value="ALL">All Departments</option>';
+  depts.forEach(d=>{ const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o); });
+}
+
+/* ═══════════════════════════════════════════════════
+   LOCK / UNLOCK (ORIGINAL LOGIC)
+═══════════════════════════════════════════════════ */
+async function toggleLock(status) {
+  const batch = document.getElementById('batchSelect').value;
+  if(!batch) { showToast('⚠️ Please select a batch first!'); return; }
+  await postData('setLock',{batch,status});
+  const msg = `Marks entry for ${batch} batch is now ${status==='Open'?'✅ Unlocked':'🔒 Locked'}`;
+  setStatus('status', msg, status==='Open'?'success':'error');
+  showToast(msg);
+  // Refresh lock display
+  loadDashboard();
+}
+
+/* ═══════════════════════════════════════════════════
+   UPLOAD (ORIGINAL LOGIC)
+═══════════════════════════════════════════════════ */
+function downloadStaticTemplate(type) {
+  let csv = '';
+  if(type==='student') csv = `TeamID,Student1_ID,Student1_Name,Student2_ID,Student2_Name,Dept,Title,Venue,Batch\nT001,22CS001,Anushaa P S,22CS002,Anu,CSE,AI-Based Traffic Control,Hall-1,FN`;
+  else csv = `Faculty_ID,Name,Password,Role,Venue,Batch\nF001,Dr. xxx,pass123,Faculty,Hall-1,FN`;
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = type === "student" ? "Student_Details_Template.csv" : "Faculty_Login_Template.csv";
+  a.download = type==='student'?'Student_Details_Template.csv':'Faculty_Login_Template.csv';
   document.body.appendChild(a); a.click(); a.remove();
   showToast('📥 Template downloaded!');
 }
 
-/* ── UPLOAD SHEETS (original) ── */
 async function uploadSheet(inputId, functionName) {
   const fileInput = document.getElementById(inputId);
   const file = fileInput.files[0];
-  if (!file) { showToast('⚠️ Please select a file before uploading!'); return; }
+  if(!file) { showToast('⚠️ Please select a file!'); return; }
+  showToast('⏳ Uploading...');
   const reader = new FileReader();
   reader.onload = async e => {
-    await postData(functionName, { fileData: e.target.result, fileName: file.name });
-    setStatus('uploadStatus', `✅ ${file.name} uploaded successfully.`, 'success');
-    showToast('✅ File uploaded successfully!');
-    if (functionName === "uploadStudentSheet") populateDeptDropdown();
+    await postData(functionName,{fileData:e.target.result,fileName:file.name});
+    setStatus('uploadStatus',`✅ ${file.name} uploaded successfully.`,'success');
+    showToast('✅ File uploaded!');
+    if(functionName==='uploadStudentSheet') loadDashboard();
   };
   reader.readAsDataURL(file);
 }
 
-/* ── POPULATE DEPT DROPDOWN (original) ── */
-async function populateDeptDropdown() {
+/* ═══════════════════════════════════════════════════
+   PDF / CSV REPORTS (ALL ORIGINAL LOGIC PRESERVED)
+═══════════════════════════════════════════════════ */
+const normalize = v => String(v||'').trim().toLowerCase();
+
+function sortByStudentID(arr) {
+  return arr.sort((a,b)=>(a.Student_ID||'').toString().toLowerCase().localeCompare((b.Student_ID||'').toString().toLowerCase(),undefined,{numeric:true}));
+}
+
+function addPageNumbers(doc) {
+  const pc=doc.internal.getNumberOfPages(),pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
+  for(let i=1;i<=pc;i++){
+    doc.setPage(i);doc.setFontSize(9);doc.setFont('times','normal');
+    doc.text(`Page ${i} of ${pc}`,pw/2,ph-20,{align:'center'});
+  }
+}
+
+async function getLogoData() {
   try {
-    const students = await postData("getStudents", { venue: "ALL" });
-    const deptSelect = document.getElementById("deptSelect");
-    deptSelect.innerHTML = "";
-    const allOpt = document.createElement("option");
-    allOpt.value = "ALL"; allOpt.textContent = "All Departments";
-    deptSelect.appendChild(allOpt);
-    const depts = [...new Set(students.map(s => s.Dept || s.dept || "").filter(d => d))];
-    depts.forEach(d => {
-      const opt = document.createElement("option");
-      opt.value = d; opt.textContent = d;
-      deptSelect.appendChild(opt);
-    });
-    document.getElementById('kpi2').textContent = depts.length;
-  } catch (err) {
-    console.error("populateDeptDropdown error:", err);
-  }
+    const resp=await fetch('logo.jpeg');
+    if(!resp.ok) throw new Error();
+    const blob=await resp.blob();
+    const bm=await createImageBitmap(blob);
+    const cv=document.createElement('canvas');
+    cv.width=bm.width;cv.height=bm.height;
+    cv.getContext('2d').drawImage(bm,0,0);
+    return cv.toDataURL('image/jpeg');
+  } catch(e){return null;}
 }
 
-/* ── DEPT REPORT PDF (original) ── */
 async function downloadDeptReport() {
-  const dept = document.getElementById("deptSelect").value;
-  const batch = document.getElementById("reportBatch").value;
+  const dept=document.getElementById('deptSelect').value;
+  const batch=document.getElementById('reportBatch').value;
   showToast('⏳ Generating PDF...');
-  const marksResp = await postData("getMarks", { batch });
-  const marks = Array.isArray(marksResp) ? marksResp : marksResp.data || [];
-  const filtered = dept === "ALL" ? marks : marks.filter(m => (m.Dept||"").trim().toLowerCase() === dept.trim().toLowerCase());
-  if (!filtered.length) { showToast('⚠️ No marks data found.'); return; }
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF("landscape", "pt", "a4");
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const logoData = await getLogoData();
-  const generatedDate = new Date().toLocaleString();
-
-  doc.setFont("times", "bold"); doc.setFontSize(18);
-  doc.text("SEMINAR DAY EVALUATION REPORT", pageWidth / 2, 100, { align: "center" });
-  doc.setFontSize(12);
-  doc.text(`Department: ${dept}`, 60, 120);
-  doc.text(`Batch: ${batch}`, pageWidth - 120, 120);
-
-  const head = [["Faculty ID","Team ID","Student ID","Student Name","Dept","Venue","Level I - Self-Introduction","Level I - Presentation","Level I - Content","Level I - Response","Level II - Determination","Level II - Communication","Total"]];
-  filtered.sort((a,b) => (a.Student_ID||"").localeCompare(b.Student_ID||""));
-  const body = filtered.map(m => [m.Faculty_ID||"",m.TeamID||"",m.Student_ID||"",m.Student_Name||"",m.Dept||"",m.Venue||"",m.LevelI_Self_Introduction||0,m.LevelI_Presentation||0,m.LevelI_Content||0,m.LevelI_Response||0,m.LevelII_Determination||0,m.LevelII_Communication||0,m.Total||0]);
-
-  doc.autoTable({
-    head, body, startY: 150, theme: "grid",
-    styles: { font:"times", fontSize:10, textColor:0, cellPadding:4, lineColor:0, lineWidth:0.5, halign:"center", valign:"middle" },
-    headStyles: { fillColor:[255,255,255], textColor:0, lineColor:0, lineWidth:0.5, halign:"center", valign:"middle" },
-    columnStyles: { 3: { halign:"left" } },
-    didDrawPage: data => {
-      if (data.pageNumber === 1 && logoData) doc.addImage(logoData,"JPEG",(pageWidth-250)/2,20,250,50);
-    }
-  });
-
-  const finalY = doc.lastAutoTable.finalY + 60;
-  doc.setFontSize(12); doc.setFont("times","bold");
-  if (dept === "ALL") { doc.text("Dean Academic Courses", pageWidth - 40, finalY + 20, { align:"right" }); }
-  else { doc.text("HoD", pageWidth - 740, finalY + 20); doc.text("Dean Academic Courses", pageWidth - 40, finalY + 20, { align:"right" }); }
-  doc.setFont("times","normal"); doc.text(`Generated on: ${generatedDate}`, pageWidth - 200, finalY + 40);
-  addPageNumbers(doc);
-  doc.save(`${dept}_${batch}_Seminar_Report.pdf`);
+  const marksResp=await postData('getMarks',{batch});
+  const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
+  const filtered=dept==='ALL'?marks:marks.filter(m=>(m.Dept||'').trim().toLowerCase()===dept.trim().toLowerCase());
+  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF('landscape','pt','a4');
+  const pw=doc.internal.pageSize.getWidth();
+  const logoData=await getLogoData();
+  const gd=new Date().toLocaleString();
+  doc.setFont('times','bold');doc.setFontSize(18);
+  doc.text('SEMINAR DAY EVALUATION REPORT',pw/2,100,{align:'center'});
+  doc.setFontSize(12);doc.text(`Department: ${dept}`,60,120);doc.text(`Batch: ${batch}`,pw-120,120);
+  const head=[['Faculty ID','Team ID','Student ID','Student Name','Dept','Venue','Level I - Self-Introduction','Level I - Presentation','Level I - Content','Level I - Response','Level II - Determination','Level II - Communication','Total']];
+  filtered.sort((a,b)=>(a.Student_ID||'').localeCompare(b.Student_ID||''));
+  const body=filtered.map(m=>[m.Faculty_ID||'',m.TeamID||'',m.Student_ID||'',m.Student_Name||'',m.Dept||'',m.Venue||'',m.LevelI_Self_Introduction||0,m.LevelI_Presentation||0,m.LevelI_Content||0,m.LevelI_Response||0,m.LevelII_Determination||0,m.LevelII_Communication||0,m.Total||0]);
+  doc.autoTable({head,body,startY:150,theme:'grid',styles:{font:'times',fontSize:10,textColor:0,cellPadding:4,lineColor:0,lineWidth:.5,halign:'center',valign:'middle'},headStyles:{fillColor:[255,255,255],textColor:0,lineColor:0,lineWidth:.5,halign:'center',valign:'middle'},columnStyles:{3:{halign:'left'}},didDrawPage:d=>{if(d.pageNumber===1&&logoData)doc.addImage(logoData,'JPEG',(pw-250)/2,20,250,50);}});
+  const fy=doc.lastAutoTable.finalY+60;
+  doc.setFontSize(12);doc.setFont('times','bold');
+  if(dept==='ALL'){doc.text('Dean Academic Courses',pw-40,fy+20,{align:'right'});}
+  else{doc.text('HoD',pw-740,fy+20);doc.text('Dean Academic Courses',pw-40,fy+20,{align:'right'});}
+  doc.setFont('times','normal');doc.text(`Generated on: ${gd}`,pw-200,fy+40);
+  addPageNumbers(doc);doc.save(`${dept}_${batch}_Seminar_Report.pdf`);
   showToast('✅ PDF downloaded!');
 }
 
-/* ── DEPT REPORT CSV (original) ── */
 async function downloadDeptReportCSV() {
-  const dept = document.getElementById("deptSelect").value;
-  const batch = document.getElementById("reportBatch").value;
+  const dept=document.getElementById('deptSelect').value;
+  const batch=document.getElementById('reportBatch').value;
   showToast('⏳ Generating CSV...');
-  const marksResp = await postData("getMarks", { batch });
-  const marks = Array.isArray(marksResp) ? marksResp : marksResp.data || [];
-  const filtered = dept === "ALL" ? marks : marks.filter(m => (m.Dept||"").trim().toLowerCase() === dept.trim().toLowerCase());
-  if (!filtered.length) { showToast('⚠️ No marks data found.'); return; }
-
-  const header = ["Faculty_ID","TeamID","Student_ID","Student_Name","Dept","Venue","LevelI_Self_Introduction","LevelI_Presentation","LevelI_Content","LevelI_Response","LevelII_Determination","LevelII_Communication","Total","Batch"];
-  let csv = header.join(",") + "\n";
-  filtered.forEach(m => {
-    csv += [m.Faculty_ID||"",m.TeamID||"",m.Student_ID||"",m.Student_Name||"",m.Dept||"",m.Venue||"",m.LevelI_Self_Introduction||"",m.LevelI_Presentation||"",m.LevelI_Content||"",m.LevelI_Response||"",m.LevelII_Determination||"",m.LevelII_Communication||"",m.Total||"",m.Batch||""].join(",") + "\n";
-  });
-  const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `${dept}_${batch}_Seminar_Report.csv`;
-  a.click();
+  const marksResp=await postData('getMarks',{batch});
+  const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
+  const filtered=dept==='ALL'?marks:marks.filter(m=>(m.Dept||'').trim().toLowerCase()===dept.trim().toLowerCase());
+  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
+  const header=['Faculty_ID','TeamID','Student_ID','Student_Name','Dept','Venue','LevelI_Self_Introduction','LevelI_Presentation','LevelI_Content','LevelI_Response','LevelII_Determination','LevelII_Communication','Total','Batch'];
+  let csv=header.join(',')+'\n';
+  filtered.forEach(m=>{csv+=[m.Faculty_ID||'',m.TeamID||'',m.Student_ID||'',m.Student_Name||'',m.Dept||'',m.Venue||'',m.LevelI_Self_Introduction||'',m.LevelI_Presentation||'',m.LevelI_Content||'',m.LevelI_Response||'',m.LevelII_Determination||'',m.LevelII_Communication||'',m.Total||'',m.Batch||''].join(',') + '\n';});
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${dept}_${batch}_Seminar_Report.csv`;a.click();
   showToast('✅ CSV downloaded!');
 }
 
-/* ── TOTAL REPORT CSV (original) ── */
 async function downloadTotalDeptReportCSV() {
-  const dept = document.getElementById("deptSelect").value;
-  const batch = document.getElementById("reportBatch").value;
+  const dept=document.getElementById('deptSelect').value;
+  const batch=document.getElementById('reportBatch').value;
   showToast('⏳ Generating CSV...');
-  const marksResp = await postData("getMarks", { batch });
-  const marks = Array.isArray(marksResp) ? marksResp : marksResp.data || [];
-  const filtered = dept === "ALL" ? marks : marks.filter(m => (m.Dept||"").trim().toLowerCase() === dept.trim().toLowerCase());
-  if (!filtered.length) { showToast('⚠️ No marks data found.'); return; }
-
-  const grouped = {};
-  filtered.forEach(m => {
-    const sid = (m.Student_ID||"").trim();
-    if (!sid) return;
-    if (!grouped[sid]) grouped[sid] = { Student_ID:sid, Student_Name:(m.Student_Name||"").trim(), Dept:m.Dept||"", Marks:[] };
-    grouped[sid].Marks.push(Number(m.Total)||0);
-  });
-
-  let rows = Object.values(grouped).map(s => {
-    const mark1 = s.Marks[0]||0, mark2 = s.Marks[1]||0;
-    const avg = mark1===0 && mark2===0 ? "Absent" : (mark1+mark2)/2;
-    return [s.Student_ID, s.Student_Name, s.Dept, mark1, mark2, avg];
-  });
-  rows.sort((a,b) => a[0].toLowerCase().localeCompare(b[0].toLowerCase(), undefined, { numeric:true }));
-
-  const header = ["Student_ID","Student_Name","Dept","Mark1","Mark2","Average"];
-  let csv = header.join(",") + "\n";
-  rows.forEach(r => { csv += r.join(",") + "\n"; });
-  const blob = new Blob([csv], { type:"text/csv;charset=utf-8;" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = `${dept}_${batch}_Total_Seminar_Report.csv`;
-  a.click();
+  const marksResp=await postData('getMarks',{batch});
+  const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
+  const filtered=dept==='ALL'?marks:marks.filter(m=>(m.Dept||'').trim().toLowerCase()===dept.trim().toLowerCase());
+  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
+  const grouped={};
+  filtered.forEach(m=>{const sid=(m.Student_ID||'').trim();if(!sid)return;if(!grouped[sid])grouped[sid]={Student_ID:sid,Student_Name:(m.Student_Name||'').trim(),Dept:m.Dept||'',Marks:[]};grouped[sid].Marks.push(Number(m.Total)||0);});
+  let rows=Object.values(grouped).map(s=>{const m1=s.Marks[0]||0,m2=s.Marks[1]||0;const avg=m1===0&&m2===0?'Absent':(m1+m2)/2;return[s.Student_ID,s.Student_Name,s.Dept,m1,m2,avg];});
+  rows.sort((a,b)=>a[0].toLowerCase().localeCompare(b[0].toLowerCase(),undefined,{numeric:true}));
+  const header=['Student_ID','Student_Name','Dept','Mark1','Mark2','Average'];
+  let csv=header.join(',')+'\n';
+  rows.forEach(r=>{csv+=r.join(',')+'\n';});
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${dept}_${batch}_Total_Seminar_Report.csv`;a.click();
   showToast('✅ CSV downloaded!');
 }
 
-/* ── TOTAL DEPT REPORT PDF (original) ── */
 async function downloadTotalDeptReport() {
-  const dept = document.getElementById("deptSelect").value;
-  const batch = document.getElementById("reportBatch").value;
+  const dept=document.getElementById('deptSelect').value;
+  const batch=document.getElementById('reportBatch').value;
   showToast('⏳ Generating PDF...');
-  const marksResp = await postData("getMarks", { batch });
-  const marks = Array.isArray(marksResp) ? marksResp : marksResp.data || [];
-  const filtered = dept === "ALL" ? marks : marks.filter(m => (m.Dept||"").trim().toLowerCase() === dept.trim().toLowerCase());
-  if (!filtered.length) { showToast('⚠️ No marks data found.'); return; }
-
-  const grouped = {};
-  filtered.forEach(m => {
-    const sid = (m.Student_ID||"").trim();
-    if (!sid) return;
-    if (!grouped[sid]) grouped[sid] = { Student_ID:sid, Student_Name:m.Student_Name||"", Dept:m.Dept||"", Marks:[] };
-    grouped[sid].Marks.push(Number(m.Total)||0);
-  });
-
-  const combined = Object.values(grouped).sort((a,b) => (a.Student_ID||"").localeCompare(b.Student_ID||"")).map(s => {
-    const mark1 = s.Marks[0]||0, mark2 = s.Marks[1]||0;
-    let avg = ((mark1+mark2)/2).toFixed(2);
-    if (avg == 0) avg = "Absent";
-    return [s.Student_ID, s.Student_Name, s.Dept, mark1, mark2, avg];
-  });
-
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const logoData = await getLogoData();
-  const generatedDate = new Date().toLocaleString();
-
-  doc.setFont("times","bold"); doc.setFontSize(18);
-  doc.text("SEMINAR DAY TOTAL REPORT", pageWidth/2, 40, { align:"center" });
-  doc.setFontSize(12);
-  doc.text(`Department: ${dept}`, 20, 50);
-  doc.text(`Batch: ${batch}`, pageWidth-40, 50);
-
-  const head = [["Student ID","Student Name","Dept","Mark 1","Mark 2","Average"]];
-  doc.autoTable({
-    head, body:combined, startY:60, theme:"grid",
-    styles:{ font:"times", fontSize:10, textColor:0, cellPadding:2, lineColor:0, lineWidth:0.5, halign:"center", valign:"middle" },
-    headStyles:{ fillColor:[255,255,255], textColor:0, lineColor:0, lineWidth:0.5, halign:"center", valign:"middle", fontStyle:"bold" },
-    columnStyles:{ 1:{ halign:"left" } },
-    didDrawPage: data => {
-      if (data.pageNumber===1 && logoData) doc.addImage(logoData,"JPEG",(pageWidth-100)/2,20,100,20);
-    }
-  });
-
-  const finalY = doc.lastAutoTable.finalY + 60;
-  doc.setFontSize(12); doc.setFont("times","bold");
-  if (dept === "ALL") { doc.text("Dean Academic Courses", pageWidth-27, finalY, { align:"right" }); }
-  else { doc.text("HoD", 30, finalY); doc.text("Dean Academic Courses", pageWidth-27, finalY, { align:"right" }); }
-  doc.setFont("times","normal"); doc.setFontSize(10);
-  doc.text(`Generated on: ${generatedDate}`, pageWidth-75, finalY+10);
-  addPageNumbers(doc);
-  doc.save(`${dept}_${batch}_Total_Seminar_Report.pdf`);
+  const marksResp=await postData('getMarks',{batch});
+  const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
+  const filtered=dept==='ALL'?marks:marks.filter(m=>(m.Dept||'').trim().toLowerCase()===dept.trim().toLowerCase());
+  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
+  const grouped={};
+  filtered.forEach(m=>{const sid=(m.Student_ID||'').trim();if(!sid)return;if(!grouped[sid])grouped[sid]={Student_ID:sid,Student_Name:m.Student_Name||'',Dept:m.Dept||'',Marks:[]};grouped[sid].Marks.push(Number(m.Total)||0);});
+  const combined=Object.values(grouped).sort((a,b)=>(a.Student_ID||'').localeCompare(b.Student_ID||'')).map(s=>{const m1=s.Marks[0]||0,m2=s.Marks[1]||0;let avg=((m1+m2)/2).toFixed(2);if(avg==0)avg='Absent';return[s.Student_ID,s.Student_Name,s.Dept,m1,m2,avg];});
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF();
+  const pw=doc.internal.pageSize.getWidth();
+  const logoData=await getLogoData();
+  const gd=new Date().toLocaleString();
+  doc.setFont('times','bold');doc.setFontSize(18);doc.text('SEMINAR DAY TOTAL REPORT',pw/2,40,{align:'center'});
+  doc.setFontSize(12);doc.text(`Department: ${dept}`,20,50);doc.text(`Batch: ${batch}`,pw-40,50);
+  const head=[['Student ID','Student Name','Dept','Mark 1','Mark 2','Average']];
+  doc.autoTable({head,body:combined,startY:60,theme:'grid',styles:{font:'times',fontSize:10,textColor:0,cellPadding:2,lineColor:0,lineWidth:.5,halign:'center',valign:'middle'},headStyles:{fillColor:[255,255,255],textColor:0,lineColor:0,lineWidth:.5,halign:'center',valign:'middle',fontStyle:'bold'},columnStyles:{1:{halign:'left'}},didDrawPage:d=>{if(d.pageNumber===1&&logoData)doc.addImage(logoData,'JPEG',(pw-100)/2,20,100,20);}});
+  const fy=doc.lastAutoTable.finalY+60;
+  doc.setFontSize(12);doc.setFont('times','bold');
+  if(dept==='ALL'){doc.text('Dean Academic Courses',pw-27,fy,{align:'right'});}
+  else{doc.text('HoD',30,fy);doc.text('Dean Academic Courses',pw-27,fy,{align:'right'});}
+  doc.setFont('times','normal');doc.setFontSize(10);doc.text(`Generated on: ${gd}`,pw-75,fy+10);
+  addPageNumbers(doc);doc.save(`${dept}_${batch}_Total_Seminar_Report.pdf`);
   showToast('✅ PDF downloaded!');
 }
-
-/* ── INIT ── */
-document.addEventListener("DOMContentLoaded", function() {
-  if (typeof postData === "function") {
-    populateDeptDropdown();
-    // Simulate KPIs
-    document.getElementById('kpi1').textContent = '2';
-  } else {
-    console.warn("postData() is not defined. Ensure common.js provides postData.");
-    document.getElementById('kpi1').textContent = '2';
-    document.getElementById('kpi2').textContent = '—';
-    document.getElementById('kpi3').textContent = '—';
-  }
-});
 </script>
 </body>
 </html>
