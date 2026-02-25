@@ -2,388 +2,863 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Venue Incharge - View Marks</title>
+  <title>Venue Incharge — Seminar Day</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <script src="common.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    .logout-btn {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  position: absolute;
-  top: 15px;
-  right: 20px;
-}
-.logout-btn:hover {
-  background-color: #e60000;
-}
+    :root {
+      --ink: #0f0f14;
+      --paper: #f5f0e8;
+      --gold: #c8a95b;
+      --gold-light: #e8d49a;
+      --gold-dark: #8a6e2f;
+      --crimson: #8b1a2e;
+      --slate: #1e2a3a;
+      --muted: #6b7280;
+      --surface: rgba(255,255,255,0.65);
+      --glass-border: rgba(200,169,91,0.25);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #a8edea, #fed6e3);
+      font-family: 'DM Sans', sans-serif;
+      background: #0e0e16;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      color: #e8e3d8;
+      overflow-x: hidden;
     }
 
-    .container {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(15px);
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      padding: 30px;
-      width: 95%;
-      max-width: 1100px;
-      animation: fadeIn 1s ease;
+    /* ---- ANIMATED BACKGROUND ---- */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(200,169,91,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139,26,46,0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 100% 80% at 50% 50%, #0e0e16 40%, #12101a 100%);
     }
 
-    h2 {
-      color: #2c3e50;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 15px;
+    .bg-grid {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(200,169,91,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,169,91,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
     }
 
-    #welcome {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: 500;
-      color: #444;
+    /* ---- WRAPPER ---- */
+    .page {
+      position: relative; z-index: 1;
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 24px 60px;
     }
 
-    label {
-      font-weight: 600;
-      color: #333;
-      margin-right: 10px;
+    /* ---- HEADER ---- */
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 0 24px;
+      border-bottom: 1px solid rgba(200,169,91,0.18);
+      margin-bottom: 40px;
+    }
+
+    .brand {
+      display: flex; align-items: center; gap: 14px;
+    }
+
+    .brand-icon {
+      width: 46px; height: 46px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; box-shadow: 0 4px 20px rgba(200,169,91,0.3);
+    }
+
+    .brand-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700;
+      color: #f0ead8;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-text p {
+      font-size: 12px; color: var(--gold); letter-spacing: 1.5px;
+      text-transform: uppercase; font-weight: 500;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid rgba(139,26,46,0.6);
+      color: #e88fa0;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex; align-items: center; gap: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .logout-btn:hover {
+      background: rgba(139,26,46,0.15);
+      border-color: #e88fa0;
+      color: #f5b0bf;
+      transform: none;
+    }
+
+    /* ---- WELCOME CARD ---- */
+    .welcome-card {
+      background: linear-gradient(135deg, rgba(200,169,91,0.08) 0%, rgba(200,169,91,0.03) 100%);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 20px;
+      backdrop-filter: blur(10px);
+      animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .welcome-avatar {
+      width: 54px; height: 54px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(200,169,91,0.2);
+    }
+
+    #welcome { line-height: 1.7; }
+    #welcome .role-badge {
+      display: inline-block;
+      background: rgba(200,169,91,0.15);
+      border: 1px solid rgba(200,169,91,0.3);
+      color: var(--gold-light);
+      font-size: 11px; font-weight: 600;
+      padding: 2px 10px; border-radius: 20px;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      margin-left: 8px;
+    }
+
+    #welcome .venue-badge {
+      display: inline-block;
+      background: rgba(139,26,46,0.15);
+      border: 1px solid rgba(139,26,46,0.3);
+      color: #f0a0b0;
+      font-size: 11px; font-weight: 600;
+      padding: 2px 10px; border-radius: 20px;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      margin-left: 8px;
+    }
+
+    #welcome .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700; color: #f0ead8;
+    }
+
+    #welcome .meta {
+      font-size: 13px; color: #9a9590; margin-top: 2px;
+    }
+
+    /* ---- CONTROLS PANEL ---- */
+    .controls-panel {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 22px 26px;
+      margin-bottom: 32px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      animation: slideDown 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    }
+
+    .controls-panel label {
+      font-size: 13px; font-weight: 600;
+      color: #b0aaa0; letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: '▾';
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--gold); font-size: 12px; pointer-events: none;
     }
 
     select {
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      outline: none;
-      font-size: 14px;
-      margin-right: 10px;
-    }
-
-    button {
-      background: linear-gradient(90deg, #007bff, #00c6ff);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      font-weight: 600;
+      appearance: none;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(200,169,91,0.25);
+      color: #e8e3d8;
+      padding: 10px 36px 10px 14px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 5px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
     }
 
-    button:hover {
-      transform: scale(1.05);
-      background: linear-gradient(90deg, #00c6ff, #007bff);
+    select:hover, select:focus {
+      border-color: rgba(200,169,91,0.55);
+      background: rgba(200,169,91,0.06);
+    }
+
+    select option { background: #1a1820; color: #e8e3d8; }
+
+    .btn-group { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none; outline: none;
+      letter-spacing: 0.3px;
+      position: relative; overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.25s;
+    }
+
+    .btn:hover::before { background: rgba(255,255,255,0.08); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+      color: #0e0e16;
+      box-shadow: 0 4px 16px rgba(200,169,91,0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(200,169,91,0.38);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(200,169,91,0.35);
+      color: var(--gold-light);
+    }
+
+    .btn-outline:hover {
+      transform: translateY(-1px);
+      border-color: var(--gold);
+      background: rgba(200,169,91,0.07);
+    }
+
+    /* ---- STATS ROW ---- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+      animation: slideDown 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+    }
+
+    .stat-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 18px 20px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(200,169,91,0.25);
+      transform: translateY(-2px);
+    }
+
+    .stat-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;
+      color: #6b6560; font-weight: 600; margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 30px; font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+    }
+
+    .stat-sub {
+      font-size: 12px; color: #6b6560; margin-top: 4px;
+    }
+
+    /* ---- TABLE WRAPPER ---- */
+    .table-section {
+      animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    .table-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .table-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-weight: 700; color: #f0ead8;
+    }
+
+    .table-subtitle {
+      font-size: 12px; color: var(--muted); margin-top: 2px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #e8e3d8;
+      padding: 9px 14px 9px 36px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; outline: none;
+      transition: border-color 0.2s;
+      width: 220px;
+    }
+
+    .search-box input::placeholder { color: #4a4a54; }
+    .search-box input:focus { border-color: rgba(200,169,91,0.4); }
+
+    .search-box .search-icon {
+      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+      font-size: 14px; color: #4a4a54;
+    }
+
+    .table-wrap {
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.07);
+      overflow: hidden;
+      overflow-x: auto;
     }
 
     table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      border-radius: 10px;
-      overflow: hidden;
+      width: 100%; border-collapse: collapse; min-width: 900px;
     }
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px 6px;
-      text-align: center;
-      font-size: 14px;
+    thead tr {
+      background: rgba(200,169,91,0.08);
+      border-bottom: 1px solid rgba(200,169,91,0.2);
     }
 
     th {
-      background: #007bff;
-      color: white;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--gold);
+      padding: 14px 12px;
+      text-align: center; white-space: nowrap;
     }
 
-    tr:nth-child(even) {
-      background: #f8f9fa;
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
+    tbody tr:hover { background: rgba(200,169,91,0.04); }
+    tbody tr:last-child { border-bottom: none; }
+
+    td {
+      padding: 12px 12px;
+      font-size: 13px; color: #c8c4bc;
+      text-align: center;
+    }
+
+    td:nth-child(4) { text-align: left; font-weight: 500; color: #e8e3d8; }
+
+    .total-cell {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px; font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .absent-badge {
+      background: rgba(139,26,46,0.2);
+      border: 1px solid rgba(139,26,46,0.4);
+      color: #f0a0b0;
+      padding: 2px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .score-pill {
+      display: inline-block;
+      background: rgba(200,169,91,0.1);
+      border: 1px solid rgba(200,169,91,0.2);
+      color: var(--gold-light);
+      min-width: 30px;
+      padding: 2px 8px; border-radius: 6px;
+      font-size: 13px; font-weight: 600;
+    }
+
+    /* ---- EMPTY STATE ---- */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+    }
+
+    .empty-icon {
+      font-size: 48px; margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .empty-state p {
+      font-size: 15px; color: #5a5a64;
+    }
+
+    /* ---- LOADING ---- */
+    .loading-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 999;
+      background: rgba(14,14,22,0.8);
+      backdrop-filter: blur(6px);
+      align-items: center; justify-content: center;
+      flex-direction: column; gap: 16px;
+    }
+
+    .loading-overlay.active { display: flex; }
+
+    .spinner {
+      width: 46px; height: 46px;
+      border: 3px solid rgba(200,169,91,0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .loading-text {
+      font-size: 14px; color: var(--gold); letter-spacing: 1px;
+      text-transform: uppercase; font-weight: 500;
+    }
+
+    /* ---- TOAST ---- */
+    .toast {
+      position: fixed; bottom: 28px; right: 28px;
+      background: #1a1820;
+      border: 1px solid rgba(200,169,91,0.3);
+      border-radius: 12px;
+      padding: 14px 20px;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 13px; color: #e8e3d8;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+      z-index: 9999;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 18px; }
+    .toast-success .toast-icon { color: #6dde6d; }
+    .toast-error .toast-icon { color: #e87070; }
+    .toast-info .toast-icon { color: var(--gold); }
+
+    /* ---- ANIMATIONS ---- */
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-18px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Responsive table for mobile */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ---- DIVIDER ---- */
+    .gold-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,169,91,0.35), transparent);
+      margin: 28px 0;
+    }
+
+    /* ---- RESPONSIVE ---- */
     @media (max-width: 768px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      thead {
-        display: none;
-      }
-      tr {
-        margin-bottom: 15px;
-        background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        padding: 10px;
-      }
-      td {
-        border: none;
-        display: flex;
-        justify-content: space-between;
-        text-align: left;
-        padding: 6px 10px;
-        font-size: 14px;
-      }
-      td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: #007bff;
-      }
+      header { flex-wrap: wrap; gap: 12px; }
+      .controls-panel { flex-direction: column; align-items: flex-start; }
+      .btn-group { margin-left: 0; }
+      .search-box input { width: 100%; }
+      .table-header { flex-direction: column; align-items: flex-start; gap: 12px; }
     }
   </style>
 </head>
-<body onload="initVenueIncharge()">
 
-  <div class="container">
-    <h2><i class="bi bi-building-fill-gear"></i> Venue Incharge Dashboard</h2>
-    <div id="welcome"></div>
+<body>
+  <div class="bg-layer"></div>
+  <div class="bg-grid"></div>
 
-    <div style="text-align:center; margin-bottom:20px;">
-      <label for="batchSelect"><i class="bi bi-calendar-check"></i> Select Batch:</label>
-      <select id="batchSelect">
-        <option value="">-- Select Batch --</option>
-        <option value="FN">FN</option>
-        <option value="AN">AN</option>
-      </select>
-      <button id="logoutBtn" class="logout-btn">Logout</button>
-      <button onclick="fetchVenueMarks()"><i class="bi bi-eye-fill"></i> View Marks</button>
-      <button onclick="downloadVenueReport()"><i class="bi bi-file-earmark-arrow-down-fill"></i> Download PDF</button>
+  <!-- Loading -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Fetching Records…</div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon">✦</span>
+    <span id="toastMsg">Message</span>
+  </div>
+
+  <div class="page">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">🏛</div>
+        <div class="brand-text">
+          <h1>Seminar Day Evaluation</h1>
+          <p>Venue Incharge Dashboard</p>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <span>⎋</span> Logout
+      </button>
+    </header>
+
+    <!-- Welcome -->
+    <div class="welcome-card">
+      <div class="welcome-avatar">👤</div>
+      <div id="welcome">
+        <div class="name">Loading…</div>
+        <div class="meta">Please wait</div>
+      </div>
     </div>
 
-    <table id="marksTable" style="display:none;">
-      <thead>
-        <tr>
-          <th>Faculty ID</th>
-          <th>Team ID</th>
-          <th>Student ID</th>
-          <th>Student Name</th>
-          <th>Dept</th>
-          <th>Venue</th>
-          <th>Level I - Problem Statement/Theme</th>
-          <th>Level I - Methodology/Proposed Solution</th>
-          <th>Level I - Pictorial/Scientific Explanation</th>
-          <th>Level I - Response</th>
-          <th>Level II - Determination</th>
-          <th>Level II - Communication</th>
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <!-- Controls -->
+    <div class="controls-panel">
+      <label for="batchSelect">📅 Batch</label>
+      <div class="select-wrapper">
+        <select id="batchSelect">
+          <option value="">— Select —</option>
+          <option value="FN">FN</option>
+          <option value="AN">AN</option>
+        </select>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="fetchVenueMarks()">
+          <span>👁</span> View Marks
+        </button>
+        <button class="btn btn-outline" onclick="downloadVenueReport()">
+          <span>⬇</span> Download PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow" style="display:none;">
+      <div class="stat-card">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value" id="statTotal">—</div>
+        <div class="stat-sub">Evaluated this batch</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Highest Score</div>
+        <div class="stat-value" id="statHigh">—</div>
+        <div class="stat-sub">Top performer</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Score</div>
+        <div class="stat-value" id="statAvg">—</div>
+        <div class="stat-sub">Class average</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Absent</div>
+        <div class="stat-value" id="statAbsent">—</div>
+        <div class="stat-sub">Not evaluated</div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-section" id="tableSection" style="display:none;">
+      <div class="gold-divider"></div>
+      <div class="table-header">
+        <div>
+          <div class="table-title">Evaluation Records</div>
+          <div class="table-subtitle" id="tableSubtitle"></div>
+        </div>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search student…" oninput="filterTable()">
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="marksTable">
+          <thead>
+            <tr>
+              <th>Faculty ID</th>
+              <th>Team ID</th>
+              <th>Student ID</th>
+              <th>Student Name</th>
+              <th>Dept</th>
+              <th>Venue</th>
+              <th>LI – Problem</th>
+              <th>LI – Methodology</th>
+              <th>LI – Pictorial</th>
+              <th>LI – Response</th>
+              <th>LII – Determination</th>
+              <th>LII – Communication</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="marksBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
     setupLogout();
+
     const faculty_id = localStorage.getItem("faculty_id");
     const facultyName = localStorage.getItem("faculty_name");
     const venue = localStorage.getItem("venue");
     const role = localStorage.getItem("role");
 
+    // ---- TOAST ----
+    function showToast(msg, type = 'info') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      const msgEl = document.getElementById('toastMsg');
+      const icons = { info: '✦', success: '✔', error: '✖' };
+      toast.className = `toast toast-${type}`;
+      icon.textContent = icons[type];
+      msgEl.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    // ---- LOADING ----
+    function setLoading(on) {
+      document.getElementById('loadingOverlay').classList.toggle('active', on);
+    }
+
+    // ---- INIT ----
     function initVenueIncharge() {
       if (!faculty_id || role !== "VenueIncharge") {
         alert("Unauthorized access! Please login again.");
         window.location.href = "index.html";
         return;
       }
-    
-      document.getElementById("welcome").innerHTML =
-        `Welcome <b>${facultyName}</b> — Role: <b>${role}</b> — Venue: <b>${venue}</b>`;
+      document.getElementById("welcome").innerHTML = `
+        <div class="name">${facultyName} <span class="role-badge">${role}</span><span class="venue-badge">📍 ${venue}</span></div>
+        <div class="meta">Faculty ID: ${faculty_id} &nbsp;·&nbsp; Welcome back to your dashboard</div>
+      `;
     }
 
-function addPageNumbers(doc) {
-  const pageCount = doc.internal.getNumberOfPages();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(9);
-    doc.setFont("times", "normal");
-    doc.text(
-      `Page ${i} of ${pageCount}`,
-      pageWidth / 2,
-      pageHeight - 20,
-      { align: "center" }
-    );
-  }
-}
+    // ---- FETCH MARKS ----
+    let allRows = [];
 
     async function fetchVenueMarks() {
       const batch = document.getElementById("batchSelect").value;
-      if (!batch) {
-        alert("Please select a batch first!");
-        return;
+      if (!batch) { showToast("Please select a batch first!", "error"); return; }
+
+      setLoading(true);
+      try {
+        const res = await postData("getVenueMarks", { batch });
+        const marks = Array.isArray(res) ? res : res.data || [];
+        const filtered = marks.filter(m => (m.Venue || "").trim().toLowerCase() === venue.trim().toLowerCase());
+        allRows = filtered;
+
+        renderTable(filtered, batch);
+
+        if (filtered.length) {
+          const totals = filtered.map(m => parseFloat(m.Total) || 0);
+          const absents = filtered.filter(m => !m.Total || m.Total === "Absent").length;
+          document.getElementById("statTotal").textContent = filtered.length;
+          document.getElementById("statHigh").textContent = Math.max(...totals);
+          document.getElementById("statAvg").textContent = (totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1);
+          document.getElementById("statAbsent").textContent = absents;
+          document.getElementById("statsRow").style.display = "grid";
+          showToast(`Loaded ${filtered.length} records for ${venue}`, "success");
+        }
+      } catch(e) {
+        showToast("Failed to fetch marks. Try again.", "error");
+      } finally {
+        setLoading(false);
       }
-
-      const res = await postData("getVenueMarks", { batch });
-      const marks = Array.isArray(res) ? res : res.data || [];
-      const filtered = marks.filter(m => (m.Venue || "").trim().toLowerCase() === venue.trim().toLowerCase());
-      const tbody = document.querySelector("#marksTable tbody");
-      tbody.innerHTML = "";
-
-      if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="13">No marks found for ${venue} (${batch})</td></tr>`;
-        document.getElementById("marksTable").style.display = "table";
-        return;
-      }
-
-      filtered.forEach(m => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td data-label="Faculty ID">${m.Faculty_ID || ""}</td>
-          <td data-label="Team ID">${m.TeamID || ""}</td>
-          <td data-label="Student ID">${m.Student_ID || ""}</td>
-          <td data-label="Student Name">${m.Student_Name || ""}</td>
-          <td data-label="Dept">${m.Dept || ""}</td>
-          <td data-label="Venue">${m.Venue || ""}</td>
-          <td data-label="Level I - Problem Statement/Theme">${m.LevelI_Problem || 0}</td>
-          <td data-label="Level I - Methodology/Proposed Solution">${m.LevelI_Methodology  || 0}</td>
-          <td data-label="Level I - Pictorial/Scientific Explanation">${m.LevelI_Pictorial || 0}</td>
-          <td data-label="Level I - Response">${m.LevelI_Response || 0}</td>
-          <td data-label="Level II - Determination">${m.LevelII_Determination || 0}</td>
-          <td data-label="Level II - Communication">${m.LevelII_Communication || 0}</td>
-          <td data-label="Total">${m.Total || "Absent"}</td>`;
-        tbody.appendChild(tr);
-      });
-
-      document.getElementById("marksTable").style.display = "table";
     }
 
+    function renderTable(data, batch) {
+      const tbody = document.getElementById("marksBody");
+      tbody.innerHTML = "";
+
+      if (!data.length) {
+        tbody.innerHTML = `<tr><td colspan="13">
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <p>No marks found for <b>${venue}</b> (${batch})</p>
+          </div>
+        </td></tr>`;
+        document.getElementById("statsRow").style.display = "none";
+        document.getElementById("tableSection").style.display = "block";
+        document.getElementById("tableSubtitle").textContent = "";
+        return;
+      }
+
+      data.forEach(m => {
+        const isAbsent = !m.Total || m.Total === "Absent";
+        const totalCell = isAbsent
+          ? `<span class="absent-badge">Absent</span>`
+          : `<span class="total-cell">${m.Total}</span>`;
+
+        const score = v => `<span class="score-pill">${v || 0}</span>`;
+
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr>
+            <td>${m.Faculty_ID || "—"}</td>
+            <td>${m.TeamID || "—"}</td>
+            <td>${m.Student_ID || "—"}</td>
+            <td>${m.Student_Name || "—"}</td>
+            <td>${m.Dept || "—"}</td>
+            <td>${m.Venue || "—"}</td>
+            <td>${score(m.LevelI_Problem)}</td>
+            <td>${score(m.LevelI_Methodology)}</td>
+            <td>${score(m.LevelI_Pictorial)}</td>
+            <td>${score(m.LevelI_Response)}</td>
+            <td>${score(m.LevelII_Determination)}</td>
+            <td>${score(m.LevelII_Communication)}</td>
+            <td>${totalCell}</td>
+          </tr>`);
+      });
+
+      document.getElementById("tableSection").style.display = "block";
+      document.getElementById("tableSubtitle").textContent =
+        `Venue: ${venue} · Batch: ${batch} · ${data.length} record${data.length !== 1 ? 's' : ''}`;
+    }
+
+    // ---- SEARCH ----
+    function filterTable() {
+      const q = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#marksBody tr");
+      rows.forEach(tr => {
+        tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+      });
+    }
+
+    // ---- LOGO ----
     async function getLogoData() {
-      const logoUrl = "logo.jpeg";
       try {
-        const resp = await fetch(logoUrl);
-        if (!resp.ok) throw new Error("Logo not found");
+        const resp = await fetch("logo.jpeg");
+        if (!resp.ok) throw new Error("not found");
         const blob = await resp.blob();
         const bitmap = await createImageBitmap(blob);
         const canvas = document.createElement("canvas");
-        canvas.width = bitmap.width;
-        canvas.height = bitmap.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(bitmap, 0, 0);
+        canvas.width = bitmap.width; canvas.height = bitmap.height;
+        canvas.getContext("2d").drawImage(bitmap, 0, 0);
         return canvas.toDataURL("image/jpeg");
-      } catch (e) {
-        console.warn("Logo load failed:", e);
-        return null;
+      } catch { return null; }
+    }
+
+    function addPageNumbers(doc) {
+      const pageCount = doc.internal.getNumberOfPages();
+      const pw = doc.internal.pageSize.getWidth();
+      const ph = doc.internal.pageSize.getHeight();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(9);
+        doc.setFont("times", "normal");
+        doc.text(`Page ${i} of ${pageCount}`, pw / 2, ph - 20, { align: "center" });
       }
     }
 
+    // ---- DOWNLOAD PDF ----
     async function downloadVenueReport() {
       const batch = document.getElementById("batchSelect").value;
-      if (!batch) {
-        alert("Please select a batch first!");
-        return;
+      if (!batch) { showToast("Please select a batch first!", "error"); return; }
+
+      setLoading(true);
+      try {
+        const res = await postData("getMarks", { batch });
+        const marks = Array.isArray(res) ? res : res.data || [];
+        const filtered = marks.filter(m => (m.Venue || "").trim().toLowerCase() === venue.trim().toLowerCase());
+
+        if (!filtered.length) {
+          showToast(`No marks found for ${venue} (${batch})`, "error");
+          return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("landscape", "pt", "a4");
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const logoData = await getLogoData();
+        const generatedDate = new Date().toLocaleString();
+
+        if (logoData) {
+          doc.addImage(logoData, "JPEG", (pageWidth - 250) / 2, 20, 250, 50);
+        }
+
+        doc.setFont("times", "bold");
+        doc.setFontSize(18);
+        doc.text("SEMINAR DAY EVALUATION REPORT", pageWidth / 2, 100, { align: "center" });
+        doc.setFontSize(12);
+        doc.text(`Batch: ${batch}`, pageWidth - 120, 120);
+
+        const head = [[
+          "Faculty ID", "Team ID", "Student ID", "Student Name", "Dept", "Venue",
+          "LI – Problem", "LI – Methodology", "LI – Pictorial",
+          "LI – Response", "LII – Determination", "LII – Communication", "Total"
+        ]];
+
+        const body = filtered.map(m => [
+          m.Faculty_ID || "", m.TeamID || "", m.Student_ID || "", m.Student_Name || "",
+          m.Dept || "", m.Venue || "", m.LevelI_Problem || 0, m.LevelI_Methodology || 0,
+          m.LevelI_Pictorial || 0, m.LevelI_Response || 0, m.LevelII_Determination || 0,
+          m.LevelII_Communication || 0, m.Total || 0
+        ]);
+
+        doc.autoTable({
+          head, body,
+          startY: 135,
+          theme: "grid",
+          styles: { font: "times", fontSize: 10, cellPadding: 4, halign: "center", valign: "middle" },
+          headStyles: { fillColor: [30, 20, 10], textColor: [200, 169, 91], fontStyle: "bold" },
+          alternateRowStyles: { fillColor: [248, 245, 240] },
+          columnStyles: { 3: { halign: "left" } },
+        });
+
+        const finalY = doc.lastAutoTable.finalY + 30;
+        const sigY = finalY + 60;
+
+        doc.setFont("times", "normal");
+        doc.setFontSize(10);
+        doc.text(`Generated on: ${generatedDate}`, 40, finalY);
+
+        if (sigY > pageHeight - 40) {
+          doc.addPage();
+          doc.setFont("times", "bold");
+          doc.text("Venue Incharge Signature", pageWidth - 60, 40, { align: "right" });
+          doc.text("Faculty Signature", pageWidth - 660, 40, { align: "right" });
+        } else {
+          doc.setFont("times", "bold");
+          doc.text("Venue Incharge Signature", pageWidth - 60, sigY, { align: "right" });
+          doc.text("Faculty Signature", pageWidth - 660, sigY, { align: "right" });
+        }
+
+        addPageNumbers(doc);
+        doc.save(`${venue}_${batch}_Seminar_Report.pdf`);
+        showToast("PDF downloaded successfully!", "success");
+      } catch(e) {
+        showToast("Failed to generate PDF. Try again.", "error");
+      } finally {
+        setLoading(false);
       }
-
-      const res = await postData("getMarks", { batch });
-      const marks = Array.isArray(res) ? res : res.data || [];
-      const filtered = marks.filter(m => (m.Venue || "").trim().toLowerCase() === venue.trim().toLowerCase());
-
-      if (!filtered.length) {
-        alert(`No marks found for ${venue} (${batch})`);
-        return;
-      }
-
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF("landscape", "pt", "a4");
-      const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
-      const logoData = await getLogoData();
-      const generatedDate = new Date().toLocaleString();
-
-      doc.setFont("times", "bold");
-      doc.setFontSize(18);
-      doc.text("SEMINAR DAY EVALUATION REPORT", pageWidth / 2, 100, { align: "center" });
-      doc.setFontSize(12);
-      doc.text(`Batch: ${batch}`, pageWidth - 120, 120);
-
-      const head = [[
-        "Faculty ID", "Team ID", "Student ID", "Student Name", "Dept", "Venue",
-        "Level I - Problem Statement/Theme", "Level I - Methodology/Proposed Solution", "Level I - Pictorial/Scientific Explanation",
-        "Level I - Response", "Level II - Determination", "Level II - Communication", "Total"
-      ]];
-
-      const body = filtered.map(m => [
-        m.Faculty_ID || "", m.TeamID || "", m.Student_ID || "", m.Student_Name || "",
-        m.Dept || "", m.Venue || "", m.LevelI_Problem || 0, m.LevelI_Methodology || 0,
-        m.LevelI_Pictorial || 0, m.LevelI_Response || 0, m.LevelII_Determination || 0,
-        m.LevelII_Communication || 0, m.Total || 0
-      ]);
-
-      const headerHeight = 130;
-
-      doc.autoTable({
-        head, body,
-        startY: headerHeight,
-        theme: "grid",
-        styles: { font: "times", fontSize: 10, cellPadding: 4, halign: "center", valign: "middle" },
-        headStyles: { fillColor: [240, 240, 240], textColor: 0 },
-        columnStyles: { 3: { halign: "left" } },
-                didDrawPage: function (data) {
-          if (data.pageNumber === 1 && logoData) {
-            const logoWidth = 250, logoHeight = 50;
-    doc.addImage(
-      logoData,
-      "JPEG",
-      (pageWidth - logoWidth) / 2,
-      20,
-      logoWidth,
-      logoHeight
-    );
-          }
-        },
-      });
-
-      const finalY = doc.lastAutoTable.finalY + 30;
-const sigY = finalY + 60;
-
-// Footer - generated time
-doc.setFont("times", "normal");
-doc.text(`Generated on: ${generatedDate}`, 625, finalY);
-
-// If signature goes beyond the page → add new page
-if (sigY > pageHeight - 40) {
-    doc.addPage();
-    doc.setFont("times", "bold");
-    doc.text("Venue Incharge Signature", pageWidth - 60, 40, { align: "right" });
-    doc.text("Faculty Signature", pageWidth - 660, 40, { align: "right" });
-} else {
-    doc.setFont("times", "bold");
-    doc.text("Venue Incharge Signature", pageWidth - 60, sigY, { align: "right" });
-    doc.text("Faculty Signature", pageWidth - 660, 320, { align: "right" });
-}
-addPageNumbers(doc);
-
-      doc.save(`${venue}_${batch}_Seminar_Report.pdf`);
     }
+
+    // init on load
+    window.onload = initVenueIncharge;
   </script>
 </body>
 </html>
-
-
