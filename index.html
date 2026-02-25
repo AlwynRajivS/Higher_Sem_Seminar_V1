@@ -1,202 +1,632 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>KCET - Seminar Mark Management System</title>
+<title>KCET — Seminar Day Mark Management System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --primary:#2563eb;
-  --gold:#d4af37;
-  --success:#16a34a;
-  --error:#dc2626;
-}
-
-*{margin:0;padding:0;box-sizing:border-box}
-
-body{
-  height:100vh;
-  font-family:'Poppins',sans-serif;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  overflow:hidden;
-  background:linear-gradient(-45deg,#0ea5e9,#9333ea,#facc15,#22c55e);
-  background-size:400% 400%;
-  animation:gradientBG 18s ease infinite;
-}
-
-@keyframes gradientBG{
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-
-/* Glass Card */
-.card{
-  width:500px;
-  padding:50px;
-  border-radius:30px;
-  background:rgba(255,255,255,0.15);
-  backdrop-filter:blur(25px);
-  box-shadow:0 30px 60px rgba(0,0,0,0.3);
-  text-align:center;
-  color:#fff;
-  animation:fadeUp 1s ease;
-}
-
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(50px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* Titles */
-.kcet{
-  font-size:42px;
-  font-weight:800;
-  letter-spacing:2px;
-  font-family:'Playfair Display',serif;
-  margin-bottom:10px;
-}
-
-.main-title{
-  font-size:26px;
-  font-weight:600;
-  margin-bottom:30px;
-}
-
-/* Inputs */
-.input-group{
-  margin-bottom:20px;
-  text-align:left;
-}
-
-.input-group input{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  outline:none;
-  font-size:14px;
-}
-
-.eye{
-  position:absolute;
-  right:20px;
-  margin-top:-35px;
-  cursor:pointer;
-  color:#333;
-}
-
-/* Button */
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:14px;
-  font-weight:600;
-  background:linear-gradient(135deg,#2563eb,#9333ea);
-  color:#fff;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-button:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 25px rgba(0,0,0,0.3);
-}
-
-#msg{
-  margin-top:15px;
-  min-height:20px;
-}
-
-/* Success Screen */
-.success{
-  position:fixed;
-  inset:0;
-  background:linear-gradient(135deg,#16a34a,#22c55e);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
-  font-size:28px;
-  transform:scale(0);
-  transition:0.5s;
-}
-
-.success.active{
-  transform:scale(1);
-}
-
-.logout-btn{
-  margin-top:20px;
-  padding:10px 20px;
-  background:#fff;
-  color:#000;
-  border-radius:10px;
-  cursor:pointer;
-}
-</style>
-</head>
-
-<body>
-
-<div class="card">
-  <div class="kcet">KCET</div>
-  <div class="main-title">Seminar Mark Management System</div>
-
-  <div class="input-group">
-    <input id="faculty_id" type="text" placeholder="Faculty ID">
-  </div>
-
-  <div class="input-group">
-    <input id="password" type="password" placeholder="Password">
-    <span class="eye" onclick="togglePassword()">👁</span>
-  </div>
-
-  <button onclick="login()">Sign In</button>
-  <div id="msg"></div>
-</div>
-
-<div class="success" id="successPage">
-  ✔ Login Successful  
-  <div style="font-size:16px;margin-top:10px">Welcome to KCET Portal</div>
-</div>
-
-<script>
-function togglePassword(){
-  const pass=document.getElementById("password");
-  pass.type = pass.type==="password"?"text":"password";
-}
-
-function login(){
-  const id=document.getElementById("faculty_id").value.trim();
-  const pass=document.getElementById("password").value.trim();
-  const msg=document.getElementById("msg");
-
-  if(!id||!pass){
-    msg.style.color="yellow";
-    msg.textContent="Please enter Faculty ID and Password";
-    return;
+  :root {
+    --gold: #b8892a;
+    --gold-light: #d4a84b;
+    --gold-pale: #f0e6c8;
+    --gold-dark: #8a6010;
+    --cream: #faf7f2;
+    --warm: #f0ece4;
+    --ink: #1a1610;
+    --ink-muted: #6a5f4a;
+    --ink-light: #a09070;
+    --crimson: #8b1a2e;
+    --surface: #ffffff;
+    --border: rgba(184,137,42,0.20);
   }
 
-  msg.textContent="Verifying...";
-  
-  setTimeout(()=>{
-    document.getElementById("successPage").classList.add("active");
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    setTimeout(()=>{
-      window.location="faculty.html";
-    },2000);
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    overflow: hidden;
+  }
 
-  },1000);
-}
+  /* ====== LEFT PANEL ====== */
+  .left-panel {
+    width: 55%;
+    position: relative;
+    background: linear-gradient(160deg, #1a1208 0%, #2e1e06 40%, #1a1208 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 50px;
+    overflow: hidden;
+  }
+
+  /* Decorative gold grid */
+  .left-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(212,168,75,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,168,75,0.06) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Radial glow */
+  .left-panel::after {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(212,168,75,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .left-content { position: relative; z-index: 1; text-align: center; }
+
+  /* College emblem ring */
+  .emblem-ring {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    border: 2px solid rgba(212,168,75,0.35);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 32px;
+    position: relative;
+    animation: pulseRing 3s ease-in-out infinite;
+  }
+
+  .emblem-ring::before {
+    content: '';
+    position: absolute; inset: 8px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,168,75,0.2);
+  }
+
+  .emblem-inner {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 0 30px rgba(212,168,75,0.3);
+  }
+
+  @keyframes pulseRing {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(212,168,75,0.15); }
+    50% { box-shadow: 0 0 0 12px rgba(212,168,75,0); }
+  }
+
+  .college-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px; font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: 4px;
+    line-height: 1;
+    text-shadow: 0 2px 20px rgba(212,168,75,0.3);
+    margin-bottom: 8px;
+    animation: fadeSlideDown 0.8s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  .college-full {
+    font-size: 13px; font-weight: 400;
+    color: rgba(212,168,75,0.55);
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    animation: fadeSlideDown 0.9s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+  }
+
+  .divider-line {
+    width: 80px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    margin: 0 auto 24px;
+  }
+
+  .system-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    color: #f5edd8;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    animation: fadeSlideDown 1s cubic-bezier(0.16,1,0.3,1) 0.15s both;
+  }
+
+  .system-sub {
+    font-size: 13px; color: rgba(240,230,200,0.45);
+    letter-spacing: 0.5px;
+    animation: fadeSlideDown 1s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+  }
+
+  /* Feature pills */
+  .features {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center;
+    margin-top: 36px;
+    animation: fadeSlideDown 1s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+  }
+
+  .feature-pill {
+    background: rgba(212,168,75,0.09);
+    border: 1px solid rgba(212,168,75,0.18);
+    color: rgba(212,168,75,0.75);
+    font-size: 11px; font-weight: 500;
+    padding: 6px 14px; border-radius: 20px;
+    letter-spacing: 0.5px;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ====== RIGHT PANEL ====== */
+  .right-panel {
+    width: 45%;
+    background: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* subtle background pattern */
+  .right-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(184,137,42,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Gold accent bar top */
+  .right-panel::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), var(--gold-dark), transparent);
+  }
+
+  .form-box {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 380px;
+    animation: fadeSlideUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.2s both;
+  }
+
+  .form-header { margin-bottom: 34px; }
+
+  .form-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px; font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .form-header p {
+    font-size: 13px; color: var(--ink-light);
+    letter-spacing: 0.3px;
+  }
+
+  .form-header .accent-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--gold-light);
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* Input fields */
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap .icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px; opacity: 0.45;
+    pointer-events: none;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    padding: 13px 44px 13px 42px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .input-wrap input::placeholder { color: #c0b8a0; }
+
+  .input-wrap input:focus {
+    border-color: var(--gold-light);
+    box-shadow: 0 0 0 4px rgba(184,137,42,0.10);
+  }
+
+  .eye-toggle {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer; font-size: 16px;
+    color: var(--ink-light);
+    transition: color 0.2s;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .eye-toggle:hover { color: var(--gold-dark); }
+
+  /* Login button */
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #1a1208, #3d2a08);
+    color: var(--gold-light);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 6px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .login-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(212,168,75,0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(26,18,8,0.35);
+  }
+
+  .login-btn:hover::before { opacity: 1; }
+
+  .login-btn:active { transform: translateY(0); }
+
+  /* Spinner inside button */
+  .btn-spinner {
+    display: none;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(212,168,75,0.3);
+    border-top-color: var(--gold-light);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Message */
+  #msg {
+    margin-top: 16px; min-height: 20px;
+    font-size: 13px; text-align: center;
+    border-radius: 8px;
+    transition: all 0.3s;
+  }
+
+  #msg.error {
+    background: rgba(139,26,46,0.08);
+    border: 1px solid rgba(139,26,46,0.18);
+    color: var(--crimson);
+    padding: 10px 14px;
+  }
+
+  #msg.loading {
+    color: var(--gold-dark);
+  }
+
+  /* Decorative bottom text */
+  .footer-note {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(184,137,42,0.15);
+    font-size: 11px; color: var(--ink-light);
+    text-align: center; letter-spacing: 0.3px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .footer-note .dot {
+    width: 4px; height: 4px;
+    background: var(--gold-light);
+    border-radius: 50%; display: inline-block;
+  }
+
+  /* ====== SUCCESS OVERLAY ====== */
+  #successOverlay {
+    position: fixed; inset: 0; z-index: 999;
+    background: var(--cream);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  #successOverlay.show {
+    opacity: 1; pointer-events: all;
+  }
+
+  .success-card {
+    text-align: center;
+    animation: successPop 0.6s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  @keyframes successPop {
+    from { opacity: 0; transform: scale(0.85) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .success-ring {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    border: 2px solid rgba(22,163,74,0.3);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    animation: successRing 1s ease forwards;
+  }
+
+  @keyframes successRing {
+    0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.25); }
+    100% { box-shadow: 0 0 0 20px rgba(22,163,74,0); }
+  }
+
+  .success-check {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px;
+    box-shadow: 0 8px 30px rgba(22,163,74,0.3);
+  }
+
+  .success-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .success-sub {
+    font-size: 15px; color: var(--ink-muted);
+    margin-bottom: 6px;
+  }
+
+  .success-name {
+    display: inline-block;
+    background: rgba(184,137,42,0.10);
+    border: 1px solid rgba(184,137,42,0.25);
+    color: var(--gold-dark);
+    font-size: 13px; font-weight: 600;
+    padding: 4px 16px; border-radius: 20px;
+    letter-spacing: 0.5px;
+    margin-bottom: 28px;
+  }
+
+  .progress-bar-wrap {
+    width: 200px; height: 3px;
+    background: rgba(184,137,42,0.15);
+    border-radius: 10px;
+    overflow: hidden; margin: 0 auto;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+    border-radius: 10px;
+    width: 0;
+    animation: progressFill 2s ease forwards;
+  }
+
+  @keyframes progressFill {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+
+  .redirect-note {
+    font-size: 12px; color: var(--ink-light);
+    margin-top: 12px; letter-spacing: 0.3px;
+  }
+
+  /* ====== ANIMATIONS ====== */
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 768px) {
+    body { flex-direction: column; overflow: auto; }
+    .left-panel, .right-panel { width: 100%; }
+    .left-panel { padding: 40px 24px 32px; min-height: auto; }
+    .college-name { font-size: 36px; }
+    .right-panel { padding: 36px 24px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ===== LEFT PANEL ===== -->
+  <div class="left-panel">
+    <div class="left-content">
+
+      <div class="emblem-ring">
+        <div class="emblem-inner">🎓</div>
+      </div>
+
+      <div class="college-name">KCET</div>
+      <div class="college-full">Karpaga Vinayaga College of Engineering & Technology</div>
+      <div class="divider-line"></div>
+
+      <div class="system-title">Seminar Day<br>Mark Management System</div>
+      <div class="system-sub">Academic Evaluation Portal · Restricted Access</div>
+
+      <div class="features">
+        <div class="feature-pill">📊 Mark Entry</div>
+        <div class="feature-pill">🏛 Venue Reports</div>
+        <div class="feature-pill">📄 PDF Export</div>
+        <div class="feature-pill">👥 Team Evaluation</div>
+        <div class="feature-pill">🔒 Secure Access</div>
+        <div class="feature-pill">📅 Batch Wise</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== RIGHT PANEL ===== -->
+  <div class="right-panel">
+    <div class="form-box">
+
+      <div class="form-header">
+        <h2>Welcome Back</h2>
+        <p><span class="accent-dot"></span>Sign in to access your evaluation portal</p>
+      </div>
+
+      <!-- Faculty ID -->
+      <div class="field">
+        <label>Faculty ID</label>
+        <div class="input-wrap">
+          <span class="icon">🪪</span>
+          <input id="faculty_id" type="text" placeholder="Enter your Faculty ID" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap">
+          <span class="icon">🔑</span>
+          <input id="password" type="password" placeholder="Enter your password">
+          <span class="eye-toggle" id="eyeBtn" onclick="togglePassword()" title="Show/Hide Password">👁</span>
+        </div>
+      </div>
+
+      <button class="login-btn" onclick="login()" id="loginBtn">
+        <div class="btn-spinner" id="btnSpinner"></div>
+        <span id="btnText">Sign In →</span>
+      </button>
+
+      <div id="msg"></div>
+
+      <div class="footer-note">
+        <span class="dot"></span>
+        KCET Academic Portal · Authorized Personnel Only
+        <span class="dot"></span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== SUCCESS OVERLAY ===== -->
+  <div id="successOverlay">
+    <div class="success-card">
+      <div class="success-ring">
+        <div class="success-check">✔</div>
+      </div>
+      <div class="success-title">Login Successful!</div>
+      <div class="success-sub">Welcome back to KCET Portal</div>
+      <div class="success-name" id="successId">—</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar"></div>
+      </div>
+      <div class="redirect-note">Redirecting to your dashboard…</div>
+    </div>
+  </div>
+
+<script>
+  // ---- Password toggle ----
+  let passwordVisible = false;
+  function togglePassword() {
+    passwordVisible = !passwordVisible;
+    const pass = document.getElementById("password");
+    const eye = document.getElementById("eyeBtn");
+    pass.type = passwordVisible ? "text" : "password";
+    eye.textContent = passwordVisible ? "🙈" : "👁";
+    eye.title = passwordVisible ? "Hide Password" : "Show Password";
+  }
+
+  // ---- Enter key ----
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+  });
+
+  // ---- Login ----
+  function login() {
+    const id = document.getElementById("faculty_id").value.trim();
+    const pass = document.getElementById("password").value.trim();
+    const msg = document.getElementById("msg");
+    const btn = document.getElementById("loginBtn");
+    const spinner = document.getElementById("btnSpinner");
+    const btnText = document.getElementById("btnText");
+
+    msg.className = '';
+    msg.textContent = '';
+
+    if (!id || !pass) {
+      msg.className = 'error';
+      msg.textContent = "⚠ Please enter your Faculty ID and Password.";
+      shake(document.querySelector('.form-box'));
+      return;
+    }
+
+    // Loading state
+    btn.disabled = true;
+    spinner.style.display = "block";
+    btnText.textContent = "Verifying…";
+    msg.className = 'loading';
+    msg.textContent = "Please wait…";
+
+    setTimeout(() => {
+      showSuccess(id);
+      setTimeout(() => {
+        window.location.href = "faculty.html";
+      }, 2200);
+    }, 1200);
+  }
+
+  function showSuccess(id) {
+    document.getElementById("successId").textContent = "Faculty ID: " + id;
+    const overlay = document.getElementById("successOverlay");
+    overlay.classList.add("show");
+  }
+
+  function shake(el) {
+    el.style.animation = "none";
+    el.offsetHeight;
+    el.style.animation = "shake 0.4s ease";
+  }
 </script>
-
+<style>
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+  }
+</style>
 </body>
 </html>
