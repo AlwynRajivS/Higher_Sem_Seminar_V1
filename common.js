@@ -1,5 +1,5 @@
 // common.js
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyV0EsPYkSraj6MZgk42ufYUdVfK0kSiTJuaNw3tMU4RRKuGE_TGFK3ShN73SFOcg9J/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2SZGHxNXbqNfleLmz4685oW7_lMjD8DyRQHUQ89qQpVZAapwvBzkdu7tZW6DTzhfv/exec";
 
 /**
  * Universal API POST helper
@@ -43,6 +43,7 @@ function setupLogout() {
     }
   });
 }
+
 
 
 
