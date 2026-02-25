@@ -9,533 +9,316 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <style>
     :root{
-      --bg:#f4f6fb;
-      --bg2:#eaeff7;
-      --white:#ffffff;
-      --ink:#0d1526;
-      --ink2:#3a4a60;
-      --ink3:#7e90a8;
-      --blue:#2563eb;
-      --blue-l:#3b82f6;
-      --blue-bg:rgba(37,99,235,.07);
-      --blue-bdr:rgba(37,99,235,.18);
-      --cyan:#0891b2;
-      --cyan-bg:rgba(8,145,178,.07);
-      --emerald:#059669;
-      --emerald-bg:rgba(5,150,105,.08);
-      --amber:#b45309;
-      --amber-bg:rgba(180,83,9,.08);
-      --rose:#be123c;
-      --rose-bg:rgba(190,18,60,.07);
-      --violet:#6d28d9;
-      --violet-bg:rgba(109,40,217,.07);
+      --bg:#f4f6fb; --bg2:#eaeff7; --white:#ffffff;
+      --ink:#0d1526; --ink2:#3a4a60; --ink3:#7e90a8;
+      --blue:#2563eb; --blue-l:#3b82f6;
+      --blue-bg:rgba(37,99,235,.07); --blue-bdr:rgba(37,99,235,.18);
+      --cyan:#0891b2; --cyan-bg:rgba(8,145,178,.07);
+      --emerald:#059669; --emerald-bg:rgba(5,150,105,.08);
+      --amber:#b45309; --amber-bg:rgba(180,83,9,.08);
+      --rose:#be123c; --rose-bg:rgba(190,18,60,.07);
       --radius:16px;
       --shadow:0 2px 16px rgba(13,21,38,.07);
       --shadow-md:0 6px 28px rgba(13,21,38,.10);
       --shadow-lg:0 16px 56px rgba(13,21,38,.13);
     }
-
     *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;color:var(--ink);overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:radial-gradient(ellipse 60% 40% at 0% 0%,rgba(37,99,235,.05) 0%,transparent 60%),
+                 radial-gradient(ellipse 50% 50% at 100% 100%,rgba(8,145,178,.05) 0%,transparent 60%);}
 
-    body{
-      font-family:'DM Sans',sans-serif;
-      background:var(--bg);
-      min-height:100vh;
-      color:var(--ink);
-      overflow-x:hidden;
-    }
-
-    /* ─── BACKGROUND DECORATION ─── */
-    body::before{
-      content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
-      background:
-        radial-gradient(ellipse 60% 40% at 0% 0%, rgba(37,99,235,.05) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 50% at 100% 100%, rgba(8,145,178,.05) 0%, transparent 60%);
-    }
-
-    /* ─── TOPBAR ─── */
+    /* ── TOPBAR ── */
     .topbar{
       position:sticky;top:0;z-index:500;
-      background:rgba(255,255,255,.92);
-      backdrop-filter:blur(20px) saturate(1.8);
-      border-bottom:1px solid rgba(13,21,38,.07);
-      box-shadow:0 2px 24px rgba(13,21,38,.06);
-      height:66px;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:0 32px;
+      background:rgba(255,255,255,.95);backdrop-filter:blur(20px) saturate(1.8);
+      border-bottom:1px solid rgba(13,21,38,.07);box-shadow:0 2px 24px rgba(13,21,38,.06);
+      height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
     }
-
-    .brand{display:flex;align-items:center;gap:12px;}
+    .brand{display:flex;align-items:center;gap:10px;}
     .brand-icon{
-      width:40px;height:40px;border-radius:12px;
+      width:36px;height:36px;border-radius:10px;flex-shrink:0;
       background:linear-gradient(135deg,var(--blue),#60a5fa);
       display:flex;align-items:center;justify-content:center;
-      color:white;font-size:18px;
-      box-shadow:0 4px 16px rgba(37,99,235,.35);
+      color:white;font-size:16px;box-shadow:0 4px 14px rgba(37,99,235,.35);
     }
     .brand-text strong{
-      display:block;font-size:15px;font-weight:700;
+      display:block;font-size:13px;font-weight:700;
       background:linear-gradient(90deg,var(--blue),var(--cyan));
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     }
-    .brand-text small{
-      font-size:10px;color:var(--ink3);letter-spacing:1.2px;
-      text-transform:uppercase;font-weight:400;
-    }
-
-    .topbar-right{display:flex;align-items:center;gap:10px;}
-
-    /* Live clock */
+    .brand-text small{font-size:9px;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;display:block;}
+    .topbar-right{display:flex;align-items:center;gap:8px;}
     .clock-pill{
-      display:flex;align-items:center;gap:6px;
-      background:var(--bg);border:1px solid var(--bg2);
-      border-radius:20px;padding:6px 14px;
-      font-size:12px;font-weight:600;color:var(--ink2);
-      font-variant-numeric:tabular-nums;
+      display:flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--bg2);
+      border-radius:20px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--ink2);
+      font-variant-numeric:tabular-nums;white-space:nowrap;
     }
-    .clock-dot{
-      width:6px;height:6px;border-radius:50%;
-      background:var(--emerald);
-      animation:blinkDot 1.5s ease infinite;
-    }
+    .clock-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald);flex-shrink:0;animation:blinkDot 1.5s ease infinite;}
     @keyframes blinkDot{0%,100%{opacity:1;}50%{opacity:.2;}}
-
-    /* Logout */
     .btn-logout{
-      display:flex;align-items:center;gap:7px;
-      background:var(--rose-bg);
-      border:1.5px solid rgba(190,18,60,.18);
-      color:var(--rose);
-      font-family:'DM Sans',sans-serif;
-      font-size:12px;font-weight:600;
-      padding:8px 18px;border-radius:20px;cursor:pointer;
-      transition:all .25s;
+      display:flex;align-items:center;gap:6px;background:var(--rose-bg);
+      border:1.5px solid rgba(190,18,60,.18);color:var(--rose);
+      font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+      padding:7px 14px;border-radius:20px;cursor:pointer;transition:all .25s;white-space:nowrap;
     }
     .btn-logout:hover{background:var(--rose);color:white;transform:translateY(-1px);box-shadow:0 6px 18px rgba(190,18,60,.3);}
 
-    /* ─── MAIN ─── */
-    .main{
-      position:relative;z-index:1;
-      padding:28px 28px 80px;
-      max-width:1560px;margin:0 auto;
-    }
+    /* ── MAIN ── */
+    .main{position:relative;z-index:1;padding:20px 20px 80px;max-width:1560px;margin:0 auto;}
 
-    /* ─── WELCOME BANNER ─── */
+    /* ── WELCOME ── */
     .welcome-banner{
-      background:linear-gradient(135deg,#1e3a5f 0%,#1d4ed8 50%,#0891b2 100%);
-      border-radius:20px;padding:28px 32px;
-      display:flex;align-items:center;justify-content:space-between;
-      flex-wrap:wrap;gap:18px;
-      margin-bottom:22px;
-      box-shadow:0 8px 40px rgba(37,99,235,.25);
-      position:relative;overflow:hidden;
-      animation:slideDown .6s cubic-bezier(.16,1,.3,1) both;
+      background:linear-gradient(135deg,#1e3a5f 0%,#1d4ed8 55%,#0891b2 100%);
+      border-radius:16px;padding:20px 24px;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+      margin-bottom:16px;box-shadow:0 8px 40px rgba(37,99,235,.25);
+      position:relative;overflow:hidden;animation:slideDown .6s cubic-bezier(.16,1,.3,1) both;
     }
-    .welcome-banner::before{
-      content:'';position:absolute;inset:0;
-      background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    }
+    .welcome-banner::before{content:'';position:absolute;inset:0;
+      background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");}
+    .welcome-left{display:flex;align-items:center;gap:12px;position:relative;flex:1;min-width:0;}
+    .w-avatar{width:44px;height:44px;border-radius:12px;flex-shrink:0;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;}
+    .w-name{font-size:15px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .w-role{font-size:11px;color:rgba(255,255,255,.65);margin-top:1px;}
+    .welcome-pills{display:flex;gap:7px;flex-wrap:wrap;position:relative;}
+    .w-pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;color:white;white-space:nowrap;}
 
-    .welcome-left{display:flex;align-items:center;gap:16px;position:relative;}
-    .w-avatar{
-      width:54px;height:54px;border-radius:16px;
-      background:rgba(255,255,255,.15);
-      border:2px solid rgba(255,255,255,.25);
-      display:flex;align-items:center;justify-content:center;
-      font-size:24px;color:white;
-      box-shadow:0 4px 16px rgba(0,0,0,.15);
-    }
-    .w-name{font-size:18px;font-weight:700;color:white;}
-    .w-role{font-size:12px;color:rgba(255,255,255,.65);margin-top:2px;}
-
-    .welcome-pills{display:flex;gap:10px;flex-wrap:wrap;position:relative;}
-    .w-pill{
-      display:flex;align-items:center;gap:6px;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.2);
-      border-radius:20px;padding:7px 16px;
-      font-size:12px;font-weight:600;color:white;
-    }
-
-    /* ─── LOCK BANNER ─── */
-    .lock-banner{
-      background:linear-gradient(90deg,#fff0f3,#fff8fa);
-      border:1.5px solid rgba(190,18,60,.2);
-      border-left:4px solid var(--rose);
-      border-radius:12px;padding:14px 20px;
-      display:none;align-items:center;gap:12px;
-      margin-bottom:18px;
-      animation:slideDown .4s ease both;
-    }
+    /* ── LOCK ── */
+    .lock-banner{background:linear-gradient(90deg,#fff0f3,#fff8fa);border:1.5px solid rgba(190,18,60,.2);border-left:4px solid var(--rose);border-radius:12px;padding:12px 18px;display:none;align-items:center;gap:12px;margin-bottom:14px;animation:slideDown .4s ease both;}
     .lock-banner.show{display:flex;}
-    .lock-pulse{
-      width:34px;height:34px;border-radius:50%;
-      background:var(--rose-bg);
-      display:flex;align-items:center;justify-content:center;
-      color:var(--rose);font-size:16px;flex-shrink:0;
-      animation:lockPulse 2s ease infinite;
-    }
+    .lock-pulse{width:30px;height:30px;border-radius:50%;flex-shrink:0;background:var(--rose-bg);display:flex;align-items:center;justify-content:center;color:var(--rose);font-size:14px;animation:lockPulse 2s ease infinite;}
     @keyframes lockPulse{0%,100%{box-shadow:0 0 0 0 rgba(190,18,60,.3);}50%{box-shadow:0 0 0 8px rgba(190,18,60,0);}}
     .lock-info strong{display:block;font-size:13px;font-weight:700;color:var(--rose);}
     .lock-info span{font-size:12px;color:#9f4060;}
 
-    /* ─── STAT GRID ─── */
-    .stat-grid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:14px;margin-bottom:22px;
-      animation:slideDown .65s cubic-bezier(.16,1,.3,1) .08s both;
-    }
-    @media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
-    @media(max-width:480px){.stat-grid{grid-template-columns:1fr 1fr;}}
-
-    .stat-card{
-      background:var(--white);
-      border:1px solid rgba(13,21,38,.07);
-      border-radius:var(--radius);
-      padding:20px;box-shadow:var(--shadow);
-      display:flex;flex-direction:column;gap:4px;
-      position:relative;overflow:hidden;
-      transition:transform .2s,box-shadow .2s;
-    }
+    /* ── STAT GRID ── */
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;animation:slideDown .65s cubic-bezier(.16,1,.3,1) .08s both;}
+    .stat-card{background:var(--white);border:1px solid rgba(13,21,38,.07);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
     .stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);}
-    .stat-card::after{
-      content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
-    }
-    .stat-card.sc-blue::after{background:linear-gradient(90deg,var(--blue),#60a5fa);}
-    .stat-card.sc-cyan::after{background:linear-gradient(90deg,var(--cyan),#22d3ee);}
-    .stat-card.sc-emerald::after{background:linear-gradient(90deg,var(--emerald),#34d399);}
-    .stat-card.sc-amber::after{background:linear-gradient(90deg,var(--amber),#f59e0b);}
+    .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+    .sc-blue::after{background:linear-gradient(90deg,var(--blue),#60a5fa);}
+    .sc-cyan::after{background:linear-gradient(90deg,var(--cyan),#22d3ee);}
+    .sc-emerald::after{background:linear-gradient(90deg,var(--emerald),#34d399);}
+    .sc-amber::after{background:linear-gradient(90deg,var(--amber),#f59e0b);}
+    .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .stat-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+    .stat-badge{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 6px;border-radius:20px;}
+    .stat-val{font-size:22px;font-weight:800;color:var(--ink);line-height:1;}
+    .stat-lbl{font-size:11px;color:var(--ink3);font-weight:500;}
 
-    .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-    .stat-ic{
-      width:38px;height:38px;border-radius:10px;
-      display:flex;align-items:center;justify-content:center;font-size:17px;
-    }
-    .stat-change{
-      font-size:10px;font-weight:700;letter-spacing:.3px;
-      padding:3px 8px;border-radius:20px;
-    }
-    .stat-val{font-size:26px;font-weight:800;color:var(--ink);line-height:1;}
-    .stat-lbl{font-size:11px;color:var(--ink3);font-weight:500;margin-top:2px;}
-
-    /* ─── CONTROL ROW ─── */
-    .control-row{
-      background:var(--white);
-      border:1px solid rgba(13,21,38,.07);
-      border-radius:var(--radius);
-      padding:20px 24px;box-shadow:var(--shadow);
-      margin-bottom:22px;
-      display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;
-      animation:slideDown .7s cubic-bezier(.16,1,.3,1) .12s both;
-    }
-    .ctrl-field{flex:1;min-width:200px;}
-    .ctrl-field label{
-      display:block;font-size:10px;font-weight:700;
-      letter-spacing:1.5px;text-transform:uppercase;
-      color:var(--ink3);margin-bottom:8px;
-    }
+    /* ── CONTROL ── */
+    .control-row{background:var(--white);border:1px solid rgba(13,21,38,.07);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow);margin-bottom:16px;display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;animation:slideDown .7s cubic-bezier(.16,1,.3,1) .12s both;}
+    .ctrl-field{flex:1;min-width:180px;}
+    .ctrl-field label{display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:7px;}
     .sel-wrap{position:relative;}
-    .sel-wrap::after{
-      content:'';position:absolute;right:14px;top:50%;
-      transform:translateY(-50%) rotate(45deg);
-      width:7px;height:7px;
-      border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);
-      pointer-events:none;
-    }
-    #teamSelect{
-      width:100%;appearance:none;
-      background:var(--bg);border:1.5px solid var(--bg2);
-      border-radius:10px;padding:11px 38px 11px 14px;
-      font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
-      color:var(--ink);outline:none;cursor:pointer;transition:all .25s;
-    }
+    .sel-wrap::after{content:'';position:absolute;right:13px;top:50%;transform:translateY(-50%) rotate(45deg);width:7px;height:7px;border-right:2px solid var(--blue);border-bottom:2px solid var(--blue);pointer-events:none;}
+    #teamSelect{width:100%;appearance:none;background:var(--bg);border:1.5px solid var(--bg2);border-radius:10px;padding:10px 34px 10px 13px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--ink);outline:none;cursor:pointer;transition:all .25s;}
     #teamSelect:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:white;}
-
-    .search-field{flex:1.2;min-width:200px;}
-    .search-wrap{position:relative;}
-    .search-wrap i{
-      position:absolute;left:13px;top:50%;transform:translateY(-50%);
-      color:var(--ink3);font-size:15px;pointer-events:none;
-    }
-    #studentSearch{
-      width:100%;background:var(--bg);
-      border:1.5px solid var(--bg2);border-radius:10px;
-      padding:11px 14px 11px 40px;
-      font-family:'DM Sans',sans-serif;font-size:13px;
-      color:var(--ink);outline:none;transition:all .25s;
-    }
-    #studentSearch:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);background:white;}
-    #studentSearch::placeholder{color:var(--ink3);}
-
-    /* ─── PROGRESS BAR ─── */
-    .progress-card{
-      background:var(--white);border:1px solid rgba(13,21,38,.07);
-      border-radius:var(--radius);padding:16px 22px;box-shadow:var(--shadow);
-      margin-bottom:18px;display:none;
-      animation:slideDown .4s ease both;
-    }
-    .progress-card.show{display:block;}
-    .prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-    .prog-header span{font-size:12px;font-weight:600;color:var(--ink2);}
-    .prog-count{
-      font-size:13px;font-weight:800;
-      background:linear-gradient(90deg,var(--blue),var(--cyan));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    }
-    .prog-track{width:100%;height:7px;background:var(--bg2);border-radius:20px;overflow:hidden;}
-    .prog-fill{
-      height:100%;border-radius:20px;width:0%;
-      background:linear-gradient(90deg,var(--blue),var(--cyan));
-      transition:width .7s cubic-bezier(.16,1,.3,1);
-      box-shadow:0 2px 8px rgba(37,99,235,.3);
-    }
-    .prog-labels{display:flex;justify-content:space-between;margin-top:6px;}
-    .prog-labels span{font-size:10px;color:var(--ink3);}
-
-    /* ─── TABLE SECTION ─── */
-    #tableSection{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both;}
-
-    .tbl-header{
-      display:flex;align-items:center;justify-content:space-between;
-      margin-bottom:16px;flex-wrap:wrap;gap:10px;
-    }
-    .tbl-title{
-      font-family:'Fraunces',serif;
-      font-size:22px;font-weight:700;color:var(--ink);
-    }
-    .tbl-title em{font-style:italic;color:var(--blue);}
-
-    .tbl-actions{display:flex;gap:8px;flex-wrap:wrap;}
-    .act-btn{
-      display:flex;align-items:center;gap:6px;
-      padding:7px 16px;border-radius:20px;border:1.5px solid;
-      font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;
-      cursor:pointer;transition:all .2s;letter-spacing:.3px;
-    }
+    .ctrl-actions{display:flex;gap:8px;flex-wrap:wrap;padding-bottom:1px;}
+    .act-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:20px;border:1.5px solid;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.3px;background:none;}
     .ab-blue{background:var(--blue-bg);border-color:var(--blue-bdr);color:var(--blue);}
     .ab-blue:hover{background:var(--blue);color:white;box-shadow:0 4px 14px rgba(37,99,235,.3);}
     .ab-emerald{background:var(--emerald-bg);border-color:rgba(5,150,105,.2);color:var(--emerald);}
     .ab-emerald:hover{background:var(--emerald);color:white;box-shadow:0 4px 14px rgba(5,150,105,.3);}
 
-    /* ─── TABLE ─── */
-    .tbl-shell{
-      background:var(--white);border:1px solid rgba(13,21,38,.07);
-      border-radius:var(--radius);box-shadow:var(--shadow-lg);
-      overflow:hidden;
-    }
+    /* ── PROGRESS ── */
+    .progress-card{background:var(--white);border:1px solid rgba(13,21,38,.07);border-radius:var(--radius);padding:14px 20px;box-shadow:var(--shadow);margin-bottom:16px;display:none;animation:slideDown .4s ease both;}
+    .progress-card.show{display:block;}
+    .prog-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+    .prog-header span{font-size:12px;font-weight:600;color:var(--ink2);}
+    .prog-count{font-size:13px;font-weight:800;background:linear-gradient(90deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+    .prog-track{width:100%;height:7px;background:var(--bg2);border-radius:20px;overflow:hidden;}
+    .prog-fill{height:100%;border-radius:20px;width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width .7s cubic-bezier(.16,1,.3,1);box-shadow:0 2px 8px rgba(37,99,235,.3);}
+    .prog-labels{display:flex;justify-content:space-between;margin-top:5px;}
+    .prog-labels span{font-size:10px;color:var(--ink3);}
+
+    /* ── TABLE ── */
+    #tableSection{animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both;}
+    .tbl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px;}
+    .tbl-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);}
+    .tbl-title em{font-style:italic;color:var(--blue);}
+    .tbl-shell{background:var(--white);border:1px solid rgba(13,21,38,.07);border-radius:var(--radius);box-shadow:var(--shadow-lg);overflow:hidden;}
     .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;}
-
     #studentTable{width:100%;border-collapse:collapse;min-width:1100px;}
-
-    #studentTable thead tr:first-child th{
-      background:linear-gradient(105deg,#0d1526 0%,#1e3a5f 60%,#1d4ed8 100%);
-      color:rgba(240,246,255,.88);
-      font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;
-      letter-spacing:.5px;text-transform:uppercase;
-      padding:15px 14px;border:none;
-    }
-    #studentTable thead tr:nth-child(2) th{
-      background:#172040;
-      color:rgba(180,200,230,.6);
-      font-size:10px;font-weight:600;
-      padding:9px 14px;letter-spacing:.3px;
-      border-right:1px solid rgba(255,255,255,.04);
-      border-top:1px solid rgba(255,255,255,.05);
-    }
+    #studentTable thead tr:first-child th{background:linear-gradient(105deg,#0d1526 0%,#1e3a5f 60%,#1d4ed8 100%);color:rgba(240,246,255,.88);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:14px 13px;border:none;}
+    #studentTable thead tr:nth-child(2) th{background:#172040;color:rgba(180,200,230,.6);font-size:10px;font-weight:600;padding:8px 13px;letter-spacing:.3px;border-right:1px solid rgba(255,255,255,.04);border-top:1px solid rgba(255,255,255,.05);}
     .th-sep{border-left:2px solid rgba(34,211,238,.2) !important;}
-
-    #studentTable tbody tr{
-      border-bottom:1px solid var(--bg);
-      transition:background .15s;
-    }
+    #studentTable tbody tr{border-bottom:1px solid var(--bg);transition:background .15s;}
     #studentTable tbody tr:hover{background:rgba(37,99,235,.025);}
-    #studentTable tbody tr.row-saved{
-      background:linear-gradient(90deg,rgba(5,150,105,.04),transparent 60%);
-    }
+    #studentTable tbody tr.row-saved{background:linear-gradient(90deg,rgba(5,150,105,.04),transparent 60%);}
     #studentTable tbody tr:last-child{border-bottom:none;}
-
-    #studentTable tbody td{
-      padding:13px 14px;font-size:12.5px;color:var(--ink2);
-      border-right:1px solid var(--bg);vertical-align:middle;
-    }
+    #studentTable tbody td{padding:11px 13px;font-size:12.5px;color:var(--ink2);border-right:1px solid var(--bg);vertical-align:middle;}
     #studentTable tbody td:last-child{border-right:none;}
-
-    /* Name */
     .name-wrap{display:flex;align-items:center;gap:8px;}
-    .name-av{
-      width:30px;height:30px;border-radius:9px;
-      background:var(--blue-bg);border:1px solid var(--blue-bdr);
-      display:flex;align-items:center;justify-content:center;
-      font-size:13px;color:var(--blue);flex-shrink:0;
-      font-weight:700;
-    }
+    .name-av{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:var(--blue-bg);border:1px solid var(--blue-bdr);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--blue);font-weight:800;}
     .name-text{font-weight:600;color:var(--ink);}
-
-    /* Team badge */
-    .team-tag{
-      display:inline-flex;align-items:center;gap:4px;
-      background:var(--blue-bg);border:1px solid var(--blue-bdr);
-      border-radius:6px;padding:3px 8px;
-      font-size:11px;font-weight:700;color:var(--blue);
-    }
-
-    /* Title */
-    .title-wrap{
-      max-width:130px;font-size:12px;color:var(--ink3);
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      cursor:help;
-    }
-
-    /* Mark dropdowns */
-    .mk-sel{
-      appearance:none;
-      background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232563eb'/%3E%3C/svg%3E") no-repeat right 8px center;
-      border:1.5px solid var(--bg2);border-radius:8px;
-      padding:7px 26px 7px 10px;
-      font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
-      color:var(--ink);outline:none;cursor:pointer;
-      transition:all .2s;width:100%;min-width:128px;
-    }
+    .team-tag{display:inline-flex;align-items:center;gap:3px;background:var(--blue-bg);border:1px solid var(--blue-bdr);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--blue);}
+    .title-wrap{max-width:120px;font-size:12px;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:help;}
+    .mk-sel{appearance:none;background:var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232563eb'/%3E%3C/svg%3E") no-repeat right 8px center;border:1.5px solid var(--bg2);border-radius:8px;padding:7px 26px 7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--ink);outline:none;cursor:pointer;transition:all .2s;width:100%;min-width:125px;}
     .mk-sel:focus{border-color:var(--blue);box-shadow:0 0 0 2px rgba(37,99,235,.1);}
     .mk-sel.dirty{border-color:var(--amber);background-color:rgba(180,83,9,.04);}
-    .mk-sel.locked-sel{opacity:.65;cursor:not-allowed;}
-
-    /* Total */
-    .total-chip{
-      display:inline-flex;align-items:center;justify-content:center;
-      min-width:52px;padding:5px 10px;border-radius:8px;
-      font-weight:800;font-size:15px;
-      background:linear-gradient(135deg,var(--blue-bg),rgba(37,99,235,.12));
-      border:1px solid var(--blue-bdr);color:var(--blue);
-      transition:all .3s;
-    }
+    .mk-sel.prefilled{border-color:rgba(5,150,105,.4);background-color:rgba(5,150,105,.04);}
+    .mk-sel:disabled{opacity:.6;cursor:not-allowed;}
+    .total-chip{display:inline-flex;align-items:center;justify-content:center;min-width:48px;padding:5px 10px;border-radius:8px;font-weight:800;font-size:14px;background:var(--blue-bg);border:1px solid var(--blue-bdr);color:var(--blue);transition:all .3s;}
     .total-chip.absent{background:var(--rose-bg);border-color:rgba(190,18,60,.2);color:var(--rose);}
-    .total-chip.full{
-      background:linear-gradient(135deg,var(--emerald-bg),rgba(5,150,105,.14));
-      border-color:rgba(5,150,105,.2);color:var(--emerald);
-    }
-
-    /* Save button */
-    .btn-save{
-      display:inline-flex;align-items:center;justify-content:center;gap:6px;
-      background:linear-gradient(135deg,var(--rose),#e11d48);
-      border:none;border-radius:9px;
-      padding:8px 16px;
-      font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;
-      color:white;cursor:pointer;
-      transition:all .25s;white-space:nowrap;
-      box-shadow:0 2px 10px rgba(190,18,60,.25);
-    }
+    .total-chip.full{background:var(--emerald-bg);border-color:rgba(5,150,105,.2);color:var(--emerald);}
+    .btn-save{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,var(--rose),#e11d48);border:none;border-radius:9px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:white;cursor:pointer;transition:all .25s;white-space:nowrap;box-shadow:0 2px 10px rgba(190,18,60,.25);}
     .btn-save:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 20px rgba(190,18,60,.35);}
     .btn-save:active:not(:disabled){transform:translateY(0);}
     .btn-save:disabled{background:#c8d0de;box-shadow:none;cursor:not-allowed;}
-    .btn-save.saved-state{
-      background:linear-gradient(135deg,var(--emerald),#059669);
-      box-shadow:0 2px 10px rgba(5,150,105,.3);
-    }
-    .btn-save.saved-state:hover{transform:none;cursor:default;}
+    .btn-save.saved-state{background:linear-gradient(135deg,var(--emerald),#059669);box-shadow:0 2px 10px rgba(5,150,105,.3);}
+    .btn-save.saved-state:hover{transform:none;}
 
-    /* ─── TOAST ─── */
-    .toast-stack{
-      position:fixed;bottom:28px;right:28px;z-index:900;
-      display:flex;flex-direction:column;gap:8px;pointer-events:none;
-    }
-    .toast{
-      background:white;border:1px solid var(--bg2);
-      border-radius:12px;padding:13px 18px;
-      box-shadow:0 8px 32px rgba(13,21,38,.15);
-      font-size:13px;font-weight:500;color:var(--ink2);
-      display:flex;align-items:center;gap:10px;
-      pointer-events:auto;min-width:260px;max-width:340px;
-      animation:toastIn .35s cubic-bezier(.16,1,.3,1) both, toastOut .3s 2.8s ease forwards;
-    }
-    .toast-icon{
-      width:28px;height:28px;border-radius:8px;
-      display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;
-    }
-    .toast.t-success{border-left:3px solid var(--emerald);}
-    .toast.t-error{border-left:3px solid var(--rose);}
-    .toast.t-warn{border-left:3px solid var(--amber);}
-    @keyframes toastIn{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
-    @keyframes toastOut{from{opacity:1;}to{opacity:0;transform:translateX(24px);}}
-
-    /* ─── LOGOUT OVERLAY ─── */
-    .logout-overlay{
-      position:fixed;inset:0;z-index:1000;
-      background:linear-gradient(135deg,#0d1526,#1e3a5f,#1d4ed8);
-      display:none;flex-direction:column;
-      align-items:center;justify-content:center;gap:24px;
-    }
-    .logout-overlay.show{display:flex;}
-    .lo-ring{
-      width:90px;height:90px;border-radius:50%;
-      border:3px solid rgba(255,255,255,.1);
-      border-top-color:#60a5fa;
-      animation:spin .8s linear infinite;
-    }
-    @keyframes spin{to{transform:rotate(360deg);}}
-    .lo-icon{
-      position:absolute;
-      width:60px;height:60px;border-radius:50%;
-      background:rgba(37,99,235,.3);
-      display:flex;align-items:center;justify-content:center;
-      font-size:26px;color:white;
-    }
-    .lo-ring-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:90px;height:90px;}
-    .lo-text{text-align:center;}
-    .lo-text h2{font-size:22px;font-weight:700;color:white;}
-    .lo-text p{font-size:13px;color:rgba(255,255,255,.5);margin-top:6px;}
-
-    /* ─── ANIMATIONS ─── */
-    @keyframes slideDown{
-      from{opacity:0;transform:translateY(-18px);}
-      to{opacity:1;transform:translateY(0);}
-    }
-    @keyframes fadeUp{
-      from{opacity:0;transform:translateY(18px);}
-      to{opacity:1;transform:translateY(0);}
-    }
-
-    /* ─── MOBILE CARDS ─── */
+    /* ══════════════════════════════
+       MOBILE — Completely redesigned
+    ══════════════════════════════ */
     @media(max-width:860px){
-      .topbar{padding:0 16px;}
-      .main{padding:16px 14px 60px;}
-      .welcome-banner{padding:20px 20px;}
+      /* Compact topbar */
+      .topbar{padding:0 14px;height:56px;}
+      .brand-text small{display:none;}
+      .brand-text strong{font-size:12px;}
+      .brand-icon{width:32px;height:32px;font-size:14px;border-radius:9px;}
+      .clock-pill{display:none;}  /* hide clock — space constraint */
+      .btn-logout{padding:6px 11px;font-size:11px;}
+
+      .main{padding:12px 12px 70px;}
+      .welcome-banner{padding:14px 16px;border-radius:14px;gap:10px;}
+      .w-avatar{width:38px;height:38px;font-size:17px;border-radius:10px;}
+      .w-name{font-size:13px;}
+      .w-role{font-size:10px;}
+      .w-pill{font-size:10px;padding:4px 10px;}
+
+      .stat-grid{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+      .stat-card{padding:13px;}
+      .stat-val{font-size:20px;}
+      .stat-lbl{font-size:10px;}
+
+      .control-row{padding:13px 15px;gap:10px;}
+      .ctrl-field{min-width:100%;flex:unset;width:100%;}
+      .ctrl-actions{width:100%;gap:7px;}
+      .act-btn{flex:1;justify-content:center;font-size:11px;}
+
+      /* ── MOBILE TABLE → BEAUTIFUL CARDS ── */
       .tbl-shell{background:transparent;border:none;box-shadow:none;overflow:visible;}
+      .tbl-scroll{overflow:visible;}
+      #studentTable{min-width:unset;}
       #studentTable,#studentTable thead,#studentTable tbody,
       #studentTable th,#studentTable td,#studentTable tr{display:block;}
       #studentTable thead{display:none;}
+
+      /* Card container */
       #studentTable tbody tr{
         background:var(--white);
-        border:1px solid rgba(13,21,38,.08);
-        border-radius:var(--radius);
-        padding:18px;margin-bottom:14px;
-        box-shadow:var(--shadow);
-        border-bottom:1px solid rgba(13,21,38,.08)!important;
-        animation:fadeUp .4s ease both;
+        border:1px solid rgba(13,21,38,.09);
+        border-radius:14px;
+        margin-bottom:12px;
+        box-shadow:0 3px 16px rgba(13,21,38,.08);
+        overflow:hidden;
+        padding:0;
+        border-bottom:1px solid rgba(13,21,38,.09) !important;
+        animation:fadeUp .35s ease both;
       }
+      #studentTable tbody tr.row-saved{
+        border-color:rgba(5,150,105,.3) !important;
+      }
+
+      /* Card top header strip (name + team) */
+      #studentTable tbody td[data-label="Student Name"]{
+        background:linear-gradient(105deg,#0d1526,#1e3a5f);
+        padding:12px 16px !important;
+        border:none !important;
+        flex-direction:row;align-items:center;
+      }
+      #studentTable tbody td[data-label="Student Name"]::before{display:none;}
+      #studentTable tbody td[data-label="Student Name"] .name-wrap .name-text{color:white;font-size:13px;font-weight:700;}
+      #studentTable tbody td[data-label="Student Name"] .name-av{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.25);color:white;font-size:11px;}
+      #studentTable tbody td[data-label="Team ID"]{
+        display:none; /* team shown via name row */
+      }
+
+      /* Generic td reset */
       #studentTable tbody td{
-        padding:8px 0;border:none;border-right:none!important;
-        text-align:left!important;
+        display:flex;flex-direction:column;
+        padding:0;border:none !important;
+        border-right:none !important;border-bottom:1px solid var(--bg) !important;
       }
+      #studentTable tbody td:last-child{border-bottom:none !important;}
+
+      /* Label above each field */
       #studentTable tbody td::before{
         content:attr(data-label);
-        display:block;font-size:10px;font-weight:700;
-        letter-spacing:1px;text-transform:uppercase;
-        color:var(--blue);margin-bottom:4px;
+        font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+        color:var(--blue);padding:10px 16px 0;display:block;
       }
-      .mk-sel{min-width:unset;}
-      .btn-save{width:100%;margin-top:10px;}
-      .tbl-scroll{overflow-x:visible;}
-      #studentTable{min-width:unset;}
-      .stat-grid{grid-template-columns:1fr 1fr;}
+      #studentTable tbody td[data-label="Student Name"]::before,
+      #studentTable tbody td[data-label="Team ID"]::before{display:none;}
+
+      /* Children get padding */
+      #studentTable tbody td > *{padding:4px 16px 10px;}
+
+      /* Dept / Title — simple text */
+      #studentTable tbody td[data-label="Department"],
+      #studentTable tbody td[data-label="Project Title"]{
+        flex-direction:column;
+      }
+      #studentTable tbody td[data-label="Department"] > *,
+      #studentTable tbody td[data-label="Project Title"] > *{
+        font-size:13px;color:var(--ink);font-weight:500;
+        white-space:normal;max-width:100%;
+      }
+
+      /* Selects */
+      .mk-sel{min-width:unset;width:100%;font-size:13px;padding:10px 30px 10px 12px;}
+
+      /* Total row */
+      #studentTable tbody td[data-label="Total"]{
+        flex-direction:row;align-items:center;gap:12px;
+        padding:10px 16px;
+      }
+      #studentTable tbody td[data-label="Total"]::before{padding:0;font-size:9px;}
+      #studentTable tbody td[data-label="Total"] .total-chip{font-size:15px;min-width:54px;}
+
+      /* Action row */
+      #studentTable tbody td[data-label="Action"]{
+        padding:12px 16px;
+        border-top:1px solid var(--bg) !important;
+      }
+      #studentTable tbody td[data-label="Action"]::before{display:none;}
+      .btn-save{width:100%;padding:13px;font-size:13px;border-radius:10px;}
+
+      /* Progress card */
+      .progress-card{padding:12px 16px;}
     }
+
+    /* ── TOAST ── */
+    .toast-stack{position:fixed;bottom:20px;right:16px;z-index:900;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+    .toast{background:white;border:1px solid var(--bg2);border-radius:12px;padding:11px 15px;box-shadow:0 8px 32px rgba(13,21,38,.15);font-size:13px;font-weight:500;color:var(--ink2);display:flex;align-items:center;gap:9px;pointer-events:auto;min-width:220px;max-width:300px;animation:toastIn .35s cubic-bezier(.16,1,.3,1) both, toastOut .3s 2.8s ease forwards;}
+    .toast-ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+    .t-success{border-left:3px solid var(--emerald);}
+    .t-error{border-left:3px solid var(--rose);}
+    .t-warn{border-left:3px solid var(--amber);}
+    .t-info{border-left:3px solid var(--blue);}
+    @keyframes toastIn{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
+    @keyframes toastOut{from{opacity:1;}to{opacity:0;transform:translateX(24px);}}
+
+    /* ── LOGOUT OVERLAY ── */
+    .logout-overlay{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#0d1526,#1e3a5f,#1d4ed8);display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;}
+    .logout-overlay.show{display:flex;}
+    .lo-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:84px;height:84px;}
+    .lo-ring{width:84px;height:84px;border-radius:50%;border:3px solid rgba(255,255,255,.1);border-top-color:#60a5fa;animation:spin .8s linear infinite;position:absolute;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .lo-icon{width:54px;height:54px;border-radius:50%;background:rgba(37,99,235,.3);display:flex;align-items:center;justify-content:center;font-size:22px;color:white;}
+    .lo-text{text-align:center;}
+    .lo-text h2{font-size:20px;font-weight:700;color:white;}
+    .lo-text p{font-size:12px;color:rgba(255,255,255,.5);margin-top:5px;}
+
+    @keyframes slideDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
   </style>
 </head>
 <body onload="initFaculty()">
 
-  <!-- ─── TOPBAR ─── -->
   <header class="topbar">
     <div class="brand">
       <div class="brand-icon"><i class="bi bi-clipboard2-data-fill"></i></div>
@@ -547,7 +330,7 @@
     <div class="topbar-right">
       <div class="clock-pill">
         <div class="clock-dot"></div>
-        <i class="bi bi-clock-fill" style="color:var(--emerald);font-size:11px;"></i>
+        <i class="bi bi-clock-fill" style="color:var(--emerald);font-size:10px;"></i>
         <span id="liveClock">--:--:--</span>
       </div>
       <button class="btn-logout" id="logoutBtn" onclick="doLogout()">
@@ -558,125 +341,97 @@
 
   <div class="main">
 
-    <!-- ─── WELCOME BANNER ─── -->
     <div class="welcome-banner">
       <div class="welcome-left">
         <div class="w-avatar"><i class="bi bi-person-workspace"></i></div>
-        <div>
+        <div style="min-width:0;">
           <div class="w-name" id="wName">Loading…</div>
           <div class="w-role">Panel Member · Mark Entry Session</div>
         </div>
       </div>
       <div class="welcome-pills">
-        <div class="w-pill" id="wVenue"><i class="bi bi-geo-alt-fill"></i> <span>—</span></div>
-        <div class="w-pill" id="wBatch"><i class="bi bi-clock-history"></i> <span>—</span></div>
-        <div class="w-pill" id="wDate"><i class="bi bi-calendar3"></i> <span id="todayDate">—</span></div>
+        <div class="w-pill"><i class="bi bi-geo-alt-fill"></i><span id="wVenueTxt">—</span></div>
+        <div class="w-pill"><i class="bi bi-clock-history"></i><span id="wBatchTxt">—</span></div>
+        <div class="w-pill"><i class="bi bi-calendar3"></i><span id="todayDate">—</span></div>
       </div>
     </div>
 
-    <!-- ─── LOCK BANNER ─── -->
     <div class="lock-banner" id="lockMsg">
       <div class="lock-pulse"><i class="bi bi-lock-fill"></i></div>
       <div class="lock-info">
         <strong>Mark Entry Locked</strong>
-        <span>This session is closed. You can view marks but cannot submit changes.</span>
+        <span>This session is closed. Viewing only.</span>
       </div>
     </div>
 
-    <!-- ─── STAT CARDS ─── -->
     <div class="stat-grid">
       <div class="stat-card sc-blue">
         <div class="stat-top">
-          <div class="stat-ic" style="background:var(--blue-bg);color:var(--blue);">
-            <i class="bi bi-people-fill"></i>
-          </div>
-          <span class="stat-change" style="background:var(--blue-bg);color:var(--blue);">TOTAL</span>
+          <div class="stat-ic" style="background:var(--blue-bg);color:var(--blue);"><i class="bi bi-people-fill"></i></div>
+          <span class="stat-badge" style="background:var(--blue-bg);color:var(--blue);">TOTAL</span>
         </div>
         <div class="stat-val" id="sTotalStudents">—</div>
         <div class="stat-lbl">Students in Venue</div>
       </div>
       <div class="stat-card sc-emerald">
         <div class="stat-top">
-          <div class="stat-ic" style="background:var(--emerald-bg);color:var(--emerald);">
-            <i class="bi bi-check-circle-fill"></i>
-          </div>
-          <span class="stat-change" style="background:var(--emerald-bg);color:var(--emerald);">DONE</span>
+          <div class="stat-ic" style="background:var(--emerald-bg);color:var(--emerald);"><i class="bi bi-check-circle-fill"></i></div>
+          <span class="stat-badge" style="background:var(--emerald-bg);color:var(--emerald);">DONE</span>
         </div>
         <div class="stat-val" id="sSaved">0</div>
         <div class="stat-lbl">Marks Submitted</div>
       </div>
       <div class="stat-card sc-amber">
         <div class="stat-top">
-          <div class="stat-ic" style="background:var(--amber-bg);color:var(--amber);">
-            <i class="bi bi-hourglass-split"></i>
-          </div>
-          <span class="stat-change" style="background:var(--amber-bg);color:var(--amber);">LEFT</span>
+          <div class="stat-ic" style="background:var(--amber-bg);color:var(--amber);"><i class="bi bi-hourglass-split"></i></div>
+          <span class="stat-badge" style="background:var(--amber-bg);color:var(--amber);">LEFT</span>
         </div>
         <div class="stat-val" id="sPending">—</div>
         <div class="stat-lbl">Pending Students</div>
       </div>
       <div class="stat-card sc-cyan">
         <div class="stat-top">
-          <div class="stat-ic" style="background:var(--cyan-bg);color:var(--cyan);">
-            <i class="bi bi-diagram-3-fill"></i>
-          </div>
-          <span class="stat-change" style="background:var(--cyan-bg);color:var(--cyan);">TEAMS</span>
+          <div class="stat-ic" style="background:var(--cyan-bg);color:var(--cyan);"><i class="bi bi-diagram-3-fill"></i></div>
+          <span class="stat-badge" style="background:var(--cyan-bg);color:var(--cyan);">TEAMS</span>
         </div>
         <div class="stat-val" id="sTeams">—</div>
         <div class="stat-lbl">Total Teams</div>
       </div>
     </div>
 
-    <!-- ─── CONTROL ROW ─── -->
+    <!-- FIX 2: No search box. FIX 3: Team ID only in dropdown -->
     <div class="control-row">
       <div class="ctrl-field">
-        <label><i class="bi bi-people-fill"></i> &nbsp;Select Team</label>
+        <label><i class="bi bi-tag-fill"></i> &nbsp;Select Team ID</label>
         <div class="sel-wrap">
           <select id="teamSelect">
-            <option value="">— Choose a Team ID —</option>
+            <option value="">— Choose Team ID —</option>
           </select>
         </div>
       </div>
-      <div class="ctrl-field search-field">
-        <label><i class="bi bi-search"></i> &nbsp;Search Student</label>
-        <div class="search-wrap">
-          <i class="bi bi-search"></i>
-          <input id="studentSearch" type="text" placeholder="Filter by name or dept…"/>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;padding-bottom:1px;">
-        <button class="act-btn ab-blue" onclick="expandAll()">
-          <i class="bi bi-arrows-expand"></i> Expand All
-        </button>
-        <button class="act-btn ab-emerald" onclick="collapseAll()">
-          <i class="bi bi-arrows-collapse"></i> Collapse
-        </button>
+      <div class="ctrl-actions">
+        <button class="act-btn ab-emerald" onclick="saveAllVisible()"><i class="bi bi-cloud-arrow-up-fill"></i> Save All</button>
+        <button class="act-btn ab-blue" onclick="collapseAll()"><i class="bi bi-eye-slash"></i> Hide Saved</button>
+        <button class="act-btn ab-blue" onclick="expandAll()"><i class="bi bi-eye"></i> Show All</button>
       </div>
     </div>
 
-    <!-- ─── PROGRESS ─── -->
     <div class="progress-card" id="progressCard">
       <div class="prog-header">
         <span><i class="bi bi-activity"></i> &nbsp;Submission Progress</span>
         <span class="prog-count" id="progCount">0 / 0 submitted</span>
       </div>
       <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
-      <div class="prog-labels">
-        <span>0%</span><span id="progPct">0%</span><span>100%</span>
-      </div>
+      <div class="prog-labels"><span>0%</span><span id="progPct">0%</span><span>100%</span></div>
     </div>
 
-    <!-- ─── TABLE SECTION ─── -->
     <div id="tableSection" style="display:none;">
       <div class="tbl-header">
-        <div class="tbl-title">Mark Entry — <em id="activeTeamTitle">Team</em></div>
+        <div class="tbl-title">Mark Entry — <em id="activeTeamTitle">—</em></div>
         <div class="tbl-actions">
-          <button class="act-btn ab-emerald" onclick="saveAllVisible()">
-            <i class="bi bi-cloud-arrow-up-fill"></i> Save All
-          </button>
+          <button class="act-btn ab-emerald" onclick="saveAllVisible()"><i class="bi bi-cloud-arrow-up-fill"></i> Save All</button>
         </div>
       </div>
-
       <div class="tbl-shell">
         <div class="tbl-scroll">
           <table id="studentTable">
@@ -686,12 +441,8 @@
                 <th rowspan="2">Student</th>
                 <th rowspan="2">Department</th>
                 <th rowspan="2">Project Title</th>
-                <th colspan="4" class="th-sep">
-                  <i class="bi bi-bar-chart-steps"></i> &nbsp;Level I — 10 marks each
-                </th>
-                <th colspan="2" class="th-sep">
-                  <i class="bi bi-graph-up-arrow"></i> &nbsp;Level II — 30 marks each
-                </th>
+                <th colspan="4" class="th-sep"><i class="bi bi-bar-chart-steps"></i> Level I — 10 marks each</th>
+                <th colspan="2" class="th-sep"><i class="bi bi-graph-up-arrow"></i> Level II — 30 marks each</th>
                 <th rowspan="2">Total</th>
                 <th rowspan="2">Action</th>
               </tr>
@@ -710,158 +461,129 @@
       </div>
     </div>
 
-  </div><!-- /.main -->
+  </div>
 
-  <!-- ─── TOASTS ─── -->
   <div class="toast-stack" id="toastStack"></div>
 
-  <!-- ─── LOGOUT OVERLAY ─── -->
   <div class="logout-overlay" id="logoutOverlay">
-    <div class="lo-ring-wrap">
+    <div class="lo-wrap">
       <div class="lo-ring"></div>
       <div class="lo-icon"><i class="bi bi-box-arrow-right"></i></div>
     </div>
-    <div class="lo-text">
-      <h2>Signing Out…</h2>
-      <p>Your session is being safely closed.</p>
-    </div>
+    <div class="lo-text"><h2>Signing Out…</h2><p>Your session is being safely closed.</p></div>
   </div>
 
 <script>
-  /* ─────────── OVERRIDE setupLogout so our custom overlay shows ─────────── */
-  /* We call doLogout() manually from the button, so we bind the native one too */
   if(typeof setupLogout==='function') setupLogout();
 
-  /* ─────────── LIVE CLOCK ─────────── */
-  function updateClock(){
-    const now=new Date();
+  /* CLOCK */
+  function tick(){
     document.getElementById('liveClock').textContent=
-      now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }
-  updateClock(); setInterval(updateClock,1000);
+  tick(); setInterval(tick,1000);
 
-  /* ─────────── TODAY DATE ─────────── */
   document.getElementById('todayDate').textContent=
-    new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+    new Date().toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
 
-  /* ─────────── MARKS MAPS ─────────── */
-  const level1Marks={"Excellent(10)":10,"Good(7.5)":7.5,"Average(5)":5,"Poor(2.5)":2.5};
-  const level2Marks={"Excellent(30)":30,"Good(22.5)":22.5,"Average(15)":15,"Poor(7.5)":7.5};
+  const L1={"Excellent(10)":10,"Good(7.5)":7.5,"Average(5)":5,"Poor(2.5)":2.5};
+  const L2={"Excellent(30)":30,"Good(22.5)":22.5,"Average(15)":15,"Poor(7.5)":7.5};
 
-  /* ─────────── STATE ─────────── */
   const faculty_id =localStorage.getItem('faculty_id');
   const venue      =localStorage.getItem('venue');
   const facultyName=localStorage.getItem('faculty_name');
   const batch      =localStorage.getItem('batch');
 
-  let students=[],existingMarks=[],locked=false,savedCount=0;
+  let students=[],existingMarks=[],locked=false,savedCount=0,totalStudents=0;
 
-  /* ─────────── TOAST ─────────── */
   function toast(msg,type='success'){
     const stack=document.getElementById('toastStack');
     const el=document.createElement('div');
     el.className=`toast t-${type}`;
-    const icons={success:'<i class="bi bi-check-circle-fill" style="color:#059669"></i>',
-                 error:'<i class="bi bi-x-circle-fill" style="color:#be123c"></i>',
-                 warn:'<i class="bi bi-exclamation-triangle-fill" style="color:#b45309"></i>',
-                 info:'<i class="bi bi-info-circle-fill" style="color:#2563eb"></i>'};
-    el.innerHTML=`<div class="toast-icon" style="background:${type==='success'?'rgba(5,150,105,.1)':type==='error'?'rgba(190,18,60,.1)':type==='warn'?'rgba(180,83,9,.1)':'rgba(37,99,235,.1)'}">
-      ${icons[type]||icons.info}</div><span>${msg}</span>`;
+    const ic={success:'✅',error:'❌',warn:'⚠️',info:'ℹ️'};
+    const bg={success:'rgba(5,150,105,.1)',error:'rgba(190,18,60,.1)',warn:'rgba(180,83,9,.1)',info:'rgba(37,99,235,.1)'};
+    el.innerHTML=`<div class="toast-ic" style="background:${bg[type]||bg.info}">${ic[type]||ic.info}</div><span>${msg}</span>`;
     stack.appendChild(el);
-    setTimeout(()=>el.remove(),3500);
+    setTimeout(()=>el.remove(),3600);
   }
 
-  /* ─────────── LOGOUT ─────────── */
   function doLogout(){
     document.getElementById('logoutOverlay').classList.add('show');
-    setTimeout(()=>{
-      localStorage.clear();
-      window.location.href='index.html';
-    },2000);
+    setTimeout(()=>{localStorage.clear();window.location.href='index.html';},2000);
   }
 
-  /* ─────────── INIT ─────────── */
   async function initFaculty(){
     if(!faculty_id||!venue||!facultyName||!batch){
       alert('Unauthorized! Please login again.');
       window.location.href='index.html';return;
     }
-
     document.getElementById('wName').textContent=`Welcome, ${facultyName}`;
-    document.getElementById('wVenue').querySelector('span').textContent=venue;
-    document.getElementById('wBatch').querySelector('span').textContent=`Batch: ${batch}`;
+    document.getElementById('wVenueTxt').textContent=venue;
+    document.getElementById('wBatchTxt').textContent=`Batch: ${batch}`;
 
     const lockData=await postData('getLockStatus',{batch});
     locked=(lockData.status==='Closed');
     if(locked) document.getElementById('lockMsg').classList.add('show');
 
-    const studentRes=await postData('getStudents',{venue,batch});
-    students=(Array.isArray(studentRes)?studentRes:[]).map(s=>({
+    const res=await postData('getStudents',{venue,batch});
+    students=(Array.isArray(res)?res:[]).map(s=>({
       teamId:s.teamid||'',
       s1Id:s.student1_id||'',s1Name:s.student1_name||'',
       s2Id:s.student2_id||'',s2Name:s.student2_name||'',
       dept:s.dept||'',title:s.title||''
     }));
 
+    /* FIX 4: Fetch existing marks on load */
     existingMarks=await postData('getFacultyMarks',{faculty_id,batch});
+    savedCount=Array.isArray(existingMarks)?existingMarks.length:0;
 
-    /* Stat: count existing saved marks */
-    savedCount=existingMarks.length;
-
-    /* Total unique students */
-    const allStudents=[];
-    students.forEach(s=>{if(s.s1Name)allStudents.push(s.s1Id);if(s.s2Name)allStudents.push(s.s2Id);});
-    document.getElementById('sTotalStudents').textContent=allStudents.length||'—';
-    document.getElementById('sSaved').textContent=savedCount;
-    document.getElementById('sPending').textContent=Math.max(0,allStudents.length-savedCount)||'—';
+    const allIds=[];
+    students.forEach(s=>{if(s.s1Name)allIds.push(s.s1Id);if(s.s2Name)allIds.push(s.s2Id);});
+    totalStudents=allIds.length;
     const teams=[...new Set(students.map(s=>s.teamId))];
+
+    document.getElementById('sTotalStudents').textContent=totalStudents||'—';
+    document.getElementById('sSaved').textContent=savedCount;
+    document.getElementById('sPending').textContent=Math.max(0,totalStudents-savedCount)||'—';
     document.getElementById('sTeams').textContent=teams.length||'—';
 
     populateDropdown(teams);
-
-    /* Search */
-    document.getElementById('studentSearch').addEventListener('input',filterRows);
   }
 
-  /* ─────────── DROPDOWN ─────────── */
+  /* FIX 3: Only Team ID, no "Team " prefix */
   function populateDropdown(teams){
     const sel=document.getElementById('teamSelect');
-    sel.innerHTML=`<option value="">— Choose a Team ID —</option>`;
+    sel.innerHTML=`<option value="">— Choose Team ID —</option>`;
     teams.forEach(t=>{
       const o=document.createElement('option');
-      o.value=t;o.textContent=`Team ${t}`;
+      o.value=t; o.textContent=t;  /* raw ID only */
       sel.appendChild(o);
     });
     sel.onchange=handleTeamChange;
   }
 
-  /* ─────────── TEAM CHANGE ─────────── */
   function handleTeamChange(){
     const val=document.getElementById('teamSelect').value;
-    const tbody=document.getElementById('tableBody');
-    tbody.innerHTML='';
-
-    if(!val){document.getElementById('tableSection').style.display='none';
-              document.getElementById('progressCard').classList.remove('show');return;}
-
-    document.getElementById('activeTeamTitle').textContent=`Team ${val}`;
+    document.getElementById('tableBody').innerHTML='';
+    if(!val){
+      document.getElementById('tableSection').style.display='none';
+      document.getElementById('progressCard').classList.remove('show');
+      return;
+    }
+    document.getElementById('activeTeamTitle').textContent=val;
     document.getElementById('tableSection').style.display='block';
-
     students.filter(s=>s.teamId===val).forEach(st=>{
-      if(st.s1Name) tbody.appendChild(makeRow(st.teamId,st.s1Id,st.s1Name,st.dept,st.title));
-      if(st.s2Name) tbody.appendChild(makeRow(st.teamId,st.s2Id,st.s2Name,st.dept,st.title));
+      if(st.s1Name) document.getElementById('tableBody').appendChild(makeRow(st.teamId,st.s1Id,st.s1Name,st.dept,st.title));
+      if(st.s2Name) document.getElementById('tableBody').appendChild(makeRow(st.teamId,st.s2Id,st.s2Name,st.dept,st.title));
     });
-
     updateProgress();
     document.getElementById('progressCard').classList.add('show');
-    toast(`Loaded Team ${val}`,'info');
+    toast(`Loaded ${val}`,'info');
   }
 
-  /* ─────────── UPDATE STATS ─────────── */
   function updateStats(){
     document.getElementById('sSaved').textContent=savedCount;
-    const total=parseInt(document.getElementById('sTotalStudents').textContent)||0;
-    document.getElementById('sPending').textContent=Math.max(0,total-savedCount)||'—';
+    document.getElementById('sPending').textContent=Math.max(0,totalStudents-savedCount)||'—';
   }
 
   function updateProgress(){
@@ -873,102 +595,108 @@
     document.getElementById('progPct').textContent=pct+'%';
   }
 
-  /* ─────────── MAKE ROW ─────────── */
+  /* FIX 4: makeRow pre-fills existing marks & shows Saved button */
   function makeRow(team_id,student_id,student_name,dept,title){
-    const existing=existingMarks.find(m=>String(m.student_id).trim()===String(student_id).trim());
-    const tr=document.createElement('tr');
-    if(existing) tr.classList.add('row-saved');
+    const ex=Array.isArray(existingMarks)
+      ? existingMarks.find(m=>String(m.student_id).trim()===String(student_id).trim())
+      : null;
+    const isExisting=!!ex;
 
-    /* initials */
+    const tr=document.createElement('tr');
+    if(isExisting) tr.classList.add('row-saved');
+
     const initials=student_name.trim().split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
 
     tr.innerHTML=`
-      <td data-label="Team ID"><div class="team-tag"><i class="bi bi-people-fill"></i>${team_id}</div></td>
+      <td data-label="Team ID"><div class="team-tag"><i class="bi bi-tag-fill"></i>${team_id}</div></td>
       <td data-label="Student Name">
         <div class="name-wrap">
           <div class="name-av">${initials}</div>
           <div class="name-text">${student_name}</div>
         </div>
       </td>
-      <td data-label="Department">${dept}</td>
-      <td data-label="Project Title"><div class="title-wrap" title="${title}">${title}</div></td>
-      <td data-label="Problem Statement / Theme (10)" class="th-sep-col"></td>
+      <td data-label="Department"><div>${dept}</div></td>
+      <td data-label="Project Title"><div class="title-wrap" title="${title}">${title||'—'}</div></td>
+      <td data-label="Problem Statement / Theme (10)"></td>
       <td data-label="Methodology / Solution (10)"></td>
       <td data-label="Pictorial / Scientific (10)"></td>
       <td data-label="Queries (10)"></td>
-      <td data-label="Confidence (30)" class="th-sep-col"></td>
+      <td data-label="Confidence (30)"></td>
       <td data-label="Communication (30)"></td>
       <td data-label="Total"><span class="total-chip">—</span></td>
       <td data-label="Action"></td>
     `;
 
-    /* Build selects */
-    const l1v=existing?[existing.l1_1,existing.l1_2,existing.l1_3,existing.l1_4].map(v=>Number(v)||0):[];
-    const l2v=existing?[existing.l2_1,existing.l2_2].map(v=>Number(v)||0):[];
+    /* Pre-fill existing values */
+    const l1v=ex?[ex.l1_1,ex.l1_2,ex.l1_3,ex.l1_4].map(v=>Number(v)||0):[];
+    const l2v=ex?[ex.l2_1,ex.l2_2].map(v=>Number(v)||0):[];
 
     const cells=tr.querySelectorAll('td');
-    const mkSel=(cls,map,val)=>{
+
+    function mkSel(cls,map,val){
       const s=document.createElement('select');
-      s.className=`mk-sel ${cls}`;
-      if(locked) s.classList.add('locked-sel');
+      s.className='mk-sel '+cls;
       const blank=document.createElement('option');blank.textContent='---';s.appendChild(blank);
-      Object.keys(map).forEach(k=>{
-        const o=document.createElement('option');o.textContent=k;s.appendChild(o);
-      });
+      Object.keys(map).forEach(k=>{const o=document.createElement('option');o.textContent=k;s.appendChild(o);});
       if(val!==undefined){
         const key=Object.keys(map).find(k=>map[k]===val);
-        if(key) s.value=key;
+        if(key){s.value=key;s.classList.add('prefilled');}
       }
+      if(locked) s.disabled=true;
       return s;
-    };
+    }
 
     const sels=[
-      mkSel('lvl1',level1Marks,l1v[0]),mkSel('lvl1',level1Marks,l1v[1]),
-      mkSel('lvl1',level1Marks,l1v[2]),mkSel('lvl1',level1Marks,l1v[3]),
-      mkSel('lvl2',level2Marks,l2v[0]),mkSel('lvl2',level2Marks,l2v[1]),
+      mkSel('lvl1',L1,l1v[0]),mkSel('lvl1',L1,l1v[1]),
+      mkSel('lvl1',L1,l1v[2]),mkSel('lvl1',L1,l1v[3]),
+      mkSel('lvl2',L2,l2v[0]),mkSel('lvl2',L2,l2v[1]),
     ];
     [4,5,6,7,8,9].forEach((ci,i)=>cells[ci].appendChild(sels[i]));
 
-    /* Save button */
     const btn=document.createElement('button');
     btn.className='btn-save';
-    btn.innerHTML='<i class="bi bi-save2-fill"></i> Save';
-    if(existing){ btn.classList.add('saved-state'); btn.innerHTML='<i class="bi bi-check-circle-fill"></i> Saved'; }
+    if(isExisting){
+      btn.classList.add('saved-state');
+      btn.innerHTML='<i class="bi bi-check-circle-fill"></i> Saved';
+    } else {
+      btn.innerHTML='<i class="bi bi-save2-fill"></i> Save';
+    }
     cells[11].appendChild(btn);
 
-    calcTotal(tr);
+    calcTotal(tr,ex);
 
-    if(locked){ btn.disabled=true; sels.forEach(s=>s.disabled=true); }
-    else btn.onclick=()=>doSave(tr,team_id,student_id,student_name,dept,btn);
+    if(!locked) btn.onclick=()=>doSave(tr,team_id,student_id,student_name,dept,btn);
+    else btn.disabled=true;
 
     sels.forEach(s=>s.addEventListener('change',()=>{
-      calcTotal(tr);
-      s.classList.add('dirty');
+      calcTotal(tr,null);
+      s.classList.remove('prefilled');s.classList.add('dirty');
       btn.classList.remove('saved-state');
       btn.innerHTML='<i class="bi bi-save2-fill"></i> Save';
-      btn.style.background='';
       tr.classList.remove('row-saved');
     }));
 
     return tr;
   }
 
-  function calcTotal(tr){
-    const l1=Array.from(tr.querySelectorAll('.lvl1')).map(s=>level1Marks[s.value]||0);
-    const l2=Array.from(tr.querySelectorAll('.lvl2')).map(s=>level2Marks[s.value]||0);
+  function calcTotal(tr,ex){
+    if(ex&&ex.total==='Absent'){
+      const c=tr.querySelector('.total-chip');c.textContent='Absent';c.classList.add('absent');return;
+    }
+    const l1=Array.from(tr.querySelectorAll('.lvl1')).map(s=>L1[s.value]||0);
+    const l2=Array.from(tr.querySelectorAll('.lvl2')).map(s=>L2[s.value]||0);
     const tot=l1.reduce((a,b)=>a+b,0)+l2.reduce((a,b)=>a+b,0);
-    const chip=tr.querySelector('.total-chip');
-    chip.classList.remove('absent','full');
-    if(tot===100){chip.textContent='100';chip.classList.add('full');}
-    else if(tot>0){chip.textContent=tot;}
-    else{chip.textContent='—';}
+    const c=tr.querySelector('.total-chip');
+    c.classList.remove('absent','full');
+    if(tot===100){c.textContent='100';c.classList.add('full');}
+    else if(tot>0){c.textContent=tot;}
+    else{c.textContent='—';}
   }
 
-  /* ─────────── SAVE ─────────── */
   async function doSave(tr,team_id,student_id,student_name,dept,btn){
     const sels=tr.querySelectorAll('select');
-    const l1=Array.from(tr.querySelectorAll('.lvl1')).map(s=>level1Marks[s.value]);
-    const l2=Array.from(tr.querySelectorAll('.lvl2')).map(s=>level2Marks[s.value]);
+    const l1=Array.from(tr.querySelectorAll('.lvl1')).map(s=>L1[s.value]);
+    const l2=Array.from(tr.querySelectorAll('.lvl2')).map(s=>L2[s.value]);
     const allEmpty=[...sels].every(s=>s.value==='---');
     const anyEmpty=[...sels].some(s=>s.value==='---');
     let total;
@@ -979,14 +707,13 @@
       await postData('saveMarks',{faculty_id,team_id,student_id,batch,student_name,dept,venue,
         l1_1:0,l1_2:0,l1_3:0,l1_4:0,l2_1:0,l2_2:0,total:'Absent'});
     } else if(anyEmpty){
-      toast('Please fill all mark fields before saving!','warn');return;
+      toast('Please fill all mark fields!','warn');return;
     } else {
       total=l1.reduce((a,b)=>a+b,0)+l2.reduce((a,b)=>a+b,0);
       await postData('saveMarks',{faculty_id,team_id,student_id,batch,student_name,dept,venue,
         l1_1:l1[0],l1_2:l1[1],l1_3:l1[2],l1_4:l1[3],l2_1:l2[0],l2_2:l2[1],total});
     }
 
-    /* UI feedback */
     const chip=tr.querySelector('.total-chip');
     chip.classList.remove('absent','full');
     if(total==='Absent'){chip.textContent='Absent';chip.classList.add('absent');}
@@ -995,33 +722,26 @@
     btn.classList.add('saved-state');
     btn.innerHTML='<i class="bi bi-check-circle-fill"></i> Saved';
     tr.classList.add('row-saved');
-    tr.querySelectorAll('.dirty').forEach(s=>s.classList.remove('dirty'));
+    tr.querySelectorAll('.dirty').forEach(s=>{s.classList.remove('dirty');s.classList.add('prefilled');});
 
-    savedCount++;
-    updateStats();
-    updateProgress();
+    /* Update local cache so re-selecting team reflects saved marks */
+    if(!Array.isArray(existingMarks)) existingMarks=[];
+    const idx=existingMarks.findIndex(m=>String(m.student_id).trim()===String(student_id).trim());
+    const entry={student_id,l1_1:l1[0]||0,l1_2:l1[1]||0,l1_3:l1[2]||0,l1_4:l1[3]||0,l2_1:l2[0]||0,l2_2:l2[1]||0,total};
+    if(idx>=0) existingMarks[idx]=entry;
+    else { existingMarks.push(entry); savedCount++; }
 
-    toast(total==='Absent'?`${student_id} marked Absent`:`Saved! ${student_id} — Total: ${total}`
-          ,total==='Absent'?'warn':'success');
+    updateStats(); updateProgress();
+    toast(total==='Absent'?`${student_id} → Absent`:`Saved! ${student_id} · Total: ${total}`,
+          total==='Absent'?'warn':'success');
   }
 
-  /* ─────────── SAVE ALL VISIBLE ─────────── */
   async function saveAllVisible(){
-    const btns=document.querySelectorAll('#tableBody .btn-save:not(.saved-state):not(:disabled)');
-    if(!btns.length){toast('All visible rows already saved!','info');return;}
-    for(const btn of btns){ btn.click(); await new Promise(r=>setTimeout(r,200)); }
+    const btns=[...document.querySelectorAll('#tableBody .btn-save:not(.saved-state):not(:disabled)')];
+    if(!btns.length){toast('All rows already saved!','info');return;}
+    for(const b of btns){b.click();await new Promise(r=>setTimeout(r,350));}
   }
 
-  /* ─────────── FILTER ─────────── */
-  function filterRows(){
-    const q=document.getElementById('studentSearch').value.toLowerCase();
-    document.querySelectorAll('#tableBody tr').forEach(tr=>{
-      const txt=tr.textContent.toLowerCase();
-      tr.style.display=txt.includes(q)?'':'none';
-    });
-  }
-
-  /* ─────────── EXPAND / COLLAPSE (mobile) ─────────── */
   function expandAll(){
     document.querySelectorAll('#tableBody tr').forEach(tr=>tr.style.display='');
     toast('All rows visible','info');
