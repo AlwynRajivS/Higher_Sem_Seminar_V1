@@ -51,7 +51,7 @@
     .h-logo{width:38px;height:38px;background:linear-gradient(135deg,var(--deep),var(--sky));border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:900;color:white;box-shadow:0 4px 12px rgba(26,107,255,.3);flex-shrink:0;}
     .h-title{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--royal);}
     .h-sub{font-size:10px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;margin-top:1px;}
-    .h-right{display:flex;align-items:center;gap:12px;}
+    .h-right{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
     .batch-tabs{display:flex;gap:4px;background:var(--ice);border-radius:10px;padding:4px;}
     .batch-tab{padding:5px 16px;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:.2s;color:var(--muted);background:transparent;}
     .batch-tab.active{background:white;color:var(--royal);box-shadow:0 2px 8px rgba(0,47,163,.12);}
@@ -96,7 +96,8 @@
     .kpi-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-top:4px;}
 
     /* NAV TABS */
-    .nav-tabs-wrap{position:relative;z-index:1;background:white;border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:2px;overflow-x:auto;}
+    .nav-tabs-wrap{position:relative;z-index:1;background:white;border-bottom:1px solid var(--border);padding:0 32px;display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .nav-tabs-wrap::-webkit-scrollbar{display:none;}
     .nav-tab{padding:14px 18px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:.2s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
     .nav-tab:hover{color:var(--royal);}
     .nav-tab.active{color:var(--sky);border-bottom-color:var(--sky);}
@@ -125,8 +126,8 @@
     .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;}
 
     /* TABLE */
-    .track-table-wrap{border-radius:14px;overflow:hidden;border:1px solid var(--border);}
-    .track-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+    .track-table-wrap{border-radius:14px;overflow:hidden;border:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .track-table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:700px;}
     .track-table thead th{background:var(--royal);color:white;padding:11px 14px;text-align:left;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;font-weight:600;white-space:nowrap;}
     .track-table tbody tr{border-bottom:1px solid var(--border);transition:background .15s;}
     .track-table tbody tr:last-child{border-bottom:none;}
@@ -149,7 +150,7 @@
 
     /* SEARCH */
     .search-wrap{position:relative;}
-    .search-wrap input{width:220px;padding:8px 12px 8px 34px;border:1.5px solid var(--border);border-radius:9px;background:var(--ice);color:#1a2540;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:.2s;}
+    .search-wrap input{width:100%;min-width:160px;padding:8px 12px 8px 34px;border:1.5px solid var(--border);border-radius:9px;background:var(--ice);color:#1a2540;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;transition:.2s;}
     .search-wrap input:focus{border-color:var(--sky);background:white;box-shadow:0 0 0 3px rgba(26,107,255,.1);}
     .search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.35;}
 
@@ -187,7 +188,7 @@
     .s-success{background:rgba(0,199,122,.10);border:1px solid rgba(0,199,122,.28);color:#005f38;}
     .s-error{background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.22);color:#a00;}
     .s-info{background:rgba(26,107,255,.07);border:1px solid rgba(26,107,255,.18);color:var(--royal);}
-    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(0,25,70,.95);color:white;padding:12px 24px;border-radius:100px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(10px);z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;}
+    #toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(0,25,70,.95);color:white;padding:12px 24px;border-radius:100px;font-size:13px;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(10px);z-index:9999;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;pointer-events:none;display:flex;align-items:center;gap:8px;max-width:90vw;text-align:center;}
     #toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
     /* FACULTY GRID */
@@ -232,7 +233,7 @@
     .vc-stat-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--royal);}
     .vc-stat-lab{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:2px;}
     .vc-fac-list{margin-top:12px;display:flex;flex-direction:column;gap:7px;}
-    .vc-fac-row{display:flex;align-items:center;justify-content:space-between;background:var(--ice);border-radius:9px;padding:8px 11px;}
+    .vc-fac-row{display:flex;align-items:center;justify-content:space-between;background:var(--ice);border-radius:9px;padding:8px 11px;flex-wrap:wrap;gap:6px;}
     .vc-fac-id{font-size:11px;font-weight:700;color:var(--royal);}
     .vc-fac-prog-txt{font-size:10px;color:var(--muted);}
     .pending-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,71,87,.08);color:#a00;border:1px solid rgba(255,71,87,.22);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:600;}
@@ -251,13 +252,85 @@
     .empty-state .es-title{font-size:16px;font-weight:600;color:var(--royal);margin-bottom:6px;}
     .empty-state .es-sub{font-size:13px;}
 
+    /* =============================================
+       MOBILE RESPONSIVE — IMPROVED
+    ============================================= */
     @media(max-width:768px){
-      header{padding:0 14px;}
+      /* Header */
+      header{padding:0 12px;height:56px;gap:8px;}
       .h-sub,.admin-chip{display:none;}
-      .content{padding:14px 12px 40px;}
+      .h-title{font-size:15px;}
+      .h-logo{width:32px;height:32px;font-size:13px;}
+      .batch-tab{padding:4px 10px;font-size:11px;}
+      .refresh-btn{padding:6px 10px;font-size:11px;}
+      .refresh-btn span{display:none;}
+      .btn-logout{padding:6px 10px;font-size:11px;}
+      .btn-logout svg{display:none;}
+
+      /* Hero */
+      .hero{padding:16px 14px 14px;}
+      .hero-heading{font-size:18px;}
+      .hero-inner{gap:10px;}
+      .hero-inner > div:last-child{width:100%;display:flex;gap:8px;}
+      .hero-inner > div:last-child > div{flex:1;}
+
+      /* KPI Strip — 2 columns */
       .kpi-strip{grid-template-columns:repeat(2,1fr);}
-      .hero{padding:20px 16px 18px;}
-      .hero-heading{font-size:20px;}
+      .kpi-cell{padding:12px 10px;border-right:1px solid var(--border);}
+      .kpi-cell:nth-child(even){border-right:none;}
+      .kpi-val{font-size:20px;}
+      .kpi-icon{font-size:14px;margin-bottom:3px;}
+
+      /* Nav tabs */
+      .nav-tabs-wrap{padding:0 8px;}
+      .nav-tab{padding:10px 12px;font-size:11.5px;}
+
+      /* Content */
+      .content{padding:12px 10px 40px;}
+
+      /* Grids → single column */
+      .g2,.g3{grid-template-columns:1fr;}
+      .faculty-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+      .venue-grid{grid-template-columns:1fr;}
+
+      /* Cards */
+      .card{padding:16px 14px;border-radius:14px;}
+      .card-head{margin-bottom:12px;padding-bottom:10px;}
+
+      /* Venue cards */
+      .vc-stats{gap:6px;}
+      .vc-stat-val{font-size:16px;}
+      .vc-stat{padding:6px;}
+
+      /* Section head */
+      .section-head{flex-direction:column;align-items:flex-start;}
+      .section-head > div:last-child{width:100%;}
+      .section-head .search-wrap{width:100%;}
+      .section-head .search-wrap input{width:100%;min-width:unset;}
+      .section-head select{width:100%;}
+
+      /* Faculty summary row */
+      #facultySummaryRow{flex-direction:column;}
+
+      /* Donut layout */
+      .donut-wrap{flex-direction:column;align-items:flex-start;gap:12px;}
+
+      /* Progress labels */
+      .prog-label{flex-wrap:wrap;}
+
+      /* Logout popup */
+      .logout-popup{padding:32px 24px 28px;}
+      .lp-title{font-size:22px;}
+      .lp-btns{flex-direction:column;}
+    }
+
+    @media(max-width:480px){
+      .pl-logo{font-size:48px;}
+      .kpi-strip{grid-template-columns:repeat(2,1fr);}
+      .hero-heading{font-size:16px;}
+      .faculty-grid{grid-template-columns:1fr 1fr;}
+      .fc-name{font-size:11px;}
+      .venue-card{padding:14px 12px;}
     }
   </style>
 </head>
@@ -304,7 +377,7 @@
     </div>
     <button class="refresh-btn" id="refreshBtn" onclick="loadDashboard()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-      Refresh
+      <span>Refresh</span>
     </button>
     <div class="admin-chip">Administrator</div>
     <button class="btn-logout" onclick="openLogout()">
@@ -350,13 +423,13 @@
 <div class="nav-tabs-wrap">
   <button class="nav-tab active" onclick="showPanel('overview',this)">📊 Overview</button>
   <button class="nav-tab" onclick="showPanel('faculty',this)">
-    👨‍🏫 Faculty Tracking <span class="nav-badge" id="badgeFacultyPending">0</span>
+    👨‍🏫 Faculty <span class="nav-badge" id="badgeFacultyPending">0</span>
   </button>
   <button class="nav-tab" onclick="showPanel('venue',this)">
-    🏛️ Venue Tracking <span class="nav-badge amber" id="badgeVenuePending">0</span>
+    🏛️ Venue <span class="nav-badge amber" id="badgeVenuePending">0</span>
   </button>
   <button class="nav-tab" onclick="showPanel('pending',this)">
-    ⏳ Pending Students <span class="nav-badge" id="badgePendingStudents">0</span>
+    ⏳ Pending <span class="nav-badge" id="badgePendingStudents">0</span>
   </button>
   <button class="nav-tab" onclick="showPanel('manage',this)">⚙️ Manage</button>
   <button class="nav-tab" onclick="showPanel('reports',this)">📄 Reports</button>
@@ -399,12 +472,12 @@
         <div class="section-title">Faculty Mark Entry Tracking</div>
         <div class="section-sub">Source: Faculty sheet (who's assigned) vs Scores sheet (who entered). 2 faculty per venue.</div>
       </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-        <div class="search-wrap">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%;">
+        <div class="search-wrap" style="flex:1;min-width:160px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" placeholder="Search faculty ID or name…" id="facultySearch" oninput="filterFaculty()">
         </div>
-        <select id="facultyFilter" onchange="filterFaculty()" style="width:auto;padding:8px 12px;font-size:12px;">
+        <select id="facultyFilter" onchange="filterFaculty()" style="width:auto;min-width:140px;padding:8px 12px;font-size:12px;">
           <option value="all">All Status</option>
           <option value="done">✅ Completed</option>
           <option value="partial">⚡ Partial</option>
@@ -438,8 +511,8 @@
         <div class="section-title">Pending Mark Entries</div>
         <div class="section-sub">Students in Students sheet with no entry in Scores sheet yet</div>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-        <div class="search-wrap">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;">
+        <div class="search-wrap" style="flex:1;min-width:160px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" placeholder="Search student…" id="pendingSearch" oninput="filterPending()">
         </div>
@@ -450,7 +523,7 @@
     <div class="card" style="padding:0;overflow:hidden;">
       <div class="track-table-wrap" style="border-radius:18px;border:none;">
         <table class="track-table">
-          <thead><tr><th>#</th><th>Student ID</th><th>Student Name</th><th>Team</th><th>Department</th><th>Venue</th><th>Faculty 1</th><th>Faculty 2</th><th>Status</th></tr></thead>
+          <thead><tr><th>#</th><th>Student ID</th><th>Student Name</th><th>Team</th><th>Dept</th><th>Venue</th><th>Faculty 1</th><th>Faculty 2</th><th>Status</th></tr></thead>
           <tbody id="pendingTableBody">
             <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--muted);">Loading…</td></tr>
           </tbody>
@@ -543,29 +616,27 @@
    GLOBAL STATE
 ═══════════════════════════════════════════ */
 let currentBatch = 'FN';
-let allStudents  = [];   // Students sheet
-let allScores    = [];   // Scores sheet (no Batch col — backend filters by batch)
-let allFacultyDB = [];   // Faculty sheet (Faculty_ID, Name, Role, Venue, Batch) — only Role=Faculty
+let allStudents  = [];
+let allScores    = [];
+let allFacultyDB = [];
 let pendingAll   = [];
 
 const colors = ['#1a6bff','#00c77a','#ff4757','#ffa600','#7c5cfc','#00c8c8','#ff6b8a','#003fa3'];
 
-/* ─ Helpers ─ */
 function $id(id){ return document.getElementById(id); }
 function norm(v){ return String(v??'').trim(); }
 
-/* ─ Loader / Logout ─ */
+/* Loader / Logout */
 function hidePageLoader(){ $id('pageLoader').classList.add('hide'); }
 function openLogout()    { $id('logoutOverlay').classList.add('active'); }
 function closeLogout()   { $id('logoutOverlay').classList.remove('active'); }
 function doLogout()      { localStorage.clear(); window.location.href='index.html'; }
 $id('logoutOverlay').addEventListener('click',function(e){ if(e.target===this) closeLogout(); });
 
-/* ─ Init ─ */
 $id('heroDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 document.addEventListener('DOMContentLoaded', ()=>{ loadDashboard(); });
 
-/* ─ UI Helpers ─ */
+/* UI Helpers */
 function showToast(msg,dur=3200){
   const t=$id('toast'); t.innerHTML=msg; t.classList.add('show');
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur);
@@ -592,9 +663,6 @@ function switchBatch(batch,btn){
 
 /* ═══════════════════════════════════════════
    LOAD DASHBOARD
-   ─ getStudents    : filtered by batch (Students sheet)
-   ─ getMarks       : filtered by batch (Scores sheet — backend uses Batch col it stores)
-   ─ getFacultyList : NEW backend action → returns Faculty sheet rows for this batch
 ═══════════════════════════════════════════ */
 async function loadDashboard(){
   $id('refreshBtn').classList.add('spinning');
@@ -607,7 +675,7 @@ async function loadDashboard(){
       postData('getLockStatus',  {batch:'AN'})
     ]);
 
-    /* ── Students ── */
+    /* Students */
     allStudents = (Array.isArray(studRaw)?studRaw:[]).map(s=>({
       TeamID:        norm(s.TeamID||s.teamid||s.team_id),
       Student1_ID:   norm(s.Student1_ID||s.student1_id),
@@ -619,7 +687,7 @@ async function loadDashboard(){
       Batch:         norm(s.Batch||s.batch)
     }));
 
-    /* ── Scores (already batch-filtered by backend) ── */
+    /* Scores */
     allScores = (Array.isArray(scoresRaw)?scoresRaw:(scoresRaw?.data||[])).map(m=>({
       Faculty_ID:            norm(m.Faculty_ID||m.faculty_id),
       Student_ID:            norm(m.Student_ID||m.student_id),
@@ -635,7 +703,7 @@ async function loadDashboard(){
       Total:                 m.Total??m.total??0
     }));
 
-    /* ── Faculty DB (only Role=Faculty) ── */
+    /* Faculty DB */
     allFacultyDB = (Array.isArray(facRaw)?facRaw:[])
       .map(f=>({
         Faculty_ID: norm(f.Faculty_ID||f.faculty_id),
@@ -646,7 +714,7 @@ async function loadDashboard(){
       }))
       .filter(f=>f.Role.toLowerCase()==='faculty');
 
-    /* ── Lock status ── */
+    /* Lock status */
     const lFN=norm(lockFN?.status||'Open'), lAN=norm(lockAN?.status||'Open');
     $id('heroLockFN').textContent=lFN==='Open'?'🔓 Open':'🔒 Locked';
     $id('heroLockFN').style.color=lFN==='Open'?'#00ff8a':'#ff7777';
@@ -675,10 +743,26 @@ function computeAndRender(){
     if(t.Student2_ID) studentList.push({id:t.Student2_ID,name:t.Student2_Name,team:t.TeamID,dept:t.Dept,venue:t.Venue});
   });
 
-  /* Entered IDs from Scores */
+  /* ── FIX: Present = unique Student IDs in Scores (not marked absent) ── */
   const enteredIDs = new Set(allScores.map(m=>m.Student_ID).filter(Boolean));
-  const absentCnt  = allScores.filter(m=>norm(String(m.Total)).toLowerCase()==='absent').length;
-  const presentCnt = allScores.filter(m=>m.Student_ID && norm(String(m.Total)).toLowerCase()!=='absent').length;
+
+  /* Unique student IDs that have a score entry (any entry = "present in system") */
+  const uniqueEnteredStudents = new Set(allScores.map(m=>m.Student_ID).filter(Boolean));
+
+  /* Absent = unique students whose Total is 'absent' (case-insensitive) */
+  const absentStudentIDs = new Set(
+    allScores
+      .filter(m=>m.Student_ID && norm(String(m.Total)).toLowerCase()==='absent')
+      .map(m=>m.Student_ID)
+  );
+
+  /* Present = unique students entered but NOT marked absent */
+  const presentStudentIDs = new Set(
+    [...uniqueEnteredStudents].filter(sid=>!absentStudentIDs.has(sid))
+  );
+
+  const absentCnt  = absentStudentIDs.size;
+  const presentCnt = presentStudentIDs.size;  // ← FIX: unique student count, not entry count
 
   /* Venues & depts */
   const venues=[...new Set(studentList.map(s=>s.venue).filter(Boolean))];
@@ -696,8 +780,8 @@ function computeAndRender(){
     venueAssignedMap[f.Venue].push(f.Faculty_ID);
   });
 
-  /* Faculty_ID → entered student count (from Scores sheet) */
-  const facEnteredMap={};  // { fid: Set<student_id> }
+  /* Faculty_ID → entered student IDs set */
+  const facEnteredMap={};
   allScores.forEach(m=>{
     if(!m.Faculty_ID) return;
     if(!facEnteredMap[m.Faculty_ID]) facEnteredMap[m.Faculty_ID]=new Set();
@@ -721,8 +805,8 @@ function computeAndRender(){
 
   /* ── KPIs ── */
   animateCount($id('kTotal'),   studentList.length);
-  animateCount($id('kPresent'), presentCnt);
-  animateCount($id('kAbsent'),  absentCnt);
+  animateCount($id('kPresent'), presentCnt);   // ← FIX: unique student count
+  animateCount($id('kAbsent'),  absentCnt);    // ← FIX: unique student count
   animateCount($id('kPending'), pendingAll.length);
   animateCount($id('kVenues'),  venues.length);
   animateCount($id('kFaculty'), allFacultyDB.length);
@@ -741,11 +825,11 @@ function computeAndRender(){
   $id('badgePendingStudents').textContent=pendingAll.length;
 
   /* Render */
-  renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMap);
+  renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMap,absentStudentIDs,presentStudentIDs);
   window._allFacData=facData;
   renderFacultySummaryRow(facData);
   renderFacultyCards(facData);
-  renderVenueTracking(studentList,enteredIDs,facData,venueTotalMap,venueAssignedMap);
+  renderVenueTracking(studentList,enteredIDs,facData,venueTotalMap,venueAssignedMap,absentStudentIDs);
   renderPendingStudents(pendingAll,venueAssignedMap);
   populateDeptDropdown(depts);
   populatePendingDeptFilter(depts);
@@ -755,7 +839,7 @@ function computeAndRender(){
 /* ═══════════════════════════════════════════
    OVERVIEW
 ═══════════════════════════════════════════ */
-function renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMap){
+function renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMap,absentStudentIDs,presentStudentIDs){
   const total=studentList.length, entered=enteredIDs.size;
   const pct=total?Math.round(entered/total*100):0;
 
@@ -765,9 +849,10 @@ function renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMa
         <div class="donut-inner">${pct}%</div>
       </div>
       <div class="donut-legend">
-        <div class="dl-item"><div class="dl-dot" style="background:#00c77a"></div>${entered} entries submitted</div>
-        <div class="dl-item"><div class="dl-dot" style="background:#ff4757"></div>${total-entered} students pending</div>
-        <div class="dl-item"><div class="dl-dot" style="background:#eef4ff;border:1px solid #ccc"></div>${total} total enrolled</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#00c77a"></div>${presentStudentIDs.size} students present</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#ff4757"></div>${absentStudentIDs.size} students absent</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#eef4ff;border:1px solid #ccc"></div>${total-entered} students pending entry</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#1a6bff"></div>${total} total enrolled</div>
       </div>
     </div>
     <div class="prog-label"><span>Overall Entry Completion</span><span>${pct}%</span></div>
@@ -798,7 +883,7 @@ function renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMa
   $id('overviewFacultyAll').innerHTML=facData.length===0
     ?'<div style="font-size:13px;color:var(--muted);">No faculty data yet</div>'
     :facData.map(f=>`
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:4px;">
         <div>
           <div style="font-size:12px;font-weight:600;color:var(--royal);">${f.Faculty_ID} <span style="font-weight:400;color:var(--muted);font-size:11px;">${f.Name}</span></div>
           <div style="font-size:10px;color:var(--muted);">${f.Venue} · ${f.entered}/${f.target} entries</div>
@@ -810,7 +895,7 @@ function renderOverview(studentList,enteredIDs,depts,venues,facData,venueTotalMa
   $id('overviewFacultyNone').innerHTML=noneList.length===0
     ?'<div style="font-size:13px;color:#006b45;padding:10px 0;">🎉 All faculty have started!</div>'
     :noneList.map(f=>`
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:4px;">
         <div>
           <div style="font-size:12px;font-weight:600;color:var(--royal);">${f.Faculty_ID} <span style="font-weight:400;color:var(--muted);font-size:11px;">${f.Name}</span></div>
           <div style="font-size:10px;color:var(--muted);">${f.Venue} · 0/${f.target} entries</div>
@@ -856,7 +941,7 @@ function renderFacultyCards(data){
     const barCol =f.status==='done'?'linear-gradient(90deg,#00c77a,#00aaff)':f.status==='partial'?'linear-gradient(90deg,#ffa600,#ff6b2b)':'linear-gradient(90deg,#ff4757,#ff6b8a)';
     const col=colors[f.colorIdx];
     const init=(f.Faculty_ID||'?').substring(0,2).toUpperCase();
-    const partnerHtml=f.partners&&f.partners.length?`<div class="fc-partner">🤝 Partner: ${f.partners.join(', ')}</div>`:'';
+    const partnerHtml=f.partners&&f.partners.length?`<div class="fc-partner">🤝 ${f.partners.join(', ')}</div>`:'';
     return`<div class="faculty-card ${cardCls}">
       <div class="fc-top">
         <div style="display:flex;gap:10px;align-items:flex-start;">
@@ -892,54 +977,73 @@ function filterFaculty(){
 }
 
 /* ═══════════════════════════════════════════
-   VENUE TRACKING
+   VENUE TRACKING — FIX: "pending" label + partial venue status when 1 faculty not started
 ═══════════════════════════════════════════ */
-function renderVenueTracking(studentList,enteredIDs,facData,venueTotalMap,venueAssignedMap){
+function renderVenueTracking(studentList,enteredIDs,facData,venueTotalMap,venueAssignedMap,absentStudentIDs){
   const venues=[...new Set(studentList.map(s=>s.venue).filter(Boolean))];
   $id('venueGrid').innerHTML=venues.map(v=>{
     const vStu=studentList.filter(s=>s.venue===v);
     const vEnt=vStu.filter(s=>enteredIDs.has(s.id));
-    const vAbs=vStu.filter(s=>{ const m=allScores.find(m=>m.Student_ID===s.id); return m&&norm(String(m.Total)).toLowerCase()==='absent'; });
-    const vPres=vEnt.length-vAbs.length;
+
+    /* ── FIX: Absent = unique student IDs at this venue that are marked absent ── */
+    const vAbsCnt=vStu.filter(s=>absentStudentIDs.has(s.id)).length;
+    /* Present = entered but not absent */
+    const vPresCnt=vStu.filter(s=>enteredIDs.has(s.id)&&!absentStudentIDs.has(s.id)).length;
     const vPend=vStu.length-vEnt.length;
+
     const pct=vStu.length?Math.round(vEnt.length/vStu.length*100):0;
     const depts=[...new Set(vStu.map(s=>s.dept).filter(Boolean))];
 
     const assignedFac=facData.filter(f=>f.Venue===v);
+
+    /* ── FIX: Venue card status — done only if ALL faculty done AND all entries complete ── */
     const allFacDone=assignedFac.length>0&&assignedFac.every(f=>f.status==='done');
-    const statusCls=allFacDone?'vc-done':vEnt.length>0?'vc-partial':'vc-none';
+    const anyFacStarted=assignedFac.some(f=>f.status!=='none');
+    const statusCls=allFacDone&&vPend===0?'vc-done':anyFacStarted||vEnt.length>0?'vc-partial':'vc-none';
 
     const facRows=assignedFac.map(f=>{
       const pc=f.status==='done'?'pill-green':f.status==='partial'?'pill-amber':'pill-red';
-      const lbl=f.status==='done'?'Done':f.status==='partial'?'Partial':'Pending';
+      const lbl=f.status==='done'?'Done':f.status==='partial'?'Partial':'Not Started';  /* FIX: was "bending" → "Not Started" */
       const barC=f.status==='done'?'#00c77a':f.status==='partial'?'#ffa600':'#ff4757';
       return`<div class="vc-fac-row">
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="vc-fac-id">${f.Faculty_ID} <span style="font-weight:400;font-size:10px;color:var(--muted);">${f.Name}</span></div>
-          <div class="vc-fac-prog-txt">${f.entered} of ${f.target} entries done (${f.pct}%)</div>
+          <div class="vc-fac-prog-txt">${f.entered} of ${f.target} entries · ${f.pct}%</div>
         </div>
-        <div style="display:flex;align-items:center;gap:7px;">
-          <div style="width:50px;height:5px;background:#eef4ff;border-radius:10px;overflow:hidden;"><div style="width:${f.pct}%;height:100%;background:${barC};border-radius:10px;"></div></div>
+        <div style="display:flex;align-items:center;gap:7px;flex-shrink:0;">
+          <div style="width:44px;height:5px;background:#eef4ff;border-radius:10px;overflow:hidden;">
+            <div style="width:${f.pct}%;height:100%;background:${barC};border-radius:10px;"></div>
+          </div>
           <span class="pill ${pc}" style="font-size:9px;">${lbl}</span>
         </div>
       </div>`;
     }).join('');
 
+    /* ── FIX: Show per-faculty pending info when venue not fully done ── */
+    const notStartedFac=assignedFac.filter(f=>f.status==='none');
+    const alertHtml=notStartedFac.length>0
+      ?`<div style="margin-top:8px;padding:8px 10px;background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.2);border-radius:8px;font-size:11px;color:#a00;font-weight:600;">
+          ⚠️ ${notStartedFac.map(f=>f.Faculty_ID).join(', ')} ha${notStartedFac.length>1?'ve':'s'} not started entry yet
+        </div>`:'';
+
     return`<div class="venue-card ${statusCls}">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;flex-wrap:wrap;gap:6px;">
         <div class="vc-name">${v}</div>
         <span class="pill ${pct===100?'pill-green':pct>0?'pill-amber':'pill-red'}">${pct}%</span>
       </div>
-      <div class="vc-meta">🎓 ${depts.join(', ')||'—'} &nbsp;·&nbsp; 👨‍🏫 ${assignedFac.length} faculty</div>
+      <div class="vc-meta">🎓 ${depts.join(', ')||'—'} &nbsp;·&nbsp; 👨‍🏫 ${assignedFac.length} faculty assigned</div>
       <div class="vc-stats">
         <div class="vc-stat"><div class="vc-stat-val">${vStu.length}</div><div class="vc-stat-lab">Total</div></div>
-        <div class="vc-stat" style="background:rgba(0,199,122,.08);"><div class="vc-stat-val" style="color:#006b45;">${vPres}</div><div class="vc-stat-lab">Present</div></div>
-        <div class="vc-stat" style="background:rgba(255,71,87,.07);"><div class="vc-stat-val" style="color:#a00;">${vAbs.length}</div><div class="vc-stat-lab">Absent</div></div>
+        <div class="vc-stat" style="background:rgba(0,199,122,.08);"><div class="vc-stat-val" style="color:#006b45;">${vPresCnt}</div><div class="vc-stat-lab">Present</div></div>
+        <div class="vc-stat" style="background:rgba(255,71,87,.07);"><div class="vc-stat-val" style="color:#a00;">${vAbsCnt}</div><div class="vc-stat-lab">Absent</div></div>
       </div>
       <div class="prog-label"><span>Entry Progress</span><span>${vEnt.length}/${vStu.length}</span></div>
       <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${pct===100?'#00c77a':pct>60?'#ffa600':'#ff4757'}"></div></div>
       ${assignedFac.length?`<div style="margin-top:10px;font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Faculty Status</div><div class="vc-fac-list">${facRows}</div>`:''}
-      ${vPend>0?`<div style="margin-top:10px;"><span class="pending-badge">⏳ ${vPend} students pending</span></div>`:`<div style="margin-top:10px;font-size:11px;color:#006b45;font-weight:600;">🎉 All entries complete!</div>`}
+      ${alertHtml}
+      ${vPend>0
+        ?`<div style="margin-top:10px;"><span class="pending-badge">⏳ ${vPend} student${vPend>1?'s':''} pending entry</span></div>`
+        :`<div style="margin-top:10px;font-size:11px;color:#006b45;font-weight:600;">🎉 All entries complete!</div>`}
     </div>`;
   }).join('')||`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🏛️</div><div class="es-title">No Venue Data</div></div>`;
 }
@@ -986,7 +1090,7 @@ function populatePendingDeptFilter(depts){ const sel=$id('pendingDeptFilter');se
 function populatePendingVenueFilter(venues){ const sel=$id('pendingVenueFilter');sel.innerHTML='<option value="all">All Venues</option>';venues.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);}); }
 
 /* ═══════════════════════════════════════════
-   LOCK / UNLOCK (ORIGINAL)
+   LOCK / UNLOCK
 ═══════════════════════════════════════════ */
 async function toggleLock(status){
   const batch=$id('batchSelect').value;
@@ -998,7 +1102,7 @@ async function toggleLock(status){
 }
 
 /* ═══════════════════════════════════════════
-   UPLOAD (ORIGINAL)
+   UPLOAD
 ═══════════════════════════════════════════ */
 function downloadStaticTemplate(type){
   let csv=type==='student'
@@ -1026,7 +1130,7 @@ async function uploadSheet(inputId,functionName){
 }
 
 /* ═══════════════════════════════════════════
-   PDF/CSV REPORTS — ALL ORIGINAL LOGIC
+   PDF/CSV REPORTS
 ═══════════════════════════════════════════ */
 function addPageNumbers(doc){
   const pc=doc.internal.getNumberOfPages(),pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
