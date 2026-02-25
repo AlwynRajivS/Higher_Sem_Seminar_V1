@@ -177,17 +177,42 @@
       /* Compact topbar */
       .topbar{padding:0 14px;height:56px;}
       .brand-text small{display:none;}
-      .brand-text strong{font-size:12px;}
-      .brand-icon{width:32px;height:32px;font-size:14px;border-radius:9px;}
-      .clock-pill{display:none;}  /* hide clock — space constraint */
-      .btn-logout{padding:6px 11px;font-size:11px;}
+      .brand-text strong{font-size:13px;}
+      .brand-icon{width:33px;height:33px;font-size:15px;border-radius:9px;}
+      .clock-pill{display:none;}
+      .btn-logout{padding:7px 12px;font-size:12px;border-radius:14px;gap:5px;}
+      .btn-logout i{font-size:13px;}
 
       .main{padding:12px 12px 70px;}
-      .welcome-banner{padding:14px 16px;border-radius:14px;gap:10px;}
-      .w-avatar{width:38px;height:38px;font-size:17px;border-radius:10px;}
-      .w-name{font-size:13px;}
-      .w-role{font-size:10px;}
-      .w-pill{font-size:10px;padding:4px 10px;}
+
+      /* Welcome banner: stack vertically, pills scroll horizontally */
+      .welcome-banner{
+        padding:18px 18px 14px;border-radius:14px;
+        flex-direction:column;align-items:flex-start;gap:0;
+      }
+      .welcome-left{gap:12px;width:100%;margin-bottom:14px;}
+      .w-avatar{
+        width:50px;height:50px;font-size:22px;border-radius:14px;
+        background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.35);
+        box-shadow:0 4px 14px rgba(0,0,0,.15);
+      }
+      .w-name{font-size:16px;font-weight:700;line-height:1.2;}
+      .w-role{font-size:12px;margin-top:3px;color:rgba(255,255,255,.7);}
+      /* Pills: horizontal scroll strip */
+      .welcome-pills{
+        width:100%;display:flex;flex-wrap:nowrap;
+        overflow-x:auto;-webkit-overflow-scrolling:touch;
+        gap:8px;padding-bottom:4px;
+        scrollbar-width:none;
+      }
+      .welcome-pills::-webkit-scrollbar{display:none;}
+      .w-pill{
+        font-size:12px;font-weight:600;padding:7px 14px;
+        white-space:nowrap;flex-shrink:0;
+        background:rgba(255,255,255,.16);
+        border:1.5px solid rgba(255,255,255,.28);
+        border-radius:20px;
+      }
 
       .stat-grid{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
       .stat-card{padding:13px;}
@@ -346,7 +371,7 @@
         <div class="w-avatar"><i class="bi bi-person-workspace"></i></div>
         <div style="min-width:0;">
           <div class="w-name" id="wName">Loading…</div>
-          <div class="w-role">Panel Member · Mark Entry Session</div>
+          <div class="w-role" id="wRole">Panel Member · Mark Entry</div>
         </div>
       </div>
       <div class="welcome-pills">
@@ -627,22 +652,31 @@
       <td data-label="Action"></td>
     `;
 
-    /* Pre-fill existing values */
-    const l1v=ex?[ex.l1_1,ex.l1_2,ex.l1_3,ex.l1_4].map(v=>Number(v)||0):[];
-    const l2v=ex?[ex.l2_1,ex.l2_2].map(v=>Number(v)||0):[];
+    /* Pre-fill existing values
+       CRITICAL FIX: use null (not 0) for "no data" so we can distinguish
+       a stored 0 (Absent sub-score) from "never saved" */
+    const l1v = ex
+      ? [ex.l1_1, ex.l1_2, ex.l1_3, ex.l1_4].map(v => (v !== undefined && v !== null && v !== '') ? Number(v) : null)
+      : [null, null, null, null];
+    const l2v = ex
+      ? [ex.l2_1, ex.l2_2].map(v => (v !== undefined && v !== null && v !== '') ? Number(v) : null)
+      : [null, null];
 
     const cells=tr.querySelectorAll('td');
 
-    function mkSel(cls,map,val){
-      const s=document.createElement('select');
-      s.className='mk-sel '+cls;
-      const blank=document.createElement('option');blank.textContent='---';s.appendChild(blank);
-      Object.keys(map).forEach(k=>{const o=document.createElement('option');o.textContent=k;s.appendChild(o);});
-      if(val!==undefined){
-        const key=Object.keys(map).find(k=>map[k]===val);
-        if(key){s.value=key;s.classList.add('prefilled');}
+    function mkSel(cls, map, val){
+      const s = document.createElement('select');
+      s.className = 'mk-sel ' + cls;
+      const blank = document.createElement('option'); blank.textContent = '---'; s.appendChild(blank);
+      Object.keys(map).forEach(k => {
+        const o = document.createElement('option'); o.textContent = k; s.appendChild(o);
+      });
+      /* Only pre-fill when val is a real number (not null) */
+      if(val !== null && val !== undefined){
+        const key = Object.keys(map).find(k => map[k] === val);
+        if(key){ s.value = key; s.classList.add('prefilled'); }
       }
-      if(locked) s.disabled=true;
+      if(locked) s.disabled = true;
       return s;
     }
 
@@ -727,7 +761,13 @@
     /* Update local cache so re-selecting team reflects saved marks */
     if(!Array.isArray(existingMarks)) existingMarks=[];
     const idx=existingMarks.findIndex(m=>String(m.student_id).trim()===String(student_id).trim());
-    const entry={student_id,l1_1:l1[0]||0,l1_2:l1[1]||0,l1_3:l1[2]||0,l1_4:l1[3]||0,l2_1:l2[0]||0,l2_2:l2[1]||0,total};
+    const entry={
+      student_id,
+      l1_1:(l1&&l1[0]!=null?l1[0]:0),l1_2:(l1&&l1[1]!=null?l1[1]:0),
+      l1_3:(l1&&l1[2]!=null?l1[2]:0),l1_4:(l1&&l1[3]!=null?l1[3]:0),
+      l2_1:(l2&&l2[0]!=null?l2[0]:0),l2_2:(l2&&l2[1]!=null?l2[1]:0),
+      total
+    };
     if(idx>=0) existingMarks[idx]=entry;
     else { existingMarks.push(entry); savedCount++; }
 
