@@ -297,6 +297,67 @@
     .t-error{border-left:3px solid var(--rose);}
     .t-warn{border-left:3px solid var(--amber);}
     .t-info{border-left:3px solid var(--blue);}
+    /* ================= LOADING OVERLAY ================= */
+.loading-overlay{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(135deg,#0d1526,#1e3a5f);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:5000;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+
+.loading-overlay.hide{
+  opacity:0;
+  visibility:hidden;
+}
+
+.loading-box{
+  text-align:center;
+  color:white;
+}
+
+.loader-spinner{
+  width:65px;
+  height:65px;
+  border:6px solid rgba(255,255,255,.2);
+  border-top:6px solid #22d3ee;
+  border-radius:50%;
+  margin:0 auto 20px;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  100%{ transform:rotate(360deg); }
+}
+
+.loading-title{
+  font-size:18px;
+  font-weight:600;
+}
+
+.progress-wrap{
+  width:280px;
+  height:8px;
+  background:rgba(255,255,255,.2);
+  border-radius:20px;
+  margin:18px auto 10px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#22d3ee,#3b82f6);
+  transition:width .4s ease;
+}
+
+.progress-text{
+  font-size:14px;
+  font-weight:600;
+}
     @keyframes toastIn{from{opacity:0;transform:translateX(24px);}to{opacity:1;transform:translateX(0);}}
     @keyframes toastOut{from{opacity:1;}to{opacity:0;transform:translateX(24px);}}
 
@@ -305,7 +366,17 @@
   </style>
 </head>
 <body onload="initFaculty()">
-
+<!-- ================= LOADING OVERLAY ================= -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-box">
+    <div class="loader-spinner"></div>
+    <div class="loading-title">Loading Panel Data...</div>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text"><span id="progressPercent">0</span>%</div>
+  </div>
+</div>
   <header class="topbar">
     <div class="brand">
       <div class="brand-icon"><i class="bi bi-clipboard2-data-fill"></i></div>
@@ -480,43 +551,81 @@
     localStorage.clear();
     window.location.href='index.html';
   }
+/* ================= LOADING FUNCTIONS ================= */
 
-  async function initFaculty(){
-    if(!faculty_id||!venue||!facultyName||!batch){
-      alert('Unauthorized! Please login again.');
-      window.location.href='index.html';return;
-    }
-    document.getElementById('wName').textContent=`Welcome, ${facultyName}`;
-    document.getElementById('wVenueTxt').textContent=venue;
-    document.getElementById('wBatchTxt').textContent=`Batch: ${batch}`;
+function startLoading(){
+  document.getElementById("loadingOverlay").classList.remove("hide");
+  updateProgress(5);
+}
 
-    const lockData=await postData('getLockStatus',{batch});
-    locked=(lockData.status==='Closed');
-    if(locked) document.getElementById('lockMsg').classList.add('show');
+function updateProgress(value){
+  document.getElementById("progressBar").style.width = value + "%";
+  document.getElementById("progressPercent").innerText = value;
+}
 
-    const res=await postData('getStudents',{venue,batch});
-    students=(Array.isArray(res)?res:[]).map(s=>({
-      teamId:s.teamid||'',
-      s1Id:s.student1_id||'',s1Name:s.student1_name||'',
-      s2Id:s.student2_id||'',s2Name:s.student2_name||'',
-      dept:s.dept||'',title:s.title||''
-    }));
+function finishLoading(){
+  updateProgress(100);
+  setTimeout(()=>{
+    document.getElementById("loadingOverlay").classList.add("hide");
+  },600);
+}
+ async function initFaculty(){
 
-    existingMarks=await postData('getFacultyMarks',{faculty_id,batch});
-    savedCount=Array.isArray(existingMarks)?existingMarks.length:0;
+  startLoading();
 
-    const allIds=[];
-    students.forEach(s=>{if(s.s1Name)allIds.push(s.s1Id);if(s.s2Name)allIds.push(s.s2Id);});
-    totalStudents=allIds.length;
-    const teams=[...new Set(students.map(s=>s.teamId))];
-
-    document.getElementById('sTotalStudents').textContent=totalStudents||'—';
-    document.getElementById('sSaved').textContent=savedCount;
-    document.getElementById('sPending').textContent=Math.max(0,totalStudents-savedCount)||'—';
-    document.getElementById('sTeams').textContent=teams.length||'—';
-
-    populateDropdown(teams);
+  if(!faculty_id||!venue||!facultyName||!batch){
+    alert('Unauthorized! Please login again.');
+    window.location.href='index.html';
+    return;
   }
+
+  updateProgress(15);
+
+  document.getElementById('wName').textContent=`Welcome, ${facultyName}`;
+  document.getElementById('wVenueTxt').textContent=venue;
+  document.getElementById('wBatchTxt').textContent=`Batch: ${batch}`;
+
+  updateProgress(30);
+
+  const lockData=await postData('getLockStatus',{batch});
+  locked=(lockData.status==='Closed');
+  if(locked) document.getElementById('lockMsg').classList.add('show');
+
+  updateProgress(50);
+
+  const res=await postData('getStudents',{venue,batch});
+  students=(Array.isArray(res)?res:[]).map(s=>({
+    teamId:s.teamid||'',
+    s1Id:s.student1_id||'',s1Name:s.student1_name||'',
+    s2Id:s.student2_id||'',s2Name:s.student2_name||'',
+    dept:s.dept||'',title:s.title||''
+  }));
+
+  updateProgress(70);
+
+  existingMarks=await postData('getFacultyMarks',{faculty_id,batch});
+  savedCount=Array.isArray(existingMarks)?existingMarks.length:0;
+
+  updateProgress(85);
+
+  const allIds=[];
+  students.forEach(s=>{
+    if(s.s1Name)allIds.push(s.s1Id);
+    if(s.s2Name)allIds.push(s.s2Id);
+  });
+  totalStudents=allIds.length;
+  const teams=[...new Set(students.map(s=>s.teamId))];
+
+  document.getElementById('sTotalStudents').textContent=totalStudents||'—';
+  document.getElementById('sSaved').textContent=savedCount;
+  document.getElementById('sPending').textContent=Math.max(0,totalStudents-savedCount)||'—';
+  document.getElementById('sTeams').textContent=teams.length||'—';
+
+  populateDropdown(teams);
+
+  updateProgress(100);
+  finishLoading();
+}
 
   function populateDropdown(teams){
     const sel=document.getElementById('teamSelect');
@@ -717,3 +826,4 @@
 </script>
 </body>
 </html>
+
