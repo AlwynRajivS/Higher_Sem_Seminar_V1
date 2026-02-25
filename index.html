@@ -14,38 +14,31 @@ body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
     height:100vh;
-    background:linear-gradient(135deg,#ffffff,#e6f2ff,#cce6ff);
     display:flex;
     align-items:center;
     justify-content:center;
+    background:linear-gradient(135deg,#e6f2ff,#ffffff);
     overflow:hidden;
 }
 
-/* Blue Glow Background */
-body::before{
-    content:"";
-    position:absolute;
-    width:600px;
-    height:600px;
-    background:radial-gradient(circle,#007bff55,transparent);
-    border-radius:50%;
-    animation:float 6s infinite alternate ease-in-out;
+/* Particle Background */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1;
 }
 
-@keyframes float{
-    from{transform:translate(-120px,-120px);}
-    to{transform:translate(120px,120px);}
-}
-
+/* Glassmorphism Card */
 .login-box{
-    background:#ffffff;
-    padding:40px;
-    width:380px;
-    border-radius:20px;
-    box-shadow:0 20px 50px rgba(0,0,0,0.15);
+    backdrop-filter:blur(18px);
+    background:rgba(255,255,255,0.65);
+    border-radius:25px;
+    padding:45px;
+    width:400px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.2);
     text-align:center;
     animation:fadeIn 1s ease;
-    z-index:1;
 }
 
 @keyframes fadeIn{
@@ -53,104 +46,92 @@ body::before{
     to{opacity:1; transform:translateY(0);}
 }
 
+/* Typing Animation */
 .kcet-title{
-    font-size:32px;
+    font-size:34px;
     font-weight:800;
     color:#003366;
+    height:45px;
+    overflow:hidden;
+    white-space:nowrap;
+    border-right:3px solid #007bff;
+    animation:typing 2.5s steps(10), blink .7s infinite;
+}
+
+@keyframes typing{
+    from{width:0}
+    to{width:100%}
+}
+
+@keyframes blink{
+    50%{border-color:transparent}
 }
 
 .system-title{
-    font-size:18px;
+    font-size:17px;
     font-weight:600;
     color:#007bff;
     margin-bottom:25px;
 }
 
-.input-group{
-    margin:15px 0;
-}
-
-.form-control{
-    height:45px;
-    border-radius:10px;
-}
-
+/* 3D Button */
 .btn-login{
-    background:linear-gradient(90deg,#007bff,#0056b3);
-    border:none;
+    background:linear-gradient(90deg,#007bff,#0047ab);
     color:white;
     height:45px;
+    border:none;
+    border-radius:12px;
     font-weight:600;
-    border-radius:10px;
     transition:0.3s;
+    box-shadow:0 6px #002f6c;
 }
 
 .btn-login:hover{
-    transform:scale(1.05);
+    transform:translateY(3px);
+    box-shadow:0 3px #002f6c;
 }
 
-/* Full Screen Success Animation */
 .success-screen{
     position:fixed;
     top:0;
     left:0;
     width:100%;
     height:100%;
-    background:linear-gradient(135deg,#003366,#007bff,#66b3ff);
+    background:linear-gradient(135deg,#003366,#007bff);
     display:flex;
     align-items:center;
     justify-content:center;
     flex-direction:column;
     color:white;
-    font-size:28px;
+    font-size:26px;
     font-weight:600;
     z-index:999;
     opacity:0;
     visibility:hidden;
-    transition:0.5s;
+    transition:.5s;
 }
 
 .success-screen.active{
     opacity:1;
     visibility:visible;
 }
-
-.loader{
-    margin-top:20px;
-    width:200px;
-    height:6px;
-    background:white;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.loader span{
-    display:block;
-    height:100%;
-    width:0;
-    background:#ffdd00;
-    animation:load 2.5s forwards;
-}
-
-@keyframes load{
-    to{width:100%;}
-}
-
 </style>
 </head>
 
 <body>
 
+<canvas id="particles"></canvas>
+
 <div class="login-box">
     <div class="kcet-title">KCET</div>
     <div class="system-title">Seminar Mark Management System</div>
 
-    <div class="input-group">
+    <div class="input-group mb-3">
         <span class="input-group-text"><i class="bi bi-person"></i></span>
         <input id="faculty_id" class="form-control" placeholder="Faculty ID">
     </div>
 
-    <div class="input-group">
+    <div class="input-group mb-3">
         <span class="input-group-text"><i class="bi bi-lock"></i></span>
         <input id="password" type="password" class="form-control" placeholder="Password">
         <span class="input-group-text" onclick="togglePassword()" style="cursor:pointer;">
@@ -158,38 +139,31 @@ body::before{
         </span>
     </div>
 
-    <button class="btn-login w-100 mt-3" onclick="login()">
-        <i class="bi bi-box-arrow-in-right"></i> Login
-    </button>
-
+    <button class="btn-login w-100" onclick="login()">Login</button>
     <div id="msg" class="mt-3 fw-semibold"></div>
 </div>
 
-<!-- Animated Fullscreen -->
 <div class="success-screen" id="successScreen">
-    <div>Welcome to KCET 👋</div>
-    <div style="font-size:20px;margin-top:10px;">
-        Loading Dashboard...
-    </div>
-    <div class="loader"><span></span></div>
+    Welcome to KCET Portal 👋<br>
+    Loading Dashboard...
 </div>
 
 <script>
+/* Password Toggle */
 function togglePassword(){
     const pass=document.getElementById("password");
     const eye=document.getElementById("eyeIcon");
 
     if(pass.type==="password"){
         pass.type="text";
-        eye.classList.remove("bi-eye");
-        eye.classList.add("bi-eye-slash");
+        eye.classList.replace("bi-eye","bi-eye-slash");
     }else{
         pass.type="password";
-        eye.classList.remove("bi-eye-slash");
-        eye.classList.add("bi-eye");
+        eye.classList.replace("bi-eye-slash","bi-eye");
     }
 }
 
+/* Login */
 async function login(){
     const id=document.getElementById("faculty_id").value.trim();
     const password=document.getElementById("password").value.trim();
@@ -197,18 +171,20 @@ async function login(){
 
     if(!id || !password){
         msg.style.color="red";
-        msg.innerText="Please enter Faculty ID & Password";
+        msg.innerText="Enter Faculty ID & Password";
         return;
     }
-
-    msg.style.color="#007bff";
-    msg.innerText="Verifying...";
 
     const res=await postData("login",{id,password});
 
     if(res.status==="success"){
-        localStorage.setItem("faculty_name",res.faculty_name);
+
+        /* STORE ALL DATA to avoid Unauthorized error */
+        localStorage.setItem("faculty_id",res.faculty_id);
+        localStorage.setItem("venue",res.venue);
         localStorage.setItem("role",res.role);
+        localStorage.setItem("faculty_name",res.faculty_name);
+        localStorage.setItem("batch",res.batch);
 
         document.getElementById("successScreen").classList.add("active");
 
@@ -216,13 +192,46 @@ async function login(){
             if(res.role==="Admin") window.location="admin.html";
             else if(res.role==="VenueIncharge") window.location="venue_incharge.html";
             else window.location="faculty.html";
-        },2500);
+        },2000);
 
     }else{
         msg.style.color="red";
         msg.innerText="Invalid Credentials ❌";
     }
 }
+
+/* Simple Particle Animation */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<80;i++){
+    particles.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        r:Math.random()*2+1,
+        dx:(Math.random()-0.5)*1,
+        dy:(Math.random()-0.5)*1
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="#007bff";
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fill();
+        p.x+=p.dx;
+        p.y+=p.dy;
+        if(p.x<0||p.x>canvas.width) p.dx*=-1;
+        if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    });
+    requestAnimationFrame(animate);
+}
+animate();
 </script>
 
 </body>
