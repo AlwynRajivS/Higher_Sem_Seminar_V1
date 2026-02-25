@@ -185,9 +185,9 @@
           <th>Student Name</th>
           <th>Dept</th>
           <th>Venue</th>
-          <th>Level I - Self-Introduction</th>
-          <th>Level I - Presentation</th>
-          <th>Level I - Content</th>
+          <th>Level I - Problem Statement/Theme</th>
+          <th>Level I - Methodology/Proposed Solution</th>
+          <th>Level I - Pictorial/Scientific Explanation</th>
           <th>Level I - Response</th>
           <th>Level II - Determination</th>
           <th>Level II - Communication</th>
@@ -262,9 +262,9 @@ function addPageNumbers(doc) {
           <td data-label="Student Name">${m.Student_Name || ""}</td>
           <td data-label="Dept">${m.Dept || ""}</td>
           <td data-label="Venue">${m.Venue || ""}</td>
-          <td data-label="Level I - Introduction">${m.LevelI_Self_Introduction || 0}</td>
-          <td data-label="Level I - Presentation">${m.LevelI_Presentation || 0}</td>
-          <td data-label="Level I - Content">${m.LevelI_Content || 0}</td>
+          <td data-label="Level I - Problem Statement/Theme">${m.LevelI_Problem || 0}</td>
+          <td data-label="Level I - Methodology/Proposed Solution">${m.LevelI_Methodology  || 0}</td>
+          <td data-label="Level I - Pictorial/Scientific Explanation">${m.LevelI_Pictorial || 0}</td>
           <td data-label="Level I - Response">${m.LevelI_Response || 0}</td>
           <td data-label="Level II - Determination">${m.LevelII_Determination || 0}</td>
           <td data-label="Level II - Communication">${m.LevelII_Communication || 0}</td>
@@ -325,14 +325,14 @@ function addPageNumbers(doc) {
 
       const head = [[
         "Faculty ID", "Team ID", "Student ID", "Student Name", "Dept", "Venue",
-        "Level I - Self Introduction", "Level I - Presentation", "Level I - Content",
+        "Level I - Problem Statement/Theme", "Level I - Methodology/Proposed Solution", "Level I - Pictorial/Scientific Explanation",
         "Level I - Response", "Level II - Determination", "Level II - Communication", "Total"
       ]];
 
       const body = filtered.map(m => [
         m.Faculty_ID || "", m.TeamID || "", m.Student_ID || "", m.Student_Name || "",
-        m.Dept || "", m.Venue || "", m.LevelI_Self_Introduction || 0, m.LevelI_Presentation || 0,
-        m.LevelI_Content || 0, m.LevelI_Response || 0, m.LevelII_Determination || 0,
+        m.Dept || "", m.Venue || "", m.LevelI_Problem || 0, m.LevelI_Methodology || 0,
+        m.LevelI_Pictorial || 0, m.LevelI_Response || 0, m.LevelII_Determination || 0,
         m.LevelII_Communication || 0, m.Total || 0
       ]);
 
@@ -385,4 +385,5 @@ addPageNumbers(doc);
   </script>
 </body>
 </html>
+
 
