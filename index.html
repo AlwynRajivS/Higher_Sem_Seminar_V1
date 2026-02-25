@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Seminar Mark System - Faculty Portal</title>
+<title>KCET - Seminar Mark Management System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 :root{
   --primary:#2563eb;
-  --accent:#9333ea;
   --gold:#d4af37;
-  --bg1:#e0f2fe;
-  --bg2:#fef3c7;
-  --card:rgba(255,255,255,0.75);
-  --text:#0f172a;
-  --muted:#64748b;
   --success:#16a34a;
   --error:#dc2626;
 }
@@ -24,15 +18,15 @@
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  font-family:'Montserrat',sans-serif;
   height:100vh;
+  font-family:'Poppins',sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
   overflow:hidden;
-  background:linear-gradient(-45deg,var(--bg1),var(--bg2),#f0abfc,#bae6fd);
+  background:linear-gradient(-45deg,#0ea5e9,#9333ea,#facc15,#22c55e);
   background-size:400% 400%;
-  animation:gradientBG 15s ease infinite;
+  animation:gradientBG 18s ease infinite;
 }
 
 @keyframes gradientBG{
@@ -41,121 +35,87 @@ body{
   100%{background-position:0% 50%}
 }
 
-/* Floating Particles */
-.particle{
-  position:absolute;
-  width:6px;height:6px;
-  background:var(--gold);
-  border-radius:50%;
-  opacity:0.5;
-  animation:float 12s linear infinite;
-}
-@keyframes float{
-  from{transform:translateY(100vh)}
-  to{transform:translateY(-10vh)}
-}
-
-/* Card */
+/* Glass Card */
 .card{
-  width:420px;
-  padding:45px;
-  border-radius:25px;
-  background:var(--card);
+  width:500px;
+  padding:50px;
+  border-radius:30px;
+  background:rgba(255,255,255,0.15);
   backdrop-filter:blur(25px);
-  box-shadow:0 25px 60px rgba(0,0,0,0.2);
+  box-shadow:0 30px 60px rgba(0,0,0,0.3);
   text-align:center;
+  color:#fff;
   animation:fadeUp 1s ease;
 }
 
 @keyframes fadeUp{
-  from{opacity:0;transform:translateY(40px)}
+  from{opacity:0;transform:translateY(50px)}
   to{opacity:1;transform:translateY(0)}
 }
 
-h2{
-  font-weight:700;
-  margin-bottom:5px;
-  color:var(--text);
+/* Titles */
+.kcet{
+  font-size:42px;
+  font-weight:800;
+  letter-spacing:2px;
+  font-family:'Playfair Display',serif;
+  margin-bottom:10px;
 }
 
-.subtitle{
-  font-size:13px;
-  color:var(--muted);
+.main-title{
+  font-size:26px;
+  font-weight:600;
   margin-bottom:30px;
 }
 
+/* Inputs */
 .input-group{
-  margin-bottom:18px;
+  margin-bottom:20px;
   text-align:left;
-  position:relative;
-}
-
-.input-group label{
-  font-size:12px;
-  font-weight:500;
-  color:var(--muted);
 }
 
 .input-group input{
   width:100%;
-  padding:12px 40px 12px 12px;
-  margin-top:6px;
+  padding:14px;
   border-radius:12px;
-  border:1px solid #e2e8f0;
+  border:none;
   outline:none;
-  transition:0.3s;
-}
-
-.input-group input:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(37,99,235,0.2);
+  font-size:14px;
 }
 
 .eye{
   position:absolute;
-  right:12px;
-  top:37px;
+  right:20px;
+  margin-top:-35px;
   cursor:pointer;
-  font-size:16px;
-  color:var(--muted);
+  color:#333;
 }
 
+/* Button */
 button{
   width:100%;
   padding:14px;
   border:none;
   border-radius:14px;
-  background:linear-gradient(135deg,var(--primary),var(--accent));
-  color:#fff;
   font-weight:600;
+  background:linear-gradient(135deg,#2563eb,#9333ea);
+  color:#fff;
   cursor:pointer;
   transition:0.3s;
-  margin-top:15px;
 }
 
 button:hover{
   transform:translateY(-3px);
-  box-shadow:0 15px 30px rgba(0,0,0,0.25);
+  box-shadow:0 10px 25px rgba(0,0,0,0.3);
 }
 
 #msg{
   margin-top:15px;
-  font-size:13px;
-  min-height:18px;
+  min-height:20px;
 }
-
-/* Loader Circle */
-.loader{
-  width:60px;height:60px;
-  border-radius:50%;
-  border:6px solid rgba(255,255,255,0.4);
-  border-top:6px solid #fff;
-  animation:spin 1s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Success Screen */
-.success-screen{
+.success{
   position:fixed;
   inset:0;
   background:linear-gradient(135deg,#16a34a,#22c55e);
@@ -164,55 +124,38 @@ button:hover{
   justify-content:center;
   align-items:center;
   color:#fff;
-  font-size:22px;
-  font-weight:600;
+  font-size:28px;
   transform:scale(0);
-  transition:0.5s ease;
+  transition:0.5s;
 }
 
-.success-screen.active{
+.success.active{
   transform:scale(1);
 }
 
-.welcome-name{
-  font-size:28px;
-  margin-top:10px;
-  animation:fadeIn 1s ease;
-}
-
-@keyframes fadeIn{
-  from{opacity:0}
-  to{opacity:1}
+.logout-btn{
+  margin-top:20px;
+  padding:10px 20px;
+  background:#fff;
+  color:#000;
+  border-radius:10px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Floating particles -->
-<script>
-for(let i=0;i<25;i++){
-  const p=document.createElement("div");
-  p.className="particle";
-  p.style.left=Math.random()*100+"%";
-  p.style.animationDuration=(8+Math.random()*10)+"s";
-  p.style.opacity=Math.random();
-  document.body.appendChild(p);
-}
-</script>
-
 <div class="card">
-  <h2>Faculty Portal</h2>
-  <div class="subtitle">Seminar Mark Management System</div>
+  <div class="kcet">KCET</div>
+  <div class="main-title">Seminar Mark Management System</div>
 
   <div class="input-group">
-    <label>Faculty ID</label>
-    <input id="faculty_id" type="text">
+    <input id="faculty_id" type="text" placeholder="Faculty ID">
   </div>
 
   <div class="input-group">
-    <label>Password</label>
-    <input id="password" type="password">
+    <input id="password" type="password" placeholder="Password">
     <span class="eye" onclick="togglePassword()">👁</span>
   </div>
 
@@ -220,12 +163,9 @@ for(let i=0;i<25;i++){
   <div id="msg"></div>
 </div>
 
-<!-- Success Page -->
-<div class="success-screen" id="successPage">
-  <div class="loader"></div>
-  <div style="margin-top:20px">Authentication Successful</div>
-  <div class="welcome-name" id="welcomeName"></div>
-  <div style="font-size:14px;margin-top:8px">Redirecting to Dashboard...</div>
+<div class="success" id="successPage">
+  ✔ Login Successful  
+  <div style="font-size:16px;margin-top:10px">Welcome to KCET Portal</div>
 </div>
 
 <script>
@@ -234,29 +174,27 @@ function togglePassword(){
   pass.type = pass.type==="password"?"text":"password";
 }
 
-async function login(){
+function login(){
   const id=document.getElementById("faculty_id").value.trim();
   const pass=document.getElementById("password").value.trim();
   const msg=document.getElementById("msg");
 
   if(!id||!pass){
-    msg.style.color="red";
+    msg.style.color="yellow";
     msg.textContent="Please enter Faculty ID and Password";
     return;
   }
 
-  msg.style.color="blue";
-  msg.textContent="Verifying Credentials...";
-
+  msg.textContent="Verifying...";
+  
   setTimeout(()=>{
     document.getElementById("successPage").classList.add("active");
-    document.getElementById("welcomeName").innerText="Welcome, Prof. "+id;
 
     setTimeout(()=>{
       window.location="faculty.html";
-    },2500);
+    },2000);
 
-  },1200);
+  },1000);
 }
 </script>
 
