@@ -7,513 +7,726 @@
   <script src="common.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --ink: #0f0f14;
-      --paper: #f5f0e8;
-      --gold: #c8a95b;
-      --gold-light: #e8d49a;
-      --gold-dark: #8a6e2f;
-      --crimson: #8b1a2e;
-      --slate: #1e2a3a;
-      --muted: #6b7280;
-      --surface: rgba(255,255,255,0.65);
-      --glass-border: rgba(200,169,91,0.25);
+      --navy:      #04173a;
+      --blue-deep: #0a2f6e;
+      --blue:      #1246b5;
+      --blue-mid:  #1a5fd4;
+      --sky:       #2d8cf0;
+      --sky-lt:    #60b0ff;
+      --ice:       #dbeafe;
+      --frost:     #f0f7ff;
+      --white:     #ffffff;
+      --silver:    #94a3b8;
+      --muted:     #64748b;
+      --line:      rgba(18,70,181,0.12);
+      --success:   #059669;
+      --danger:    #dc2626;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: #0e0e16;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--frost);
       min-height: 100vh;
-      color: #e8e3d8;
+      color: var(--navy);
       overflow-x: hidden;
     }
 
-    /* ---- ANIMATED BACKGROUND ---- */
-    .bg-layer {
+    /* ── BACKGROUND ── */
+    .bg-base {
       position: fixed; inset: 0; z-index: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(200,169,91,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(139,26,46,0.10) 0%, transparent 60%),
-        radial-gradient(ellipse 100% 80% at 50% 50%, #0e0e16 40%, #12101a 100%);
+      background: linear-gradient(155deg, #ffffff 0%, #eef6ff 35%, #dbeafe 70%, #c7dfff 100%);
     }
-
+    .bg-blob {
+      position: fixed; z-index: 0; border-radius: 50%;
+      pointer-events: none;
+    }
+    .bg-blob.b1 {
+      width: 720px; height: 720px; top: -240px; right: -180px;
+      background: radial-gradient(circle, rgba(29,99,220,0.13) 0%, transparent 70%);
+      animation: blobMove 14s ease-in-out infinite;
+    }
+    .bg-blob.b2 {
+      width: 520px; height: 520px; bottom: -180px; left: -100px;
+      background: radial-gradient(circle, rgba(45,140,240,0.10) 0%, transparent 70%);
+      animation: blobMove 17s ease-in-out 4s infinite reverse;
+    }
     .bg-grid {
       position: fixed; inset: 0; z-index: 0;
       background-image:
-        linear-gradient(rgba(200,169,91,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,169,91,0.04) 1px, transparent 1px);
-      background-size: 60px 60px;
+        linear-gradient(rgba(18,70,181,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(18,70,181,0.045) 1px, transparent 1px);
+      background-size: 52px 52px;
+    }
+    .deco-ring {
+      position: fixed; z-index: 0; border-radius: 50%;
+      border: 1.5px solid rgba(18,70,181,0.07); pointer-events: none;
+    }
+    .ring1 { width: 640px; height: 640px; top: -290px; right: -160px; }
+    .ring2 { width: 400px; height: 400px; top: -80px; right: 60px; border-color: rgba(45,140,240,0.09); }
+    .ring3 { width: 820px; height: 820px; bottom: -380px; left: -220px; border-color: rgba(18,70,181,0.04); }
+
+    @keyframes blobMove {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(28px,-28px) scale(1.06); }
     }
 
-    /* ---- WRAPPER ---- */
+    /* ── WRAPPER ── */
     .page {
       position: relative; z-index: 1;
-      max-width: 1280px; margin: 0 auto;
-      padding: 0 24px 60px;
+      max-width: 1440px; margin: 0 auto;
+      padding: 0 32px 100px;
     }
 
-    /* ---- HEADER ---- */
+    /* ── HEADER ── */
     header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 28px 0 24px;
-      border-bottom: 1px solid rgba(200,169,91,0.18);
-      margin-bottom: 40px;
+      padding: 22px 0 20px;
+      border-bottom: 1.5px solid var(--line);
+      animation: slideDown 0.65s cubic-bezier(0.16,1,0.3,1) both;
     }
 
-    .brand {
-      display: flex; align-items: center; gap: 14px;
-    }
+    .brand { display: flex; align-items: center; gap: 15px; }
 
     .brand-icon {
-      width: 46px; height: 46px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      border-radius: 12px;
+      width: 50px; height: 50px;
+      background: linear-gradient(135deg, var(--blue), var(--sky));
+      border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; box-shadow: 0 4px 20px rgba(200,169,91,0.3);
+      font-size: 24px;
+      box-shadow: 0 8px 28px rgba(18,70,181,0.3), 0 0 0 4px rgba(18,70,181,0.08);
     }
 
     .brand-text h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px; font-weight: 700;
-      color: #f0ead8;
-      letter-spacing: 0.3px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 21px; font-weight: 700; color: var(--navy);
     }
 
     .brand-text p {
-      font-size: 12px; color: var(--gold); letter-spacing: 1.5px;
-      text-transform: uppercase; font-weight: 500;
+      font-size: 11px; color: var(--blue-mid);
+      letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+
+    .header-clock {
+      background: white;
+      border: 1.5px solid var(--line);
+      border-radius: 10px; padding: 8px 16px;
+      font-size: 12px; font-weight: 700; color: var(--blue);
+      letter-spacing: 0.4px;
+      box-shadow: 0 2px 10px rgba(18,70,181,0.06);
     }
 
     .logout-btn {
-      background: transparent;
-      border: 1px solid rgba(139,26,46,0.6);
-      color: #e88fa0;
-      padding: 9px 18px;
-      border-radius: 8px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px; font-weight: 500;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex; align-items: center; gap: 6px;
-      letter-spacing: 0.3px;
+      background: white;
+      border: 1.5px solid rgba(220,38,38,0.28);
+      color: var(--danger);
+      padding: 9px 20px;
+      border-radius: 10px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; gap: 7px;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(220,38,38,0.06);
     }
 
     .logout-btn:hover {
-      background: rgba(139,26,46,0.15);
-      border-color: #e88fa0;
-      color: #f5b0bf;
-      transform: none;
+      background: #fff5f5;
+      border-color: var(--danger);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(220,38,38,0.15);
     }
 
-    /* ---- WELCOME CARD ---- */
-    .welcome-card {
-      background: linear-gradient(135deg, rgba(200,169,91,0.08) 0%, rgba(200,169,91,0.03) 100%);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 24px 28px;
-      margin-bottom: 32px;
-      display: flex; align-items: center; gap: 20px;
-      backdrop-filter: blur(10px);
-      animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    /* ── VENUE HERO ── */
+    .venue-hero {
+      position: relative;
+      background: linear-gradient(130deg, var(--navy) 0%, var(--blue-deep) 42%, #1042a8 100%);
+      border-radius: 28px;
+      overflow: hidden;
+      margin: 26px 0 26px;
+      animation: slideDown 0.75s cubic-bezier(0.16,1,0.3,1) 0.07s both;
+      box-shadow: 0 24px 64px rgba(4,23,58,0.22), 0 0 0 1.5px rgba(255,255,255,0.07) inset;
     }
 
-    .welcome-avatar {
-      width: 54px; height: 54px;
-      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    .hero-orb1 {
+      position: absolute; top: -90px; right: -90px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(45,140,240,0.32) 0%, transparent 68%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-orb2 {
+      position: absolute; bottom: -70px; left: 32%;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, rgba(96,176,255,0.16) 0%, transparent 68%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .hero-pattern {
+      position: absolute; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(
+        45deg, transparent, transparent 44px,
+        rgba(255,255,255,0.016) 44px, rgba(255,255,255,0.016) 88px
+      );
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1fr auto;
+    }
+
+    /* Left side */
+    .hero-left {
+      padding: 42px 52px;
+      display: flex; flex-direction: column; gap: 22px;
+    }
+
+    .hero-eyebrow {
+      font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.42);
+      letter-spacing: 3.5px; text-transform: uppercase;
+    }
+
+    .hero-user { display: flex; align-items: center; gap: 18px; }
+
+    .hero-avatar {
+      width: 60px; height: 60px; flex-shrink: 0;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px; flex-shrink: 0;
-      box-shadow: 0 0 0 3px rgba(200,169,91,0.2);
+      font-size: 27px; backdrop-filter: blur(4px);
     }
 
-    #welcome { line-height: 1.7; }
-    #welcome .role-badge {
-      display: inline-block;
-      background: rgba(200,169,91,0.15);
-      border: 1px solid rgba(200,169,91,0.3);
-      color: var(--gold-light);
-      font-size: 11px; font-weight: 600;
-      padding: 2px 10px; border-radius: 20px;
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px; font-weight: 700; color: white;
+      line-height: 1.1;
+    }
+
+    .hero-meta {
+      font-size: 13px; color: rgba(255,255,255,0.52);
+      margin-top: 4px; display: flex; align-items: center; gap: 10px;
+    }
+
+    .meta-sep {
+      width: 3px; height: 3px; border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+    }
+
+    .hero-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .htag {
+      display: inline-flex; align-items: center; gap: 5px;
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 11px; font-weight: 700;
       letter-spacing: 0.8px; text-transform: uppercase;
-      margin-left: 8px;
     }
 
-    #welcome .venue-badge {
-      display: inline-block;
-      background: rgba(139,26,46,0.15);
-      border: 1px solid rgba(139,26,46,0.3);
-      color: #f0a0b0;
-      font-size: 11px; font-weight: 600;
-      padding: 2px 10px; border-radius: 20px;
-      letter-spacing: 0.8px; text-transform: uppercase;
-      margin-left: 8px;
+    .htag-role {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.82);
     }
 
-    #welcome .name {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-weight: 700; color: #f0ead8;
+    .htag-live {
+      background: rgba(5,150,105,0.2);
+      border: 1px solid rgba(5,150,105,0.45);
+      color: #6ee7b7;
     }
 
-    #welcome .meta {
-      font-size: 13px; color: #9a9590; margin-top: 2px;
+    .htag-live::before {
+      content: '';
+      width: 5px; height: 5px; border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
     }
 
-    /* ---- CONTROLS PANEL ---- */
-    .controls-panel {
+    /* Right side — BIG VENUE */
+    .hero-right {
+      min-width: 340px;
+      padding: 42px 52px;
+      display: flex; flex-direction: column;
+      align-items: flex-end; justify-content: center;
+      border-left: 1px solid rgba(255,255,255,0.08);
       background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 16px;
-      padding: 22px 26px;
-      margin-bottom: 32px;
-      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-      animation: slideDown 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s both;
     }
 
-    .controls-panel label {
-      font-size: 13px; font-weight: 600;
-      color: #b0aaa0; letter-spacing: 0.5px;
-      text-transform: uppercase;
+    .venue-eyebrow {
+      font-size: 10px; font-weight: 800;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 4px; text-transform: uppercase;
+      margin-bottom: 4px;
     }
 
-    .select-wrapper {
-      position: relative;
+    .venue-big {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 104px; font-weight: 700;
+      line-height: 0.88; letter-spacing: -4px;
+      background: linear-gradient(135deg, #ffffff 25%, var(--sky-lt) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 6px 28px rgba(45,140,240,0.45));
+      text-align: right;
     }
 
-    .select-wrapper::after {
-      content: '▾';
-      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-      color: var(--gold); font-size: 12px; pointer-events: none;
+    .venue-caption {
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.32);
+      letter-spacing: 3.5px; text-transform: uppercase;
+      margin-top: 12px; text-align: right;
+    }
+
+    /* ── STATS ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 18px; margin-bottom: 26px;
+      animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.13s both;
+    }
+
+    .stat-card {
+      background: white;
+      border: 1.5px solid var(--line);
+      border-radius: 18px; padding: 22px 24px;
+      box-shadow: 0 4px 20px rgba(18,70,181,0.055);
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--sky));
+      opacity: 0; transition: opacity 0.25s;
+    }
+
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 14px 38px rgba(18,70,181,0.1); border-color: rgba(18,70,181,0.22); }
+    .stat-card:hover::after { opacity: 1; }
+
+    .stat-icon {
+      width: 42px; height: 42px; border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; margin-bottom: 14px;
+    }
+
+    .si-b { background: rgba(18,70,181,0.08); }
+    .si-g { background: rgba(5,150,105,0.08); }
+    .si-a { background: rgba(217,119,6,0.08); }
+    .si-r { background: rgba(220,38,38,0.08); }
+
+    .stat-label {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--muted); font-weight: 700; margin-bottom: 5px;
+    }
+
+    .stat-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 40px; font-weight: 700; color: var(--navy); line-height: 1;
+    }
+
+    .stat-sub { font-size: 12px; color: var(--silver); margin-top: 5px; font-weight: 500; }
+
+    /* ── CONTROLS ── */
+    .controls-panel {
+      background: white;
+      border: 1.5px solid var(--line);
+      border-radius: 18px; padding: 20px 28px;
+      margin-bottom: 26px;
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+      box-shadow: 0 4px 20px rgba(18,70,181,0.055);
+      animation: slideDown 0.75s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    }
+
+    .ctrl-label {
+      font-size: 11px; font-weight: 800; color: var(--muted);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    .sel-wrap { position: relative; }
+    .sel-wrap::after {
+      content: '▾'; position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%); color: var(--blue-mid); font-size: 11px; pointer-events: none;
     }
 
     select {
       appearance: none;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(200,169,91,0.25);
-      color: #e8e3d8;
-      padding: 10px 36px 10px 14px;
+      background: var(--frost);
+      border: 1.5px solid rgba(18,70,181,0.18);
+      color: var(--navy);
+      padding: 10px 40px 10px 16px;
       border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px; font-weight: 500;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      outline: none;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px; font-weight: 600; cursor: pointer; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s; min-width: 170px;
     }
 
     select:hover, select:focus {
-      border-color: rgba(200,169,91,0.55);
-      background: rgba(200,169,91,0.06);
+      border-color: var(--blue-mid);
+      box-shadow: 0 0 0 3px rgba(18,70,181,0.1);
     }
 
-    select option { background: #1a1820; color: #e8e3d8; }
+    select option { background: white; color: var(--navy); }
 
-    .btn-group { display: flex; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+    .btn-group { display: flex; gap: 12px; margin-left: auto; flex-wrap: wrap; }
 
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px; font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      border: none; outline: none;
-      letter-spacing: 0.3px;
-      position: relative; overflow: hidden;
+      padding: 11px 22px; border-radius: 11px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s ease; border: none; outline: none;
+      letter-spacing: 0.5px; text-transform: uppercase;
     }
-
-    .btn::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: rgba(255,255,255,0);
-      transition: background 0.25s;
-    }
-
-    .btn:hover::before { background: rgba(255,255,255,0.08); }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
-      color: #0e0e16;
-      box-shadow: 0 4px 16px rgba(200,169,91,0.25);
+      background: linear-gradient(135deg, var(--blue), var(--sky));
+      color: white;
+      box-shadow: 0 6px 20px rgba(18,70,181,0.28);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(200,169,91,0.38);
-    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(18,70,181,0.38); }
 
     .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(200,169,91,0.35);
-      color: var(--gold-light);
+      background: white;
+      border: 1.5px solid var(--line);
+      color: var(--blue);
+      box-shadow: 0 4px 14px rgba(18,70,181,0.07);
     }
 
-    .btn-outline:hover {
-      transform: translateY(-1px);
-      border-color: var(--gold);
-      background: rgba(200,169,91,0.07);
-    }
+    .btn-outline:hover { transform: translateY(-2px); border-color: rgba(18,70,181,0.3); box-shadow: 0 8px 24px rgba(18,70,181,0.12); }
 
-    /* ---- STATS ROW ---- */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px; margin-bottom: 28px;
-      animation: slideDown 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both;
-    }
-
-    .stat-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 14px; padding: 18px 20px;
-      transition: border-color 0.25s, transform 0.25s;
-    }
-
-    .stat-card:hover {
-      border-color: rgba(200,169,91,0.25);
-      transform: translateY(-2px);
-    }
-
-    .stat-label {
-      font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px;
-      color: #6b6560; font-weight: 600; margin-bottom: 8px;
-    }
-
-    .stat-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 30px; font-weight: 700;
-      color: var(--gold-light);
-      line-height: 1;
-    }
-
-    .stat-sub {
-      font-size: 12px; color: #6b6560; margin-top: 4px;
-    }
-
-    /* ---- TABLE WRAPPER ---- */
+    /* ── TABLE SECTION ── */
     .table-section {
-      animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+      background: white;
+      border: 1.5px solid var(--line);
+      border-radius: 22px; overflow: hidden;
+      box-shadow: 0 8px 40px rgba(18,70,181,0.07);
+      animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.18s both;
     }
 
-    .table-header {
+    .table-topbar {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 14px;
+      padding: 22px 28px 18px;
+      border-bottom: 1.5px solid var(--line);
+      flex-wrap: wrap; gap: 14px;
     }
 
     .table-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-weight: 700; color: #f0ead8;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 700; color: var(--navy);
     }
 
-    .table-subtitle {
-      font-size: 12px; color: var(--muted); margin-top: 2px;
-    }
+    .table-sub { font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 500; }
 
-    .search-box {
-      position: relative;
-    }
+    .search-wrap { position: relative; }
 
-    .search-box input {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #e8e3d8;
-      padding: 9px 14px 9px 36px;
+    .search-wrap input {
+      background: var(--frost);
+      border: 1.5px solid var(--line); color: var(--navy);
+      padding: 10px 16px 10px 40px;
       border-radius: 10px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px; outline: none;
-      transition: border-color 0.2s;
-      width: 220px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px; font-weight: 500; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s; width: 230px;
     }
 
-    .search-box input::placeholder { color: #4a4a54; }
-    .search-box input:focus { border-color: rgba(200,169,91,0.4); }
+    .search-wrap input::placeholder { color: var(--silver); }
+    .search-wrap input:focus { border-color: var(--blue-mid); box-shadow: 0 0 0 3px rgba(18,70,181,0.1); }
 
-    .search-box .search-icon {
-      position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
-      font-size: 14px; color: #4a4a54;
+    .search-ico {
+      position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+      font-size: 15px; color: var(--silver);
     }
 
-    .table-wrap {
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.07);
-      overflow: hidden;
-      overflow-x: auto;
-    }
+    .table-scroll { overflow-x: auto; }
 
-    table {
-      width: 100%; border-collapse: collapse; min-width: 900px;
-    }
+    table { width: 100%; border-collapse: collapse; min-width: 1020px; }
 
-    thead tr {
-      background: rgba(200,169,91,0.08);
-      border-bottom: 1px solid rgba(200,169,91,0.2);
-    }
+    thead tr { background: linear-gradient(90deg, var(--navy), var(--blue-deep)); }
 
     th {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.8px;
-      color: var(--gold);
-      padding: 14px 12px;
-      text-align: center; white-space: nowrap;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.1px; color: rgba(255,255,255,0.72);
+      padding: 16px 14px; text-align: center; white-space: nowrap;
     }
+
+    th:nth-child(4) { text-align: left; }
 
     tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: background 0.15s;
+      border-bottom: 1px solid rgba(18,70,181,0.06);
+      transition: background 0.14s;
     }
 
-    tbody tr:hover { background: rgba(200,169,91,0.04); }
+    tbody tr:nth-child(even) { background: #fafcff; }
+    tbody tr:hover { background: #f2f8ff; }
     tbody tr:last-child { border-bottom: none; }
 
     td {
-      padding: 12px 12px;
-      font-size: 13px; color: #c8c4bc;
-      text-align: center;
+      padding: 13px 14px; font-size: 13px;
+      color: var(--muted); text-align: center; font-weight: 500;
     }
 
-    td:nth-child(4) { text-align: left; font-weight: 500; color: #e8e3d8; }
+    td:nth-child(4) { text-align: left; font-weight: 700; color: var(--navy); }
 
     .total-cell {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px; font-weight: 700;
-      color: var(--gold-light);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px; font-weight: 700; color: var(--blue);
     }
 
     .absent-badge {
-      background: rgba(139,26,46,0.2);
-      border: 1px solid rgba(139,26,46,0.4);
-      color: #f0a0b0;
-      padding: 2px 10px; border-radius: 20px;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.5px;
+      background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.25);
+      color: var(--danger); padding: 3px 11px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
     }
 
     .score-pill {
       display: inline-block;
-      background: rgba(200,169,91,0.1);
-      border: 1px solid rgba(200,169,91,0.2);
-      color: var(--gold-light);
-      min-width: 30px;
-      padding: 2px 8px; border-radius: 6px;
-      font-size: 13px; font-weight: 600;
+      background: rgba(18,70,181,0.07); border: 1px solid rgba(18,70,181,0.15);
+      color: var(--blue); min-width: 34px; padding: 3px 8px;
+      border-radius: 7px; font-size: 13px; font-weight: 700;
     }
 
-    /* ---- EMPTY STATE ---- */
-    .empty-state {
-      text-align: center; padding: 60px 20px;
+    .dept-tag {
+      background: rgba(45,140,240,0.08); border: 1px solid rgba(45,140,240,0.2);
+      color: var(--sky); padding: 3px 10px; border-radius: 7px;
+      font-size: 11px; font-weight: 700;
     }
 
-    .empty-icon {
-      font-size: 48px; margin-bottom: 16px;
-      opacity: 0.4;
+    .venue-tag {
+      background: rgba(4,23,58,0.07); border: 1px solid rgba(4,23,58,0.14);
+      color: var(--navy); padding: 3px 10px; border-radius: 7px;
+      font-size: 12px; font-weight: 700;
     }
 
-    .empty-state p {
-      font-size: 15px; color: #5a5a64;
-    }
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 80px 20px; }
+    .empty-ico { font-size: 54px; margin-bottom: 18px; opacity: 0.28; }
+    .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; color: var(--silver); }
 
-    /* ---- LOADING ---- */
+    /* ── LOADING OVERLAY ── */
     .loading-overlay {
-      display: none;
-      position: fixed; inset: 0; z-index: 999;
-      background: rgba(14,14,22,0.8);
-      backdrop-filter: blur(6px);
+      display: none; position: fixed; inset: 0; z-index: 998;
+      background: rgba(4,23,58,0.42); backdrop-filter: blur(9px);
       align-items: center; justify-content: center;
-      flex-direction: column; gap: 16px;
     }
-
     .loading-overlay.active { display: flex; }
-
+    .loading-box {
+      background: white; border-radius: 22px; padding: 44px 56px;
+      display: flex; flex-direction: column; align-items: center; gap: 18px;
+      box-shadow: 0 28px 70px rgba(4,23,58,0.25);
+    }
     .spinner {
-      width: 46px; height: 46px;
-      border: 3px solid rgba(200,169,91,0.15);
-      border-top-color: var(--gold);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      width: 50px; height: 50px;
+      border: 3px solid rgba(18,70,181,0.14); border-top-color: var(--blue);
+      border-radius: 50%; animation: spin 0.72s linear infinite;
     }
-
     .loading-text {
-      font-size: 14px; color: var(--gold); letter-spacing: 1px;
-      text-transform: uppercase; font-weight: 500;
+      font-size: 13px; color: var(--blue);
+      letter-spacing: 2px; text-transform: uppercase; font-weight: 800;
     }
 
-    /* ---- TOAST ---- */
+    /* ── LOGOUT OVERLAY ── */
+    .logout-overlay {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(4,23,58,0.52); backdrop-filter: blur(12px);
+      align-items: center; justify-content: center;
+    }
+    .logout-overlay.active { display: flex; }
+
+    .logout-card {
+      background: white; border-radius: 28px;
+      padding: 52px 56px; max-width: 450px; width: 90%;
+      text-align: center; position: relative; overflow: hidden;
+      box-shadow: 0 36px 90px rgba(4,23,58,0.3), 0 0 0 1.5px rgba(18,70,181,0.1) inset;
+      animation: popIn 0.38s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    .logout-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--sky));
+    }
+
+    .logout-icon {
+      width: 76px; height: 76px; margin: 0 auto 24px;
+      background: rgba(220,38,38,0.08); border: 2px solid rgba(220,38,38,0.2);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+    }
+
+    .logout-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 30px; font-weight: 700; color: var(--navy); margin-bottom: 12px;
+    }
+
+    .logout-desc {
+      font-size: 14px; color: var(--muted); line-height: 1.75;
+      margin-bottom: 36px; font-weight: 400;
+    }
+
+    .logout-btns { display: flex; gap: 14px; }
+
+    .btn-stay {
+      flex: 1; background: var(--frost);
+      border: 1.5px solid var(--line); color: var(--muted);
+      padding: 14px 20px; border-radius: 13px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.2px;
+    }
+
+    .btn-stay:hover {
+      background: #eef5ff; border-color: rgba(18,70,181,0.25); color: var(--blue);
+    }
+
+    .btn-go {
+      flex: 1;
+      background: linear-gradient(135deg, #b91c1c, #dc2626);
+      border: none; color: white;
+      padding: 14px 20px; border-radius: 13px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.2px;
+      box-shadow: 0 6px 22px rgba(220,38,38,0.3);
+    }
+
+    .btn-go:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(220,38,38,0.4); }
+
+    /* ── TOAST ── */
     .toast {
-      position: fixed; bottom: 28px; right: 28px;
-      background: #1a1820;
-      border: 1px solid rgba(200,169,91,0.3);
-      border-radius: 12px;
-      padding: 14px 20px;
+      position: fixed; bottom: 30px; right: 30px;
+      background: white; border: 1.5px solid var(--line);
+      border-radius: 14px; padding: 14px 20px;
       display: flex; align-items: center; gap: 12px;
-      font-size: 13px; color: #e8e3d8;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      transform: translateY(80px); opacity: 0;
+      font-size: 13px; color: var(--navy); font-weight: 600;
+      box-shadow: 0 12px 40px rgba(18,70,181,0.14);
+      transform: translateY(90px); opacity: 0;
       transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
-      z-index: 9999;
+      z-index: 9999; max-width: 340px;
     }
 
     .toast.show { transform: translateY(0); opacity: 1; }
-    .toast-icon { font-size: 18px; }
-    .toast-success .toast-icon { color: #6dde6d; }
-    .toast-error .toast-icon { color: #e87070; }
-    .toast-info .toast-icon { color: var(--gold); }
 
-    /* ---- ANIMATIONS ---- */
+    .toast-ico {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+
+    .toast-success .toast-ico { background: rgba(5,150,105,0.1); }
+    .toast-error   .toast-ico { background: rgba(220,38,38,0.1); }
+    .toast-info    .toast-ico { background: rgba(18,70,181,0.1); }
+
+    .toast-prog {
+      position: absolute; bottom: 0; left: 0; height: 3px;
+      border-radius: 0 0 14px 14px;
+      animation: toastProg 3.3s linear forwards;
+    }
+
+    .toast-success .toast-prog { background: var(--success); }
+    .toast-error   .toast-prog { background: var(--danger); }
+    .toast-info    .toast-prog { background: var(--blue); }
+
+    @keyframes toastProg { from { width: 100%; } to { width: 0%; } }
+
+    /* ── DIVIDER ── */
+    .sec-divider {
+      display: flex; align-items: center; gap: 16px; margin: 0 0 20px;
+    }
+    .sec-divider-line { flex: 1; height: 1.5px; background: linear-gradient(90deg, var(--line), transparent); }
+    .sec-divider-lbl { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--blue-mid); }
+
+    /* ── KEYFRAMES ── */
     @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-18px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(-22px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.5; transform: scale(0.85); }
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.86) translateY(14px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    /* ── RESPONSIVE ── */
+    @media (max-width: 920px) {
+      .hero-content { grid-template-columns: 1fr; }
+      .hero-right { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); align-items: flex-start; padding-top: 24px; }
+      .venue-big { font-size: 70px; }
+      .stats-row { grid-template-columns: repeat(2,1fr); }
     }
-
-    /* ---- DIVIDER ---- */
-    .gold-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(200,169,91,0.35), transparent);
-      margin: 28px 0;
-    }
-
-    /* ---- RESPONSIVE ---- */
-    @media (max-width: 768px) {
+    @media (max-width: 600px) {
+      .page { padding: 0 16px 80px; }
       header { flex-wrap: wrap; gap: 12px; }
       .controls-panel { flex-direction: column; align-items: flex-start; }
-      .btn-group { margin-left: 0; }
-      .search-box input { width: 100%; }
-      .table-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .btn-group { margin-left: 0; width: 100%; }
+      .btn { flex: 1; justify-content: center; }
+      .hero-left { padding: 28px 24px; }
+      .hero-right { padding: 20px 24px; }
+      .venue-big { font-size: 54px; }
+      .logout-card { padding: 36px 28px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="bg-layer"></div>
-  <div class="bg-grid"></div>
 
-  <!-- Loading -->
+  <!-- BG -->
+  <div class="bg-base"></div>
+  <div class="bg-blob b1"></div>
+  <div class="bg-blob b2"></div>
+  <div class="bg-grid"></div>
+  <div class="deco-ring ring1"></div>
+  <div class="deco-ring ring2"></div>
+  <div class="deco-ring ring3"></div>
+
+  <!-- LOADING -->
   <div class="loading-overlay" id="loadingOverlay">
-    <div class="spinner"></div>
-    <div class="loading-text">Fetching Records…</div>
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <div class="loading-text">Fetching Records…</div>
+    </div>
   </div>
 
-  <!-- Toast -->
+  <!-- LOGOUT OVERLAY -->
+  <div class="logout-overlay" id="logoutOverlay">
+    <div class="logout-card">
+      <div class="logout-icon">🔐</div>
+      <div class="logout-title">Sign Out?</div>
+      <div class="logout-desc">
+        You are about to sign out of the<br>
+        <strong>Seminar Day Evaluation Portal</strong>.<br>
+        Any unsaved progress will be lost.
+      </div>
+      <div class="logout-btns">
+        <button class="btn-stay" onclick="closeLogout()">Stay Signed In</button>
+        <button class="btn-go" onclick="doLogout()">Yes, Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
   <div class="toast" id="toast">
-    <span class="toast-icon" id="toastIcon">✦</span>
-    <span id="toastMsg">Message</span>
+    <div class="toast-ico" id="toastIco"></div>
+    <span id="toastMsg">—</span>
+    <div class="toast-prog" id="toastProg"></div>
   </div>
 
   <div class="page">
-    <!-- Header -->
+
+    <!-- HEADER -->
     <header>
       <div class="brand">
         <div class="brand-icon">🏛</div>
@@ -522,343 +735,397 @@
           <p>Venue Incharge Dashboard</p>
         </div>
       </div>
-      <button class="logout-btn" id="logoutBtn">
-        <span>⎋</span> Logout
-      </button>
+      <div class="header-right">
+        <div class="header-clock" id="headerClock">—</div>
+        <button class="logout-btn" onclick="openLogout()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
+      </div>
     </header>
 
-    <!-- Welcome -->
-    <div class="welcome-card">
-      <div class="welcome-avatar">👤</div>
-      <div id="welcome">
-        <div class="name">Loading…</div>
-        <div class="meta">Please wait</div>
+    <!-- VENUE HERO -->
+    <div class="venue-hero">
+      <div class="hero-orb1"></div>
+      <div class="hero-orb2"></div>
+      <div class="hero-pattern"></div>
+      <div class="hero-content">
+        <div class="hero-left">
+          <div class="hero-eyebrow">Venue Incharge · Seminar Day Evaluation System</div>
+          <div class="hero-user">
+            <div class="hero-avatar">👤</div>
+            <div>
+              <div class="hero-name" id="heroName">Loading…</div>
+              <div class="hero-meta">
+                <span id="heroFacId">Faculty ID: —</span>
+                <span class="meta-sep"></span>
+                <span>Welcome back to your portal</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-tags">
+            <span class="htag htag-role" id="heroRole">Venue Incharge</span>
+            <span class="htag htag-live">Session Active</span>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="venue-eyebrow">Assigned Venue</div>
+          <div class="venue-big" id="venueBig">—</div>
+          <div class="venue-caption">Evaluation Zone</div>
+        </div>
       </div>
     </div>
 
-    <!-- Controls -->
-    <div class="controls-panel">
-      <label for="batchSelect">📅 Batch</label>
-      <div class="select-wrapper">
-        <select id="batchSelect">
-          <option value="">— Select —</option>
-          <option value="FN">FN</option>
-          <option value="AN">AN</option>
-        </select>
-      </div>
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="fetchVenueMarks()">
-          <span>👁</span> View Marks
-        </button>
-        <button class="btn btn-outline" onclick="downloadVenueReport()">
-          <span>⬇</span> Download PDF
-        </button>
-      </div>
-    </div>
-
-    <!-- Stats -->
+    <!-- STATS -->
     <div class="stats-row" id="statsRow" style="display:none;">
       <div class="stat-card">
+        <div class="stat-icon si-b">👥</div>
         <div class="stat-label">Total Students</div>
         <div class="stat-value" id="statTotal">—</div>
         <div class="stat-sub">Evaluated this batch</div>
       </div>
       <div class="stat-card">
+        <div class="stat-icon si-g">🏆</div>
         <div class="stat-label">Highest Score</div>
         <div class="stat-value" id="statHigh">—</div>
         <div class="stat-sub">Top performer</div>
       </div>
       <div class="stat-card">
+        <div class="stat-icon si-a">📊</div>
         <div class="stat-label">Average Score</div>
         <div class="stat-value" id="statAvg">—</div>
         <div class="stat-sub">Class average</div>
       </div>
       <div class="stat-card">
+        <div class="stat-icon si-r">⚠️</div>
         <div class="stat-label">Absent</div>
         <div class="stat-value" id="statAbsent">—</div>
         <div class="stat-sub">Not evaluated</div>
       </div>
     </div>
 
-    <!-- Table -->
-    <div class="table-section" id="tableSection" style="display:none;">
-      <div class="gold-divider"></div>
-      <div class="table-header">
-        <div>
-          <div class="table-title">Evaluation Records</div>
-          <div class="table-subtitle" id="tableSubtitle"></div>
-        </div>
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="searchInput" placeholder="Search student…" oninput="filterTable()">
-        </div>
+    <!-- CONTROLS -->
+    <div class="controls-panel">
+      <div class="ctrl-label">Select Batch</div>
+      <div class="sel-wrap">
+        <select id="batchSelect">
+          <option value="">— Choose Batch —</option>
+          <option value="FN">FN · Forenoon</option>
+          <option value="AN">AN · Afternoon</option>
+        </select>
       </div>
-      <div class="table-wrap">
-        <table id="marksTable">
-          <thead>
-            <tr>
-              <th>Faculty ID</th>
-              <th>Team ID</th>
-              <th>Student ID</th>
-              <th>Student Name</th>
-              <th>Dept</th>
-              <th>Venue</th>
-              <th>LI – Problem</th>
-              <th>LI – Methodology</th>
-              <th>LI – Pictorial</th>
-              <th>LI – Response</th>
-              <th>LII – Determination</th>
-              <th>LII – Communication</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody id="marksBody"></tbody>
-        </table>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="fetchVenueMarks()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          View Marks
+        </button>
+        <button class="btn btn-outline" onclick="downloadVenueReport()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
       </div>
     </div>
-  </div>
+
+    <!-- TABLE -->
+    <div id="tableSection" style="display:none;">
+      <div class="sec-divider">
+        <div class="sec-divider-lbl">Evaluation Records</div>
+        <div class="sec-divider-line"></div>
+      </div>
+      <div class="table-section">
+        <div class="table-topbar">
+          <div>
+            <div class="table-title">Student Evaluation Report</div>
+            <div class="table-sub" id="tableSub">—</div>
+          </div>
+          <div class="search-wrap">
+            <span class="search-ico">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search by name, ID, dept…" oninput="filterTable()">
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table id="marksTable">
+            <thead>
+              <tr>
+                <th>Faculty ID</th>
+                <th>Team ID</th>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Dept</th>
+                <th>Venue</th>
+                <th>LI – Problem</th>
+                <th>LI – Methodology</th>
+                <th>LI – Pictorial</th>
+                <th>LI – Response</th>
+                <th>LII – Determination</th>
+                <th>LII – Communication</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="marksBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page -->
 
   <script>
-    setupLogout();
+    // ── CLOCK ──
+    function tick() {
+      const n = new Date();
+      document.getElementById('headerClock').textContent =
+        n.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) +
+        ' · ' + n.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    }
+    tick(); setInterval(tick, 10000);
 
-    const faculty_id = localStorage.getItem("faculty_id");
-    const facultyName = localStorage.getItem("faculty_name");
-    const venue = localStorage.getItem("venue");
-    const role = localStorage.getItem("role");
+    // ── SESSION ──
+    const faculty_id  = localStorage.getItem('faculty_id');
+    const facultyName = localStorage.getItem('faculty_name');
+    const venue       = localStorage.getItem('venue');
+    const role        = localStorage.getItem('role');
 
-    // ---- TOAST ----
-    function showToast(msg, type = 'info') {
-      const toast = document.getElementById('toast');
-      const icon = document.getElementById('toastIcon');
-      const msgEl = document.getElementById('toastMsg');
-      const icons = { info: '✦', success: '✔', error: '✖' };
-      toast.className = `toast toast-${type}`;
-      icon.textContent = icons[type];
-      msgEl.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3200);
+    // ── LOGOUT ──
+    function openLogout() { document.getElementById('logoutOverlay').classList.add('active'); }
+    function closeLogout() { document.getElementById('logoutOverlay').classList.remove('active'); }
+    function doLogout()   { localStorage.clear(); window.location.href = 'index.html'; }
+    document.getElementById('logoutOverlay').addEventListener('click', function(e){ if(e.target===this) closeLogout(); });
+
+    // ── TOAST ──
+    let toastTimer;
+    function showToast(msg, type='info') {
+      clearTimeout(toastTimer);
+      const t = document.getElementById('toast');
+      const ico = {info:'ℹ️', success:'✅', error:'❌'};
+      t.className = `toast toast-${type} show`;
+      document.getElementById('toastIco').textContent = ico[type];
+      document.getElementById('toastMsg').textContent = msg;
+      // reset progress bar
+      const p = document.getElementById('toastProg');
+      p.style.animation = 'none';
+      void p.offsetWidth;
+      p.style.animation = '';
+      toastTimer = setTimeout(()=> t.classList.remove('show'), 3400);
     }
 
-    // ---- LOADING ----
-    function setLoading(on) {
-      document.getElementById('loadingOverlay').classList.toggle('active', on);
-    }
+    // ── LOADING ──
+    function setLoading(on) { document.getElementById('loadingOverlay').classList.toggle('active', on); }
 
-    // ---- INIT ----
-    function initVenueIncharge() {
-      if (!faculty_id || role !== "VenueIncharge") {
-        alert("Unauthorized access! Please login again.");
-        window.location.href = "index.html";
-        return;
+    // ── INIT ──
+    function initPage() {
+      if (!faculty_id || role !== 'VenueIncharge') {
+        window.location.href = 'index.html'; return;
       }
-      document.getElementById("welcome").innerHTML = `
-        <div class="name">${facultyName} <span class="role-badge">${role}</span><span class="venue-badge">📍 ${venue}</span></div>
-        <div class="meta">Faculty ID: ${faculty_id} &nbsp;·&nbsp; Welcome back to your dashboard</div>
-      `;
+      document.getElementById('heroName').textContent    = facultyName || 'Faculty';
+      document.getElementById('heroFacId').textContent   = 'Faculty ID: ' + (faculty_id || '—');
+      document.getElementById('heroRole').textContent    = role;
+      document.getElementById('venueBig').textContent    = venue || '—';
     }
 
-    // ---- FETCH MARKS ----
+    // ── FETCH MARKS ──
     let allRows = [];
-
     async function fetchVenueMarks() {
-      const batch = document.getElementById("batchSelect").value;
-      if (!batch) { showToast("Please select a batch first!", "error"); return; }
-
+      const batch = document.getElementById('batchSelect').value;
+      if (!batch) { showToast('Please select a batch first!','error'); return; }
       setLoading(true);
       try {
-        const res = await postData("getVenueMarks", { batch });
+        const res  = await postData('getVenueMarks',{batch});
         const marks = Array.isArray(res) ? res : res.data || [];
-        const filtered = marks.filter(m => (m.Venue || "").trim().toLowerCase() === venue.trim().toLowerCase());
+        const filtered = marks.filter(m=>(m.Venue||'').trim().toLowerCase()===venue.trim().toLowerCase());
         allRows = filtered;
-
-        renderTable(filtered, batch);
-
+        renderTable(filtered,batch);
         if (filtered.length) {
-          const totals = filtered.map(m => parseFloat(m.Total) || 0);
-          const absents = filtered.filter(m => !m.Total || m.Total === "Absent").length;
-          document.getElementById("statTotal").textContent = filtered.length;
-          document.getElementById("statHigh").textContent = Math.max(...totals);
-          document.getElementById("statAvg").textContent = (totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1);
-          document.getElementById("statAbsent").textContent = absents;
-          document.getElementById("statsRow").style.display = "grid";
-          showToast(`Loaded ${filtered.length} records for ${venue}`, "success");
+          const totals  = filtered.map(m=>parseFloat(m.Total)||0);
+          const absents = filtered.filter(m=>!m.Total||m.Total==='Absent').length;
+          document.getElementById('statTotal').textContent  = filtered.length;
+          document.getElementById('statHigh').textContent   = Math.max(...totals);
+          document.getElementById('statAvg').textContent    = (totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1);
+          document.getElementById('statAbsent').textContent = absents;
+          document.getElementById('statsRow').style.display = 'grid';
+          showToast(`Loaded ${filtered.length} records for Venue ${venue}`,'success');
         }
-      } catch(e) {
-        showToast("Failed to fetch marks. Try again.", "error");
-      } finally {
-        setLoading(false);
-      }
+      } catch(e) { showToast('Failed to fetch marks. Try again.','error'); }
+      finally { setLoading(false); }
     }
 
-    function renderTable(data, batch) {
-      const tbody = document.getElementById("marksBody");
-      tbody.innerHTML = "";
-
+    function renderTable(data,batch) {
+      const tbody = document.getElementById('marksBody');
+      tbody.innerHTML = '';
       if (!data.length) {
-        tbody.innerHTML = `<tr><td colspan="13">
-          <div class="empty-state">
-            <div class="empty-icon">📋</div>
-            <p>No marks found for <b>${venue}</b> (${batch})</p>
-          </div>
-        </td></tr>`;
-        document.getElementById("statsRow").style.display = "none";
-        document.getElementById("tableSection").style.display = "block";
-        document.getElementById("tableSubtitle").textContent = "";
+        tbody.innerHTML = `<tr><td colspan="13"><div class="empty-state">
+          <div class="empty-ico">📋</div>
+          <h3>No Records Found</h3>
+          <p>No marks found for Venue <strong>${venue}</strong> (${batch})</p>
+        </div></td></tr>`;
+        document.getElementById('statsRow').style.display = 'none';
+        document.getElementById('tableSection').style.display = 'block';
+        document.getElementById('tableSub').textContent = '';
         return;
       }
-
       data.forEach(m => {
-        const isAbsent = !m.Total || m.Total === "Absent";
+        const isAbsent = !m.Total || m.Total==='Absent';
         const totalCell = isAbsent
           ? `<span class="absent-badge">Absent</span>`
           : `<span class="total-cell">${m.Total}</span>`;
-
-        const score = v => `<span class="score-pill">${v || 0}</span>`;
-
-        tbody.insertAdjacentHTML("beforeend", `
+        const sc = v => `<span class="score-pill">${v??0}</span>`;
+        tbody.insertAdjacentHTML('beforeend',`
           <tr>
-            <td>${m.Faculty_ID || "—"}</td>
-            <td>${m.TeamID || "—"}</td>
-            <td>${m.Student_ID || "—"}</td>
-            <td>${m.Student_Name || "—"}</td>
-            <td>${m.Dept || "—"}</td>
-            <td>${m.Venue || "—"}</td>
-            <td>${score(m.LevelI_Problem)}</td>
-            <td>${score(m.LevelI_Methodology)}</td>
-            <td>${score(m.LevelI_Pictorial)}</td>
-            <td>${score(m.LevelI_Response)}</td>
-            <td>${score(m.LevelII_Determination)}</td>
-            <td>${score(m.LevelII_Communication)}</td>
+            <td>${m.Faculty_ID||'—'}</td>
+            <td>${m.TeamID||'—'}</td>
+            <td>${m.Student_ID||'—'}</td>
+            <td>${m.Student_Name||'—'}</td>
+            <td><span class="dept-tag">${m.Dept||'—'}</span></td>
+            <td><span class="venue-tag">${m.Venue||'—'}</span></td>
+            <td>${sc(m.LevelI_Problem)}</td>
+            <td>${sc(m.LevelI_Methodology)}</td>
+            <td>${sc(m.LevelI_Pictorial)}</td>
+            <td>${sc(m.LevelI_Response)}</td>
+            <td>${sc(m.LevelII_Determination)}</td>
+            <td>${sc(m.LevelII_Communication)}</td>
             <td>${totalCell}</td>
           </tr>`);
       });
-
-      document.getElementById("tableSection").style.display = "block";
-      document.getElementById("tableSubtitle").textContent =
-        `Venue: ${venue} · Batch: ${batch} · ${data.length} record${data.length !== 1 ? 's' : ''}`;
+      document.getElementById('tableSection').style.display = 'block';
+      document.getElementById('tableSub').textContent =
+        `Venue: ${venue} · Batch: ${batch} · ${data.length} record${data.length!==1?'s':''}`;
     }
 
-    // ---- SEARCH ----
+    // ── SEARCH ──
     function filterTable() {
-      const q = document.getElementById("searchInput").value.toLowerCase();
-      const rows = document.querySelectorAll("#marksBody tr");
-      rows.forEach(tr => {
-        tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('#marksBody tr').forEach(tr=>{
+        tr.style.display = tr.textContent.toLowerCase().includes(q) ? '' : 'none';
       });
     }
 
-    // ---- LOGO ----
+    // ── LOGO HELPER ──
     async function getLogoData() {
       try {
-        const resp = await fetch("logo.jpeg");
-        if (!resp.ok) throw new Error("not found");
-        const blob = await resp.blob();
-        const bitmap = await createImageBitmap(blob);
-        const canvas = document.createElement("canvas");
-        canvas.width = bitmap.width; canvas.height = bitmap.height;
-        canvas.getContext("2d").drawImage(bitmap, 0, 0);
-        return canvas.toDataURL("image/jpeg");
+        const r = await fetch('logo.jpeg');
+        if (!r.ok) throw new Error();
+        const blob = await r.blob();
+        const bmp  = await createImageBitmap(blob);
+        const cv   = document.createElement('canvas');
+        cv.width = bmp.width; cv.height = bmp.height;
+        cv.getContext('2d').drawImage(bmp,0,0);
+        return cv.toDataURL('image/jpeg');
       } catch { return null; }
     }
 
-    function addPageNumbers(doc) {
-      const pageCount = doc.internal.getNumberOfPages();
-      const pw = doc.internal.pageSize.getWidth();
-      const ph = doc.internal.pageSize.getHeight();
-      for (let i = 1; i <= pageCount; i++) {
+    function addPageNums(doc) {
+      const n=doc.internal.getNumberOfPages(), pw=doc.internal.pageSize.getWidth(), ph=doc.internal.pageSize.getHeight();
+      for(let i=1;i<=n;i++){
         doc.setPage(i);
-        doc.setFontSize(9);
-        doc.setFont("times", "normal");
-        doc.text(`Page ${i} of ${pageCount}`, pw / 2, ph - 20, { align: "center" });
+        doc.setFontSize(9); doc.setFont('helvetica','normal');
+        doc.setTextColor(120,140,180);
+        doc.text(`Page ${i} of ${n}`, pw/2, ph-16, {align:'center'});
       }
     }
 
-    // ---- DOWNLOAD PDF ----
+    // ── DOWNLOAD PDF ──
     async function downloadVenueReport() {
-      const batch = document.getElementById("batchSelect").value;
-      if (!batch) { showToast("Please select a batch first!", "error"); return; }
-
+      const batch = document.getElementById('batchSelect').value;
+      if (!batch) { showToast('Please select a batch first!','error'); return; }
       setLoading(true);
       try {
-        const res = await postData("getMarks", { batch });
-        const marks = Array.isArray(res) ? res : res.data || [];
-        const filtered = marks.filter(m => (m.Venue || "").trim().toLowerCase() === venue.trim().toLowerCase());
+        const res    = await postData('getMarks',{batch});
+        const marks  = Array.isArray(res) ? res : res.data||[];
+        const filtered = marks.filter(m=>(m.Venue||'').trim().toLowerCase()===venue.trim().toLowerCase());
+        if (!filtered.length) { showToast(`No marks for ${venue} (${batch})`,'error'); return; }
 
-        if (!filtered.length) {
-          showToast(`No marks found for ${venue} (${batch})`, "error");
-          return;
-        }
+        const {jsPDF} = window.jspdf;
+        const doc     = new jsPDF('landscape','pt','a4');
+        const pw      = doc.internal.pageSize.getWidth();
+        const ph      = doc.internal.pageSize.getHeight();
+        const logo    = await getLogoData();
+        const genDate = new Date().toLocaleString('en-IN');
 
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF("landscape", "pt", "a4");
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const logoData = await getLogoData();
-        const generatedDate = new Date().toLocaleString();
+        // header band
+        doc.setFillColor(4,23,58);
+        doc.rect(0,0,pw,114,'F');
+        doc.setFillColor(18,70,181);
+        doc.rect(0,111,pw,4,'F');
 
-        if (logoData) {
-          doc.addImage(logoData, "JPEG", (pageWidth - 250) / 2, 20, 250, 50);
-        }
+        if (logo) doc.addImage(logo,'JPEG',(pw-220)/2,14,220,46);
 
-        doc.setFont("times", "bold");
-        doc.setFontSize(18);
-        doc.text("SEMINAR DAY EVALUATION REPORT", pageWidth / 2, 100, { align: "center" });
-        doc.setFontSize(12);
-        doc.text(`Batch: ${batch}`, pageWidth - 120, 120);
+        doc.setFont('helvetica','bold');
+        doc.setFontSize(17); doc.setTextColor(255,255,255);
+        doc.text('SEMINAR DAY EVALUATION REPORT', pw/2, logo?76:52, {align:'center'});
+        doc.setFontSize(9); doc.setFont('helvetica','normal');
+        doc.setTextColor(150,185,255);
+        doc.text(`Venue: ${venue}   |   Batch: ${batch}   |   Generated: ${genDate}`, pw/2, 98, {align:'center'});
 
-        const head = [[
-          "Faculty ID", "Team ID", "Student ID", "Student Name", "Dept", "Venue",
-          "LI – Problem", "LI – Methodology", "LI – Pictorial",
-          "LI – Response", "LII – Determination", "LII – Communication", "Total"
-        ]];
-
-        const body = filtered.map(m => [
-          m.Faculty_ID || "", m.TeamID || "", m.Student_ID || "", m.Student_Name || "",
-          m.Dept || "", m.Venue || "", m.LevelI_Problem || 0, m.LevelI_Methodology || 0,
-          m.LevelI_Pictorial || 0, m.LevelI_Response || 0, m.LevelII_Determination || 0,
-          m.LevelII_Communication || 0, m.Total || 0
+        const head = [['Faculty ID','Team ID','Student ID','Student Name','Dept','Venue',
+          'LI-Problem','LI-Method','LI-Pictorial','LI-Response','LII-Determination','LII-Comm.','Total']];
+        const body = filtered.map(m=>[
+          m.Faculty_ID||'—', m.TeamID||'—', m.Student_ID||'—', m.Student_Name||'—',
+          m.Dept||'—', m.Venue||'—',
+          m.LevelI_Problem??0, m.LevelI_Methodology??0, m.LevelI_Pictorial??0, m.LevelI_Response??0,
+          m.LevelII_Determination??0, m.LevelII_Communication??0, m.Total||0
         ]);
 
         doc.autoTable({
-          head, body,
-          startY: 135,
-          theme: "grid",
-          styles: { font: "times", fontSize: 10, cellPadding: 4, halign: "center", valign: "middle" },
-          headStyles: { fillColor: [30, 20, 10], textColor: [200, 169, 91], fontStyle: "bold" },
-          alternateRowStyles: { fillColor: [248, 245, 240] },
-          columnStyles: { 3: { halign: "left" } },
+          head, body, startY: 126, theme: 'grid',
+          styles:{ font:'helvetica', fontSize:9, cellPadding:5, halign:'center', valign:'middle',
+            lineColor:[215,228,248], lineWidth:0.5, textColor:[28,48,90] },
+          headStyles:{ fillColor:[8,44,106], textColor:[185,210,255], fontStyle:'bold', fontSize:8.5, cellPadding:7 },
+          alternateRowStyles:{ fillColor:[244,249,255] },
+          columnStyles:{
+            3:{ halign:'left', fontStyle:'bold', textColor:[4,23,58] },
+            12:{ fontStyle:'bold', textColor:[10,60,170], fontSize:11 }
+          },
+          margin:{ left:28, right:28 },
+          didDrawPage: ()=>{
+            doc.setDrawColor(210,225,248); doc.setLineWidth(0.7);
+            doc.line(28, ph-30, pw-28, ph-30);
+          }
         });
 
-        const finalY = doc.lastAutoTable.finalY + 30;
-        const sigY = finalY + 60;
+        const lastY = doc.lastAutoTable.finalY;
+        const sigY  = lastY + 50;
 
-        doc.setFont("times", "normal");
-        doc.setFontSize(10);
-        doc.text(`Generated on: ${generatedDate}`, 40, finalY);
+        if (sigY < ph - 80) {
+          doc.setDrawColor(190,210,240); doc.setLineWidth(0.8);
+          doc.line(50, sigY, 210, sigY);
+          doc.setFont('helvetica','normal'); doc.setFontSize(9);
+          doc.setTextColor(80,100,150);
+          doc.text('Faculty Signature', 130, sigY+14, {align:'center'});
 
-        if (sigY > pageHeight - 40) {
-          doc.addPage();
-          doc.setFont("times", "bold");
-          doc.text("Venue Incharge Signature", pageWidth - 60, 40, { align: "right" });
-          doc.text("Faculty Signature", pageWidth - 660, 40, { align: "right" });
-        } else {
-          doc.setFont("times", "bold");
-          doc.text("Venue Incharge Signature", pageWidth - 60, sigY, { align: "right" });
-          doc.text("Faculty Signature", pageWidth - 660, sigY, { align: "right" });
+          doc.line(pw-210, sigY, pw-50, sigY);
+          doc.text('Venue Incharge Signature', pw-130, sigY+14, {align:'center'});
         }
 
-        addPageNumbers(doc);
-        doc.save(`${venue}_${batch}_Seminar_Report.pdf`);
-        showToast("PDF downloaded successfully!", "success");
-      } catch(e) {
-        showToast("Failed to generate PDF. Try again.", "error");
-      } finally {
-        setLoading(false);
-      }
+        // Summary box
+        const totals = filtered.map(m=>parseFloat(m.Total)||0).filter(t=>t>0);
+        if (totals.length && sigY+40 < ph-90) {
+          const bY = sigY+38;
+          doc.setFillColor(240,248,255); doc.setDrawColor(200,220,248);
+          doc.roundedRect(50, bY, pw-100, 44, 5, 5, 'FD');
+          doc.setFont('helvetica','bold'); doc.setFontSize(9);
+          doc.setTextColor(8,44,106);
+          const avg = (totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1);
+          doc.text(
+            `Total: ${filtered.length}   |   Highest: ${Math.max(...totals)}   |   Average: ${avg}   |   Absent: ${filtered.length-totals.length}`,
+            pw/2, bY+17, {align:'center'}
+          );
+          doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
+          doc.setTextColor(100,130,175);
+          doc.text(`Seminar Day Evaluation — ${venue} — Batch ${batch}`, pw/2, bY+32, {align:'center'});
+        }
+
+        addPageNums(doc);
+        doc.save(`${venue}_${batch}_Seminar_Evaluation_Report.pdf`);
+        showToast('PDF downloaded successfully!','success');
+      } catch(e) { showToast('Failed to generate PDF. Try again.','error'); }
+      finally { setLoading(false); }
     }
 
-    // init on load
-    window.onload = initVenueIncharge;
+    window.onload = initPage;
   </script>
 </body>
 </html>
