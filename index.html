@@ -18,76 +18,31 @@ body{
     background:linear-gradient(135deg,#e6f2ff,#ffffff);
 }
 
-/* ================= FRONT LOADER ================= */
-
+/* ===== FRONT LOADER ===== */
 .loader-screen{
     position:fixed;
-    top:0;
-    left:0;
     width:100%;
     height:100%;
     background:linear-gradient(135deg,#003366,#007bff);
-    color:white;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
+    color:white;
     z-index:1000;
-    transition:1s ease;
+    transition:1s;
 }
-
 .loader-title{
-    font-size:48px;
+    font-size:50px;
     font-weight:800;
     letter-spacing:3px;
-    border-right:4px solid white;
-    white-space:nowrap;
-    overflow:hidden;
-    animation:typing 2s steps(6), blink .7s infinite;
 }
-
-@keyframes typing{
-    from{width:0}
-    to{width:100%}
-}
-
-@keyframes blink{
-    50%{border-color:transparent}
-}
-
-.loader-sub{
-    margin-top:15px;
-    font-size:18px;
-}
-
-.progress-bar-container{
-    margin-top:30px;
-    width:250px;
-    height:6px;
-    background:white;
-    border-radius:10px;
-    overflow:hidden;
-}
-
-.progress-bar-fill{
-    height:100%;
-    width:0;
-    background:#ffdd00;
-    animation:load 3s forwards;
-}
-
-@keyframes load{
-    to{width:100%}
-}
-
-/* Hide Loader */
 .loader-screen.hide{
     opacity:0;
     visibility:hidden;
 }
 
-/* ================= PARTICLES ================= */
-
+/* ===== PARTICLES ===== */
 canvas{
     position:fixed;
     top:0;
@@ -95,8 +50,7 @@ canvas{
     z-index:-1;
 }
 
-/* ================= LOGIN ================= */
-
+/* ===== LOGIN CARD ===== */
 .container-wrapper{
     height:100vh;
     display:flex;
@@ -105,19 +59,19 @@ canvas{
 }
 
 .login-box{
-    backdrop-filter:blur(18px);
+    backdrop-filter:blur(20px);
     background:rgba(255,255,255,0.7);
     border-radius:25px;
     padding:45px;
     width:400px;
     box-shadow:0 30px 60px rgba(0,0,0,0.2);
     text-align:center;
-    animation:fadeIn 1s ease;
+    opacity:0;
+    animation:fadeIn 1s forwards;
 }
 
 @keyframes fadeIn{
-    from{opacity:0; transform:translateY(40px);}
-    to{opacity:1; transform:translateY(0);}
+    to{opacity:1;}
 }
 
 .kcet-title{
@@ -127,12 +81,25 @@ canvas{
 }
 
 .system-title{
-    font-size:17px;
-    font-weight:600;
     color:#007bff;
     margin-bottom:25px;
+    font-weight:600;
 }
 
+/* Input Glow */
+.form-control:focus{
+    box-shadow:0 0 10px #007bff;
+    border-color:#007bff;
+}
+
+.valid{
+    box-shadow:0 0 10px #28a745 !important;
+}
+.invalid{
+    box-shadow:0 0 10px #dc3545 !important;
+}
+
+/* 3D Button */
 .btn-login{
     background:linear-gradient(90deg,#007bff,#0047ab);
     color:white;
@@ -140,57 +107,81 @@ canvas{
     border:none;
     border-radius:12px;
     font-weight:600;
-    transition:0.3s;
+    transition:.3s;
     box-shadow:0 6px #002f6c;
 }
-
 .btn-login:hover{
     transform:translateY(3px);
     box-shadow:0 3px #002f6c;
 }
 
+/* Shake Animation */
+@keyframes shake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-8px)}
+    50%{transform:translateX(8px)}
+    75%{transform:translateX(-8px)}
+    100%{transform:translateX(0)}
+}
+.shake{
+    animation:shake .4s;
+}
+
+/* Success Screen */
 .success-screen{
     position:fixed;
-    top:0;
-    left:0;
     width:100%;
     height:100%;
     background:linear-gradient(135deg,#003366,#007bff);
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-    flex-direction:column;
     color:white;
     font-size:26px;
-    font-weight:600;
     z-index:999;
     opacity:0;
     visibility:hidden;
-    transition:.5s;
+    transition:.6s;
 }
-
 .success-screen.active{
     opacity:1;
     visibility:visible;
+}
+
+/* Green Checkmark */
+.checkmark{
+    font-size:70px;
+    color:#00ff88;
+    animation:pop .5s ease;
+}
+@keyframes pop{
+    0%{transform:scale(0)}
+    100%{transform:scale(1)}
+}
+
+/* Smooth Fade Transition */
+.fade-out{
+    animation:fadePage 1s forwards;
+}
+@keyframes fadePage{
+    to{opacity:0}
 }
 </style>
 </head>
 
 <body>
 
-<!-- FRONT LOADER -->
+<!-- LOADER -->
 <div class="loader-screen" id="loader">
     <div class="loader-title">KCET</div>
-    <div class="loader-sub">Seminar Mark Management System</div>
-    <div class="progress-bar-container">
-        <div class="progress-bar-fill"></div>
-    </div>
+    <div>Loading Portal...</div>
 </div>
 
 <canvas id="particles"></canvas>
 
 <div class="container-wrapper">
-<div class="login-box">
+<div class="login-box" id="loginBox">
     <div class="kcet-title">KCET</div>
     <div class="system-title">Seminar Mark Management System</div>
 
@@ -207,26 +198,26 @@ canvas{
         </span>
     </div>
 
-    <button class="btn-login w-100" onclick="login()">Login</button>
+    <button class="btn-login w-100" onclick="login()" id="loginBtn">Login</button>
     <div id="msg" class="mt-3 fw-semibold"></div>
 </div>
 </div>
 
 <div class="success-screen" id="successScreen">
-    Welcome to KCET Portal 👋<br>
-    Loading Dashboard...
+    <div class="checkmark">✔</div>
+    Login Successful!
 </div>
 
 <script>
 
-/* Hide loader after 3 sec */
+/* Hide Loader */
 window.onload=function(){
     setTimeout(()=>{
         document.getElementById("loader").classList.add("hide");
-    },3000);
+    },2000);
 };
 
-/* Password toggle */
+/* Password Toggle */
 function togglePassword(){
     const pass=document.getElementById("password");
     const eye=document.getElementById("eyeIcon");
@@ -235,21 +226,34 @@ function togglePassword(){
     eye.classList.toggle("bi-eye-slash");
 }
 
+/* Real-time Validation Glow */
+document.getElementById("faculty_id").addEventListener("input",function(){
+    this.classList.toggle("valid",this.value.length>3);
+});
+document.getElementById("password").addEventListener("input",function(){
+    this.classList.toggle("valid",this.value.length>3);
+});
+
 /* Login */
 async function login(){
-    const id=document.getElementById("faculty_id").value.trim();
-    const password=document.getElementById("password").value.trim();
+    const id=document.getElementById("faculty_id");
+    const pass=document.getElementById("password");
     const msg=document.getElementById("msg");
+    const btn=document.getElementById("loginBtn");
 
-    if(!id || !password){
+    if(!id.value || !pass.value){
         msg.style.color="red";
         msg.innerText="Enter Faculty ID & Password";
         return;
     }
 
-    const res=await postData("login",{id,password});
+    btn.disabled=true;
+    btn.innerHTML='<span class="spinner-border spinner-border-sm"></span> Verifying...';
+
+    const res=await postData("login",{id:id.value,password:pass.value});
 
     if(res.status==="success"){
+
         localStorage.setItem("faculty_id",res.faculty_id);
         localStorage.setItem("venue",res.venue);
         localStorage.setItem("role",res.role);
@@ -259,14 +263,25 @@ async function login(){
         document.getElementById("successScreen").classList.add("active");
 
         setTimeout(()=>{
+            document.body.classList.add("fade-out");
+        },1000);
+
+        setTimeout(()=>{
             if(res.role==="Admin") window.location="admin.html";
             else if(res.role==="VenueIncharge") window.location="venue_incharge.html";
             else window.location="faculty.html";
         },2000);
 
     }else{
+
+        document.getElementById("loginBox").classList.add("shake");
+        setTimeout(()=>{ document.getElementById("loginBox").classList.remove("shake"); },400);
+
         msg.style.color="red";
         msg.innerText="Invalid Credentials ❌";
+
+        btn.disabled=false;
+        btn.innerHTML="Login";
     }
 }
 
@@ -277,7 +292,7 @@ canvas.width=window.innerWidth;
 canvas.height=window.innerHeight;
 
 let particles=[];
-for(let i=0;i<80;i++){
+for(let i=0;i<70;i++){
     particles.push({
         x:Math.random()*canvas.width,
         y:Math.random()*canvas.height,
