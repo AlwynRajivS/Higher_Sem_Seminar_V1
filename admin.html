@@ -1702,7 +1702,7 @@ async function downloadDeptReport(){
   /* =====================================
      COLLEGE HEADER
   ===================================== */
-
+doc.setFont('times','bold');
     doc.setFontSize(14);
   doc.text('SEMINAR DAY EVALUATION REPORT', pw/2, y, {align:'center'});
   y += 20;
@@ -1929,9 +1929,9 @@ async function downloadTotalDeptReport(){
     y+=lh+12;
   }
 
-  
+  doc.setFont('times','bold');
   doc.setFontSize(14);
-  doc.text('SEMINAR DAY TOTAL REPORT', pw/2, y, {align:'center'});
+  doc.text('SEMINAR DAY TOTAL MARK REPORT', pw/2, y, {align:'center'});
   y+=18;
 
   doc.line(40,y,pw-40,y);
@@ -2055,7 +2055,7 @@ async function downloadAbsenteesReportPDF(){
     doc.setLineWidth(1);
   doc.line(40,y,pw-40,y);
   y+=18;
-
+doc.setFont('times','bold');
   doc.setFontSize(14);
   doc.text('SEMINAR DAY — CONSOLIDATED ABSENTEES REPORT', pw/2, y, {align:'center'});
   y+=18;
@@ -2247,5 +2247,6 @@ function downloadAbsenteesReportCSV(){
 </script>
 </body>
 </html>
+
 
 
