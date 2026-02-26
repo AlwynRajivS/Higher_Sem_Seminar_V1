@@ -5,8 +5,11 @@
   <title>KCET — Admin Control Center</title>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <script src="common.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+  <!-- jsPDF: try primary CDN, fallback to secondary -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+    onerror="this.onerror=null;this.src='https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js'"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"
+    onerror="this.onerror=null;this.src='https://unpkg.com/jspdf-autotable@3.5.29/dist/jspdf.plugin.autotable.min.js'"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
   <style>
     :root{--royal:#003fa3;--sky:#1a6bff;--accent:#00aaff;--deep:#001f5b;--ice:#e8f2ff;--white:#ffffff;--muted:#5a6a8a;--border:rgba(26,107,255,0.13);--shadow:0 4px 24px rgba(0,47,163,0.09);--shadow-lg:0 16px 48px rgba(0,47,163,0.14);--green:#00c77a;--red:#ff4757;--amber:#ffa600;--purple:#7c5cfc;}
@@ -237,6 +240,73 @@
     .empty-state .es-title{font-size:16px;font-weight:600;color:var(--royal);margin-bottom:6px;}
     .empty-state .es-sub{font-size:13px;}
 
+    /* ══════════════════════════════════════════
+       ABSENTEES PANEL — FULL REDESIGN
+    ══════════════════════════════════════════ */
+    .abs-hero{background:linear-gradient(135deg,#7f0000 0%,#c0392b 50%,#ff6b6b 100%);border-radius:18px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden;animation:cardIn .5s ease both;}
+    .abs-hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px;}
+    .abs-hero-inner{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+    .abs-hero-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:white;margin-bottom:4px;}
+    .abs-hero-sub{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.5px;}
+    .abs-kpi-row{display:flex;gap:12px;flex-wrap:wrap;}
+    .abs-kpi{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:10px 18px;text-align:center;min-width:80px;}
+    .abs-kpi-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:900;color:white;}
+    .abs-kpi-lab{font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+    .abs-controls-card{background:white;border:1px solid var(--border);border-radius:18px;padding:20px 24px;box-shadow:var(--shadow);margin-bottom:18px;animation:cardIn .5s ease .1s both;}
+    .abs-controls-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+    .abs-control-field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:130px;}
+    .abs-control-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+    .abs-control-field select{padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--ice);font-family:'DM Sans',sans-serif;font-size:12.5px;color:#1a2540;outline:none;transition:.2s;width:100%;}
+    .abs-control-field select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,71,87,.12);background:white;}
+    .abs-search-wrap{position:relative;flex:2;min-width:200px;}
+    .abs-search-wrap input{width:100%;padding:9px 12px 9px 36px;border:1.5px solid var(--border);border-radius:10px;background:var(--ice);font-family:'DM Sans',sans-serif;font-size:12.5px;color:#1a2540;outline:none;transition:.2s;}
+    .abs-search-wrap input:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(255,71,87,.12);background:white;}
+    .abs-search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);opacity:.35;}
+    .abs-export-row{display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
+
+    .abs-main-card{background:white;border:1px solid rgba(255,71,87,.15);border-radius:18px;box-shadow:0 4px 24px rgba(255,71,87,.07);overflow:hidden;animation:cardIn .5s ease .15s both;}
+    .abs-main-card-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid rgba(255,71,87,.1);background:rgba(255,71,87,.02);flex-wrap:wrap;gap:10px;}
+    .abs-main-card-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:#a00;display:flex;align-items:center;gap:8px;}
+    .abs-count-total{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.22);color:#a00;border-radius:100px;padding:3px 12px;font-size:11px;font-weight:700;}
+
+    /* Dept sections inside the preview */
+    .abs-dept-section{border-bottom:1px solid var(--border);}
+    .abs-dept-section:last-child{border-bottom:none;}
+    .abs-dept-header-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:linear-gradient(90deg,rgba(0,63,163,.04),transparent);cursor:pointer;user-select:none;transition:background .15s;}
+    .abs-dept-header-row:hover{background:rgba(0,63,163,.07);}
+    .abs-dept-title{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--royal);display:flex;align-items:center;gap:8px;}
+    .abs-dept-count{background:rgba(255,71,87,.1);color:#a00;border-radius:100px;padding:2px 10px;font-size:10.5px;font-weight:700;}
+    .abs-dept-toggle{font-size:10px;color:var(--muted);transition:transform .2s;}
+    .abs-dept-toggle.open{transform:rotate(180deg);}
+    .abs-dept-body{overflow:hidden;transition:max-height .3s ease;}
+    .abs-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+    .abs-table thead th{background:rgba(0,63,163,.05);color:var(--royal);padding:9px 16px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;border-bottom:1px solid var(--border);}
+    .abs-table thead th:first-child{width:48px;text-align:center;}
+    .abs-table tbody tr{border-bottom:1px solid rgba(0,0,0,.04);transition:background .12s;}
+    .abs-table tbody tr:last-child{border-bottom:none;}
+    .abs-table tbody tr:hover{background:#fff5f5;}
+    .abs-table td{padding:9px 16px;vertical-align:middle;}
+    .abs-table td:first-child{text-align:center;font-size:11px;color:var(--muted);}
+    .abs-roll-no{font-weight:700;color:var(--royal);font-size:12px;}
+    .abs-name{color:#1a2540;}
+    .abs-empty-state{text-align:center;padding:48px 20px;}
+    .abs-empty-icon{font-size:44px;margin-bottom:12px;}
+    .abs-empty-title{font-size:16px;font-weight:700;color:var(--royal);margin-bottom:6px;}
+    .abs-empty-sub{font-size:12px;color:var(--muted);}
+
+    /* Dept summary chips */
+    .abs-summary-row{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--border);background:rgba(0,0,0,.01);}
+    .abs-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:100px;font-size:11px;font-weight:600;background:var(--ice);border:1px solid var(--border);color:var(--royal);cursor:pointer;transition:.15s;}
+    .abs-chip:hover{background:#ddeaff;border-color:rgba(26,107,255,.3);}
+    .abs-chip-dot{width:7px;height:7px;border-radius:50%;background:var(--red);}
+    .abs-chip.chip-total{background:rgba(255,71,87,.08);border-color:rgba(255,71,87,.22);color:#a00;}
+
+    /* Loading spinner for absentees */
+    .abs-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 20px;gap:14px;}
+    .abs-spinner{width:36px;height:36px;border:3px solid rgba(255,71,87,.15);border-top-color:#ff4757;border-radius:50%;animation:spin .7s linear infinite;}
+    .abs-loading-msg{font-size:12px;color:var(--muted);font-weight:500;}
+
     /* MOBILE */
     @media(max-width:768px){
       header{padding:0 12px;height:56px;gap:8px;}
@@ -250,14 +320,10 @@
       .btn-logout svg{display:none;}
       .hero{padding:16px 14px 14px;}
       .hero-heading{font-size:18px;}
-      .hero-inner{gap:10px;}
-      .hero-inner > div:last-child{width:100%;display:flex;gap:8px;}
-      .hero-inner > div:last-child > div{flex:1;}
       .kpi-strip{grid-template-columns:repeat(2,1fr);}
       .kpi-cell{padding:12px 10px;border-right:1px solid var(--border);}
       .kpi-cell:nth-child(even){border-right:none;}
       .kpi-val{font-size:20px;}
-      .kpi-icon{font-size:14px;margin-bottom:3px;}
       .nav-tabs-wrap{padding:0 8px;}
       .nav-tab{padding:10px 12px;font-size:11.5px;}
       .content{padding:12px 10px 40px;}
@@ -265,28 +331,11 @@
       .faculty-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
       .venue-grid{grid-template-columns:1fr;}
       .card{padding:16px 14px;border-radius:14px;}
-      .card-head{margin-bottom:12px;padding-bottom:10px;}
-      .vc-stats{gap:6px;}
-      .vc-stat-val{font-size:16px;}
-      .vc-stat{padding:6px;}
-      .section-head{flex-direction:column;align-items:flex-start;}
-      .section-head > div:last-child{width:100%;}
-      .section-head .search-wrap{width:100%;}
-      .section-head .search-wrap input{width:100%;min-width:unset;}
-      .section-head select{width:100%;}
-      #facultySummaryRow{flex-direction:column;}
-      .donut-wrap{flex-direction:column;align-items:flex-start;gap:12px;}
-      .prog-label{flex-wrap:wrap;}
+      .abs-controls-row{flex-direction:column;}
+      .abs-export-row{width:100%;}
+      .abs-kpi-row{gap:8px;}
       .logout-popup{padding:32px 24px 28px;}
-      .lp-title{font-size:22px;}
       .lp-btns{flex-direction:column;}
-    }
-    @media(max-width:480px){
-      .pl-logo{font-size:48px;}
-      .hero-heading{font-size:16px;}
-      .faculty-grid{grid-template-columns:1fr 1fr;}
-      .fc-name{font-size:11px;}
-      .venue-card{padding:14px 12px;}
     }
   </style>
 </head>
@@ -347,7 +396,7 @@
   <div class="hero-orb hero-orb1"></div>
   <div class="hero-orb hero-orb2"></div>
   <div class="hero-inner">
-    <div class="hero-text">
+    <div>
       <div class="hero-tag">Seminar Day — Live Tracking</div>
       <div class="hero-heading">Admin <span>Control Center</span></div>
       <div class="hero-date" id="heroDate"></div>
@@ -386,6 +435,9 @@
   </button>
   <button class="nav-tab" onclick="showPanel('pending',this)">
     ⏳ Pending <span class="nav-badge" id="badgePendingStudents">0</span>
+  </button>
+  <button class="nav-tab" onclick="showPanel('absentees',this)">
+    🚫 Absentees <span class="nav-badge" id="badgeAbsentees" style="background:#c0392b;">0</span>
   </button>
   <button class="nav-tab" onclick="showPanel('manage',this)">⚙️ Manage</button>
   <button class="nav-tab" onclick="showPanel('reports',this)">📄 Reports</button>
@@ -426,7 +478,7 @@
     <div class="section-head">
       <div>
         <div class="section-title">Faculty Mark Entry Tracking</div>
-        <div class="section-sub">Each faculty must enter marks for ALL students in their venue. Target = total venue students.</div>
+        <div class="section-sub">Each faculty must enter marks for ALL students in their venue.</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;width:100%;">
         <div class="search-wrap" style="flex:1;min-width:160px;">
@@ -452,7 +504,7 @@
     <div class="section-head">
       <div>
         <div class="section-title">Venue-wise Tracking</div>
-        <div class="section-sub">Shows per-faculty missing students. A venue is complete only when ALL faculty have entered ALL students.</div>
+        <div class="section-sub">Shows per-faculty missing students.</div>
       </div>
     </div>
     <div class="venue-grid" id="venueGrid">
@@ -465,15 +517,15 @@
     <div class="section-head">
       <div>
         <div class="section-title">Pending Mark Entries — By Faculty</div>
-        <div class="section-sub">Students NOT yet entered by their venue's faculty. Each faculty must enter ALL venue students.</div>
+        <div class="section-sub">Students NOT yet entered by their venue's faculty.</div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;">
         <div class="search-wrap" style="flex:1;min-width:160px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" placeholder="Search student or faculty…" id="pendingSearch" oninput="filterPending()">
         </div>
-        <select id="pendingDeptFilter"  onchange="filterPending()" style="width:auto;padding:8px 12px;font-size:12px;"><option value="all">All Depts</option></select>
-        <select id="pendingVenueFilter" onchange="filterPending()" style="width:auto;padding:8px 12px;font-size:12px;"><option value="all">All Venues</option></select>
+        <select id="pendingDeptFilter"    onchange="filterPending()" style="width:auto;padding:8px 12px;font-size:12px;"><option value="all">All Depts</option></select>
+        <select id="pendingVenueFilter"   onchange="filterPending()" style="width:auto;padding:8px 12px;font-size:12px;"><option value="all">All Venues</option></select>
         <select id="pendingFacultyFilter" onchange="filterPending()" style="width:auto;padding:8px 12px;font-size:12px;"><option value="all">All Faculty</option></select>
       </div>
     </div>
@@ -487,6 +539,85 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       ABSENTEES — DEDICATED PANEL
+  ═══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-absentees">
+
+    <!-- Hero strip with live KPIs -->
+    <div class="abs-hero">
+      <div class="abs-hero-inner">
+        <div>
+          <div class="abs-hero-title">🚫 Absentees Report</div>
+          <div class="abs-hero-sub">Department-wise · sorted by Roll No · live preview · PDF &amp; CSV export</div>
+        </div>
+        <div class="abs-kpi-row">
+          <div class="abs-kpi"><div class="abs-kpi-val" id="absKpiTotal">0</div><div class="abs-kpi-lab">Total Absent</div></div>
+          <div class="abs-kpi"><div class="abs-kpi-val" id="absKpiDepts">0</div><div class="abs-kpi-lab">Depts Affected</div></div>
+          <div class="abs-kpi"><div class="abs-kpi-val" id="absKpiVenues">0</div><div class="abs-kpi-lab">Venues</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls card -->
+    <div class="abs-controls-card">
+      <div class="abs-controls-row">
+        <div class="abs-control-field">
+          <span class="abs-control-label">Department</span>
+          <select id="absDeptFilter" onchange="renderAbsenteesPanel()">
+            <option value="ALL">All Departments</option>
+          </select>
+        </div>
+        <div class="abs-control-field">
+          <span class="abs-control-label">Venue</span>
+          <select id="absVenueFilter" onchange="renderAbsenteesPanel()">
+            <option value="ALL">All Venues</option>
+          </select>
+        </div>
+        <div class="abs-control-field">
+          <span class="abs-control-label">Batch</span>
+          <select id="absBatchFilter" onchange="reloadAbsentees()">
+            <option value="FN">FN (Forenoon)</option>
+            <option value="AN">AN (Afternoon)</option>
+          </select>
+        </div>
+        <div class="abs-search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="absSearch" placeholder="Search roll no. or name…" oninput="renderAbsenteesPanel()">
+        </div>
+        <div class="abs-export-row">
+          <button class="btn btn-danger" onclick="downloadAbsenteesReportPDF()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            PDF
+          </button>
+          <button class="btn btn-outline" onclick="downloadAbsenteesReportCSV()">⬇ CSV</button>
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- Main preview card -->
+    <div class="abs-main-card">
+      <div class="abs-main-card-head">
+        <div class="abs-main-card-title">
+          📋 Absentees List
+          <span class="abs-count-total" id="absPreviewCount">0 students</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);">
+          Batch: <strong id="absBatchLabel">FN</strong> &nbsp;·&nbsp; Click department to expand/collapse
+        </div>
+      </div>
+      <div id="absenteesPreviewBody">
+        <div class="abs-loading">
+          <div class="abs-spinner"></div>
+          <div class="abs-loading-msg">Loading absentees data…</div>
+        </div>
+      </div>
+      <div class="abs-summary-row" id="absSummaryChips"></div>
+    </div>
+
   </div>
 
   <!-- MANAGE -->
@@ -508,7 +639,7 @@
         <div id="status" class="status-box"></div>
       </div>
       <div class="card" style="animation-delay:.15s">
-        <div class="card-head"><div class="card-icon ic-green">📁</div><div><div class="card-title">Upload Data Sheets</div><div class="card-desc">Import student & faculty records via CSV</div></div></div>
+        <div class="card-head"><div class="card-icon ic-green">📁</div><div><div class="card-title">Upload Data Sheets</div><div class="card-desc">Import student &amp; faculty records via CSV</div></div></div>
         <div class="field"><label>Download Templates</label>
           <div class="btn-row">
             <button class="btn btn-outline btn-sm" onclick="downloadStaticTemplate('student')">⬇ Student Template</button>
@@ -540,7 +671,7 @@
   <!-- REPORTS -->
   <div class="panel" id="panel-reports">
     <div class="card" style="animation-delay:.1s">
-      <div class="card-head"><div class="card-icon ic-amber">📄</div><div><div class="card-title">Download Reports</div><div class="card-desc">Generate & export departmental mark reports</div></div></div>
+      <div class="card-head"><div class="card-icon ic-amber">📄</div><div><div class="card-title">Download Reports</div><div class="card-desc">Generate &amp; export departmental mark reports</div></div></div>
       <div class="g2">
         <div>
           <div class="field"><label>Select Department</label><select id="deptSelect"></select></div>
@@ -561,6 +692,11 @@
               <button class="btn btn-outline" onclick="downloadTotalDeptReportCSV()">⬇ Total CSV</button>
             </div>
           </div>
+          <div class="field"><label>Quick Absentees Report</label>
+            <div class="btn-row">
+              <button class="btn btn-danger" onclick="showPanel('absentees', document.querySelectorAll('.nav-tab')[4])">🚫 Go to Absentees Tab</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -576,19 +712,19 @@ let currentBatch = 'FN';
 let allStudents  = [];
 let allScores    = [];
 let allFacultyDB = [];
-let pendingAll   = []; // [{faculty_id, faculty_name, student_id, student_name, team, dept, venue}]
+let allAttendance = [];  // ← NEW: attendance sheet data
+let pendingAll   = [];
+let _absenteesList = [];
 
 const colors = ['#1a6bff','#00c77a','#ff4757','#ffa600','#7c5cfc','#00c8c8','#ff6b8a','#003fa3'];
 
 function $id(id){ return document.getElementById(id); }
 function norm(v){ return String(v??'').trim(); }
-
 function hidePageLoader(){ $id('pageLoader').classList.add('hide'); }
 function openLogout()    { $id('logoutOverlay').classList.add('active'); }
 function closeLogout()   { $id('logoutOverlay').classList.remove('active'); }
 function doLogout()      { localStorage.clear(); window.location.href='index.html'; }
 $id('logoutOverlay').addEventListener('click',function(e){ if(e.target===this) closeLogout(); });
-
 $id('heroDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 document.addEventListener('DOMContentLoaded', ()=>{ loadDashboard(); });
 
@@ -608,8 +744,11 @@ function animateCount(el,target){
 function showPanel(id,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  $id('panel-'+id).classList.add('active'); btn.classList.add('active');
+  $id('panel-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='absentees') renderAbsenteesPanel();
 }
+
 function switchBatch(batch,btn){
   currentBatch=batch;
   document.querySelectorAll('.batch-tab').forEach(b=>b.classList.remove('active'));
@@ -617,15 +756,16 @@ function switchBatch(batch,btn){
 }
 
 /* ═══════════════════════════════════════════
-   LOAD DASHBOARD
+   LOAD DASHBOARD — now also fetches attendance
 ═══════════════════════════════════════════ */
 async function loadDashboard(){
   $id('refreshBtn').classList.add('spinning');
   try{
-    const [studRaw, scoresRaw, facRaw, lockFN, lockAN] = await Promise.all([
+    const [studRaw, scoresRaw, facRaw, attRaw, lockFN, lockAN] = await Promise.all([
       postData('getStudents',    {venue:'ALL', batch:currentBatch}),
       postData('getMarks',       {batch:currentBatch}),
       postData('getFacultyList', {batch:currentBatch}),
+      postData('getAttendance',  {venue:'', batch:currentBatch}),  // ★ empty venue = all venues
       postData('getLockStatus',  {batch:'FN'}),
       postData('getLockStatus',  {batch:'AN'})
     ]);
@@ -638,23 +778,28 @@ async function loadDashboard(){
       Student2_Name: norm(s.Student2_Name||s.student2_name),
       Dept:          norm(s.Dept||s.dept),
       Venue:         norm(s.Venue||s.venue),
-      Batch:         norm(s.Batch||s.batch)
+      Batch:         norm(s.Batch||s.batch||s.session||s.Session)
     }));
 
-    allScores = (Array.isArray(scoresRaw)?scoresRaw:(scoresRaw?.data||[])).map(m=>({
-      Faculty_ID:            norm(m.Faculty_ID||m.faculty_id),
-      Student_ID:            norm(m.Student_ID||m.student_id),
-      Student_Name:          norm(m.Student_Name||m.student_name),
-      Dept:                  norm(m.Dept||m.dept||m.Department||m.department),
-      Venue:                 norm(m.Venue||m.venue),
-      LevelI_Problem:        Number(m.LevelI_Problem||m.leveli_problem||0),
-      LevelI_Methodology:    Number(m.LevelI_Methodology||m.leveli_methodology||0),
-      LevelI_Pictorial:      Number(m.LevelI_Pictorial||m.leveli_pictorial||0),
-      LevelI_Response:       Number(m.LevelI_Response||m.leveli_response||0),
-      LevelII_Determination: Number(m.LevelII_Determination||m.levelii_determination||0),
-      LevelII_Communication: Number(m.LevelII_Communication||m.levelii_communication||0),
-      Total:                 m.Total??m.total??0
-    }));
+    allScores = (Array.isArray(scoresRaw)?scoresRaw:(scoresRaw?.data||[])).map(m=>{
+      // ★ CRITICAL: preserve "Absent" string — do NOT coerce to Number
+      const rawTotal = m.Total ?? m.total ?? 0;
+      const totalVal = (norm(String(rawTotal)).toLowerCase() === 'absent') ? 'Absent' : rawTotal;
+      return {
+        Faculty_ID:            norm(m.Faculty_ID||m.faculty_id),
+        Student_ID:            norm(m.Student_ID||m.student_id),
+        Student_Name:          norm(m.Student_Name||m.student_name),
+        Dept:                  norm(m.Dept||m.dept||m.Department||m.department),
+        Venue:                 norm(m.Venue||m.venue),
+        LevelI_Problem:        Number(m.LevelI_Problem||m.leveli_problem||0),
+        LevelI_Methodology:    Number(m.LevelI_Methodology||m.leveli_methodology||0),
+        LevelI_Pictorial:      Number(m.LevelI_Pictorial||m.leveli_pictorial||0),
+        LevelI_Response:       Number(m.LevelI_Response||m.leveli_response||0),
+        LevelII_Determination: Number(m.LevelII_Determination||m.levelii_determination||0),
+        LevelII_Communication: Number(m.LevelII_Communication||m.levelii_communication||0),
+        Total:                 totalVal
+      };
+    });
 
     allFacultyDB = (Array.isArray(facRaw)?facRaw:[])
       .map(f=>({
@@ -662,9 +807,26 @@ async function loadDashboard(){
         Name:       norm(f.Name||f.name),
         Role:       norm(f.Role||f.role),
         Venue:      norm(f.Venue||f.venue),
-        Batch:      norm(f.Batch||f.batch)
+        Batch:      norm(f.Batch||f.batch||f.Session||f.session)
       }))
       .filter(f=>f.Role.toLowerCase()==='faculty');
+
+    // ── Parse attendance data (handles both key casing)
+    allAttendance = (Array.isArray(attRaw)?attRaw:[]).map(a=>({
+      StudentId:   norm(a.StudentId||a.studentid||a.StudentID||a.student_id),
+      StudentName: norm(a.StudentName||a.studentname||a.Student_Name||a.student_name),
+      Dept:        norm(a.Dept||a.dept),
+      Attedance:   norm(a.Attedance||a.Attendance||a.attedance||a.attendance),
+      Faculty_ID:  norm(a.Faculty_ID||a.faculty_id),
+      Venue:       norm(a.Venue||a.venue),
+      Batch:       norm(a.Batch||a.batch||a.Session||a.session)
+    }));
+
+    // ── Debug logging (helps trace data issues) ──
+    console.log('[KCET] Scores loaded:', allScores.length, '| Sample Total values:', allScores.slice(0,5).map(m=>m.Total));
+    console.log('[KCET] Attendance loaded:', allAttendance.length, '| Sample:', allAttendance.slice(0,3));
+    console.log('[KCET] Absent from scores:', allScores.filter(m=>norm(String(m.Total)).toLowerCase()==='absent').length);
+    console.log('[KCET] Absent from attendance:', allAttendance.filter(a=>a.Attedance.toLowerCase()==='absent').length);
 
     const lFN=norm(lockFN?.status||'Open'), lAN=norm(lockAN?.status||'Open');
     $id('heroLockFN').textContent=lFN==='Open'?'🔓 Open':'🔒 Locked';
@@ -684,27 +846,17 @@ async function loadDashboard(){
 
 /* ═══════════════════════════════════════════
    CORE COMPUTE
-   
-   KEY LOGIC (fixed):
-   - Each faculty assigned to a venue must enter marks for ALL students in that venue
-   - "pending" = (venue students) that a specific faculty has NOT entered yet
-   - A venue is complete ONLY when ALL assigned faculty have entered ALL venue students
-   - The pending table shows per-faculty missing entries, not just "unentred students globally"
 ═══════════════════════════════════════════ */
 function computeAndRender(){
-
-  /* ── Flat student list ── */
   const studentList=[];
   allStudents.forEach(t=>{
     if(t.Student1_ID) studentList.push({id:t.Student1_ID, name:t.Student1_Name, team:t.TeamID, dept:t.Dept, venue:t.Venue});
     if(t.Student2_ID) studentList.push({id:t.Student2_ID, name:t.Student2_Name, team:t.TeamID, dept:t.Dept, venue:t.Venue});
   });
 
-  /* ── Student lookup by ID ── */
   const studentMap = {};
   studentList.forEach(s=>{ studentMap[s.id]=s; });
 
-  /* ── Venue → students list ── */
   const venueStudentsMap = {};
   studentList.forEach(s=>{
     if(!s.venue) return;
@@ -712,7 +864,6 @@ function computeAndRender(){
     venueStudentsMap[s.venue].push(s);
   });
 
-  /* ── Venue → assigned faculty ── */
   const venueAssignedMap = {};
   allFacultyDB.forEach(f=>{
     if(!f.Venue) return;
@@ -720,40 +871,51 @@ function computeAndRender(){
     venueAssignedMap[f.Venue].push(f.Faculty_ID);
   });
 
-  /* ── Faculty_ID → Set of student IDs they have entered ── */
-  const facEnteredMap = {};  // { faculty_id: Set<student_id> }
+  const facEnteredMap = {};
   allScores.forEach(m=>{
     if(!m.Faculty_ID || !m.Student_ID) return;
     if(!facEnteredMap[m.Faculty_ID]) facEnteredMap[m.Faculty_ID] = new Set();
     facEnteredMap[m.Faculty_ID].add(m.Student_ID);
   });
 
-  /* ── Absent student IDs (by Total='absent') ── */
-  const absentStudentIDs = new Set(
+  // ── Build absentee IDs from BOTH sources ──
+  // Helper: is a score record marking a student as absent?
+  function isAbsentScore(m){
+    const t = norm(String(m.Total ?? m.total ?? ''));
+    return t.toLowerCase() === 'absent';
+  }
+
+  // Source 1: Scores sheet where Total = 'Absent' (string, case-insensitive)
+  const absentFromScores = new Set(
     allScores
-      .filter(m=>m.Student_ID && norm(String(m.Total)).toLowerCase()==='absent')
-      .map(m=>m.Student_ID)
+      .filter(m => m.Student_ID && isAbsentScore(m))
+      .map(m => m.Student_ID)
   );
 
-  /* ── Build per-faculty data ──
-     Target for each faculty = ALL students in their venue
-     (Both faculty must enter ALL venue students independently)
-  ── */
+  // Source 2: Attendance sheet where Attedance/Attendance = 'Absent'
+  const absentFromAttendance = new Set(
+    allAttendance
+      .filter(a => a.StudentId && a.Attedance.toLowerCase() === 'absent')
+      .map(a => a.StudentId)
+  );
+
+  console.log('[KCET] absentFromScores:', absentFromScores.size, [...absentFromScores].slice(0,5));
+  console.log('[KCET] absentFromAttendance:', absentFromAttendance.size, [...absentFromAttendance].slice(0,5));
+
+  const absentStudentIDs = new Set([...absentFromScores, ...absentFromAttendance]);
+
   const facData = allFacultyDB.map((f,i)=>{
     const vStudents = venueStudentsMap[f.Venue] || [];
-    const target    = vStudents.length;  // must enter ALL venue students
+    const target    = vStudents.length;
     const myEntered = facEnteredMap[f.Faculty_ID] || new Set();
     const entered   = vStudents.filter(s=>myEntered.has(s.id)).length;
-    const missing   = vStudents.filter(s=>!myEntered.has(s.id));  // students this faculty hasn't entered
+    const missing   = vStudents.filter(s=>!myEntered.has(s.id));
     const pct       = target>0 ? Math.min(100,Math.round(entered/target*100)) : 0;
     const status    = entered>=target && target>0 ? 'done' : entered>0 ? 'partial' : 'none';
     const partners  = (venueAssignedMap[f.Venue]||[]).filter(id=>id!==f.Faculty_ID);
     return { ...f, target, entered, missing, pct, status, partners, colorIdx:i%colors.length };
   });
 
-  /* ── Pending entries = per-faculty missing students ──
-     One row per (faculty, student) pair where faculty hasn't entered that student
-  ── */
   pendingAll = [];
   facData.forEach(f=>{
     f.missing.forEach(s=>{
@@ -769,33 +931,103 @@ function computeAndRender(){
     });
   });
 
-  /* ── Global entered IDs (any faculty entered = student has at least one entry) ── */
   const anyEnteredIDs = new Set(allScores.map(m=>m.Student_ID).filter(Boolean));
-
-  /* ── Unique student IDs present (not absent) ── */
   const presentStudentIDs = new Set([...anyEnteredIDs].filter(sid=>!absentStudentIDs.has(sid)));
-
   const venues = [...new Set(studentList.map(s=>s.venue).filter(Boolean))];
   const depts  = [...new Set(studentList.map(s=>s.dept).filter(Boolean))];
 
-  /* ── Venue-level completion: done only when ALL faculty done ── */
   const venueCompleteMap = {};
   venues.forEach(v=>{
     const vFac = facData.filter(f=>f.Venue===v);
     venueCompleteMap[v] = vFac.length>0 && vFac.every(f=>f.status==='done');
   });
 
+  /* ── Build global absentees list ──
+     3 sources (merged, deduped):
+     1. Attendance sheet (Attedance = 'Absent')
+     2. Scores sheet (Total = 'Absent' string)
+     3. Students enrolled but never entered by ANY faculty (fully missing)
+     Details filled from studentMap when not available in score/attendance record.
+  */
+  const absentMap = {};
+
+  // Source 1: Attendance sheet
+  allAttendance
+    .filter(a => a.StudentId && a.Attedance.toLowerCase() === 'absent')
+    .forEach(a => {
+      const sInfo = studentMap[a.StudentId];
+      absentMap[a.StudentId] = {
+        student_id:   a.StudentId,
+        student_name: a.StudentName || (sInfo ? sInfo.name  : ''),
+        venue:        a.Venue       || (sInfo ? sInfo.venue : ''),
+        dept:         a.Dept        || (sInfo ? sInfo.dept  : ''),
+        source:       'attendance'
+      };
+    });
+
+  // Source 2: Scores sheet where Total === 'Absent'
+  allScores
+    .filter(m => m.Student_ID && isAbsentScore(m))
+    .forEach(m => {
+      const sInfo = studentMap[m.Student_ID];
+      if (!absentMap[m.Student_ID]) {
+        absentMap[m.Student_ID] = {
+          student_id:   m.Student_ID,
+          student_name: m.Student_Name || (sInfo ? sInfo.name  : ''),
+          venue:        m.Venue        || (sInfo ? sInfo.venue : ''),
+          dept:         m.Dept         || (sInfo ? sInfo.dept  : ''),
+          source:       'scores'
+        };
+      } else {
+        // Patch any missing fields
+        const e = absentMap[m.Student_ID];
+        if (!e.student_name) e.student_name = m.Student_Name || (sInfo ? sInfo.name  : '');
+        if (!e.venue)        e.venue        = m.Venue        || (sInfo ? sInfo.venue : '');
+        if (!e.dept)         e.dept         = m.Dept         || (sInfo ? sInfo.dept  : '');
+      }
+    });
+
+  // Source 3 (optional fallback): entries in scores where all marks = 0
+  // This catches cases where faculty submitted 0s instead of using the Absent toggle
+  allScores
+    .filter(m => {
+      if (!m.Student_ID) return false;
+      if (absentMap[m.Student_ID]) return false; // already captured
+      const allZero = [m.LevelI_Problem, m.LevelI_Methodology, m.LevelI_Pictorial,
+                       m.LevelI_Response, m.LevelII_Determination, m.LevelII_Communication]
+                      .every(v => Number(v) === 0);
+      return allZero && norm(String(m.Total)) === '0';
+    })
+    .forEach(m => {
+      const sInfo = studentMap[m.Student_ID];
+      absentMap[m.Student_ID] = {
+        student_id:   m.Student_ID,
+        student_name: m.Student_Name || (sInfo ? sInfo.name  : ''),
+        venue:        m.Venue        || (sInfo ? sInfo.venue : ''),
+        dept:         m.Dept         || (sInfo ? sInfo.dept  : ''),
+        source:       'all-zero'
+      };
+    });
+
+  console.log('[KCET] _absenteesList total:', Object.keys(absentMap).length,
+              '| sources:', Object.values(absentMap).reduce((a,v)=>{a[v.source]=(a[v.source]||0)+1;return a;},{}));
+
+  _absenteesList = Object.values(absentMap).sort((a,b)=>{
+    const dc = (a.dept||'').localeCompare(b.dept||'');
+    if(dc!==0) return dc;
+    return (a.student_id||'').localeCompare(b.student_id||'', undefined, {numeric:true, sensitivity:'base'});
+  });
+
   /* ── KPIs ── */
   animateCount($id('kTotal'),   studentList.length);
   animateCount($id('kPresent'), presentStudentIDs.size);
   animateCount($id('kAbsent'),  absentStudentIDs.size);
-  animateCount($id('kPending'), pendingAll.length);  // total faculty-student pending pairs
+  animateCount($id('kPending'), pendingAll.length);
   animateCount($id('kVenues'),  venues.length);
   animateCount($id('kFaculty'), allFacultyDB.length);
   animateCount($id('kDepts'),   depts.length);
   animateCount($id('kEntries'), allScores.length);
 
-  /* ── Nav badges ── */
   const pendFac = facData.filter(f=>f.status!=='done');
   const b1=$id('badgeFacultyPending');
   b1.textContent=pendFac.length;
@@ -804,11 +1036,10 @@ function computeAndRender(){
   const incompVenues = venues.filter(v=>!venueCompleteMap[v]).length;
   $id('badgeVenuePending').textContent=incompVenues;
 
-  // Unique student IDs that are still missing from at least one faculty
   const uniquePendingStudentIDs = new Set(pendingAll.map(p=>p.student_id));
   $id('badgePendingStudents').textContent=uniquePendingStudentIDs.size;
+  $id('badgeAbsentees').textContent=_absenteesList.length;
 
-  /* ── Render ── */
   renderOverview(studentList,anyEnteredIDs,depts,venues,facData,venueCompleteMap,absentStudentIDs,presentStudentIDs);
   window._allFacData=facData;
   renderFacultySummaryRow(facData);
@@ -819,14 +1050,22 @@ function computeAndRender(){
   populatePendingDeptFilter(depts);
   populatePendingVenueFilter(venues);
   populatePendingFacultyFilter(facData);
+  populateAbsFilters(depts, venues);
+
+  // Update absentees panel hero KPIs
+  $id('absKpiTotal').textContent = _absenteesList.length;
+  $id('absKpiDepts').textContent = new Set(_absenteesList.map(a=>a.dept).filter(Boolean)).size;
+  $id('absKpiVenues').textContent = new Set(_absenteesList.map(a=>a.venue).filter(Boolean)).size;
+
+  // If absentees panel is active, re-render it
+  if($id('panel-absentees').classList.contains('active')) renderAbsenteesPanel();
 }
 
 /* ═══════════════════════════════════════════
-   OVERVIEW
+   OVERVIEW (unchanged logic)
 ═══════════════════════════════════════════ */
 function renderOverview(studentList,anyEnteredIDs,depts,venues,facData,venueCompleteMap,absentStudentIDs,presentStudentIDs){
   const total=studentList.length;
-  // Overall %: based on unique students that have at least one entry
   const entered=anyEnteredIDs.size;
   const pct=total?Math.round(Math.min(entered,total)/total*100):0;
 
@@ -838,11 +1077,11 @@ function renderOverview(studentList,anyEnteredIDs,depts,venues,facData,venueComp
       <div class="donut-legend">
         <div class="dl-item"><div class="dl-dot" style="background:#00c77a"></div>${presentStudentIDs.size} students present</div>
         <div class="dl-item"><div class="dl-dot" style="background:#ff4757"></div>${absentStudentIDs.size} students absent</div>
-        <div class="dl-item"><div class="dl-dot" style="background:#eef4ff;border:1px solid #ccc"></div>${Math.max(0,total-entered)} not yet entered by anyone</div>
+        <div class="dl-item"><div class="dl-dot" style="background:#eef4ff;border:1px solid #ccc"></div>${Math.max(0,total-entered)} not yet entered</div>
         <div class="dl-item"><div class="dl-dot" style="background:#1a6bff"></div>${total} total enrolled</div>
       </div>
     </div>
-    <div class="prog-label"><span>Overall Entry Completion (unique students)</span><span>${pct}%</span></div>
+    <div class="prog-label"><span>Overall Entry Completion</span><span>${pct}%</span></div>
     <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:linear-gradient(90deg,#1a6bff,#00aaff)"></div></div>
     <div style="display:flex;gap:14px;margin-top:16px;flex-wrap:wrap;">
       ${venues.map(v=>{
@@ -913,14 +1152,13 @@ function renderFacultySummaryRow(data){
   $id('facultySummaryRow').innerHTML=`
     <div class="pill pill-green"  style="padding:6px 14px;font-size:12px;">✅ Completed: ${done}</div>
     <div class="pill pill-amber"  style="padding:6px 14px;font-size:12px;">⚡ Partial: ${partial}</div>
-    <div class="pill pill-red"    style="padding:6px 14px;font-size:12px;">❌ Not Started: ${none}</div>
-    <div style="font-size:11px;color:var(--muted);padding:6px 0;align-self:center;">· Each faculty must enter ALL venue students</div>`;
+    <div class="pill pill-red"    style="padding:6px 14px;font-size:12px;">❌ Not Started: ${none}</div>`;
 }
 
 function renderFacultyCards(data){
   const grid=$id('facultyGrid');
   if(!data.length){
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">📭</div><div class="es-title">No Faculty Data</div><div class="es-sub">Check Faculty sheet has Role=Faculty rows for batch ${currentBatch}</div></div>`;
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">📭</div><div class="es-title">No Faculty Data</div></div>`;
     return;
   }
   grid.innerHTML=data.map(f=>{
@@ -948,7 +1186,7 @@ function renderFacultyCards(data){
         <div class="fc-sdot ${dotCls}"></div>
       </div>
       <div class="fc-prog">
-        <div class="fc-prog-label"><span>Entries (all venue students)</span><span>${f.entered}/${f.target}</span></div>
+        <div class="fc-prog-label"><span>Entries</span><span>${f.entered}/${f.target}</span></div>
         <div class="fc-bar-wrap"><div class="fc-bar" style="width:${f.pct}%;background:${barCol}"></div></div>
       </div>
       ${missingHtml}
@@ -971,38 +1209,30 @@ function filterFaculty(){
 
 /* ═══════════════════════════════════════════
    VENUE TRACKING
-   Shows per-faculty missing students within each venue card
 ═══════════════════════════════════════════ */
 function renderVenueTracking(studentList,anyEnteredIDs,facData,venueStudentsMap,venueAssignedMap,absentStudentIDs,venueCompleteMap){
   const venues=[...new Set(studentList.map(s=>s.venue).filter(Boolean))];
   $id('venueGrid').innerHTML=venues.map(v=>{
-    const vStu = venueStudentsMap[v]||[];
-    const vEnt = vStu.filter(s=>anyEnteredIDs.has(s.id));
-    const vAbsCnt  = vStu.filter(s=>absentStudentIDs.has(s.id)).length;
-    const vPresCnt = vStu.filter(s=>anyEnteredIDs.has(s.id)&&!absentStudentIDs.has(s.id)).length;
-
+    const vStu=venueStudentsMap[v]||[];
+    const vEnt=vStu.filter(s=>anyEnteredIDs.has(s.id));
+    const vAbsCnt=vStu.filter(s=>absentStudentIDs.has(s.id)).length;
+    const vPresCnt=vStu.filter(s=>anyEnteredIDs.has(s.id)&&!absentStudentIDs.has(s.id)).length;
     const depts=[...new Set(vStu.map(s=>s.dept).filter(Boolean))];
     const assignedFac=facData.filter(f=>f.Venue===v);
     const isComplete=venueCompleteMap[v];
     const anyStarted=assignedFac.some(f=>f.status!=='none');
     const statusCls=isComplete?'vc-done':anyStarted?'vc-partial':'vc-none';
-
-    // Overall entry % based on unique students with any entry
     const pct=vStu.length?Math.round(Math.min(vEnt.length,vStu.length)/vStu.length*100):0;
-
     const facRows=assignedFac.map(f=>{
       const pc=f.status==='done'?'pill-green':f.status==='partial'?'pill-amber':'pill-red';
       const lbl=f.status==='done'?'Done':f.status==='partial'?'Partial':'Not Started';
       const barC=f.status==='done'?'#00c77a':f.status==='partial'?'#ffa600':'#ff4757';
-
-      // Show which specific students this faculty is missing
-      const missingBlock = f.missing.length>0
+      const missingBlock=f.missing.length>0
         ?`<div class="vc-missing-students">
             <div class="vc-missing-label">⚠️ Missing ${f.missing.length} student${f.missing.length>1?'s':''}</div>
             <div class="vc-missing-ids">${f.missing.map(s=>`<span style="display:inline-block;background:rgba(255,71,87,.1);border-radius:4px;padding:1px 6px;margin:1px;font-size:9.5px;">${s.id}</span>`).join('')}</div>
           </div>`
         :`<div style="margin-top:4px;font-size:10px;color:#006b45;font-weight:600;">✅ All ${f.target} students entered</div>`;
-
       return`<div class="vc-fac-row">
         <div class="vc-fac-header">
           <div>
@@ -1019,10 +1249,7 @@ function renderVenueTracking(studentList,anyEnteredIDs,facData,venueStudentsMap,
         ${missingBlock}
       </div>`;
     }).join('');
-
-    // Total pending = sum of all faculty missing for this venue
     const totalPending=assignedFac.reduce((a,f)=>a+f.missing.length,0);
-
     return`<div class="venue-card ${statusCls}">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;flex-wrap:wrap;gap:6px;">
         <div class="vc-name">${v}</div>
@@ -1034,11 +1261,9 @@ function renderVenueTracking(studentList,anyEnteredIDs,facData,venueStudentsMap,
         <div class="vc-stat" style="background:rgba(0,199,122,.08);"><div class="vc-stat-val" style="color:#006b45;">${vPresCnt}</div><div class="vc-stat-lab">Present</div></div>
         <div class="vc-stat" style="background:rgba(255,71,87,.07);"><div class="vc-stat-val" style="color:#a00;">${vAbsCnt}</div><div class="vc-stat-lab">Absent</div></div>
       </div>
-      ${assignedFac.length?`
-        <div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Faculty Entry Status</div>
-        <div class="vc-fac-list">${facRows}</div>`:''}
+      ${assignedFac.length?`<div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;">Faculty Entry Status</div><div class="vc-fac-list">${facRows}</div>`:''}
       ${totalPending>0
-        ?`<div style="margin-top:12px;"><span class="pending-badge">⏳ ${totalPending} total pending entr${totalPending>1?'ies':'y'} across faculty</span></div>`
+        ?`<div style="margin-top:12px;"><span class="pending-badge">⏳ ${totalPending} total pending entr${totalPending>1?'ies':'y'}</span></div>`
         :`<div style="margin-top:12px;font-size:11px;color:#006b45;font-weight:700;">🎉 All faculty entries complete!</div>`}
     </div>`;
   }).join('')||`<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🏛️</div><div class="es-title">No Venue Data</div></div>`;
@@ -1046,7 +1271,6 @@ function renderVenueTracking(studentList,anyEnteredIDs,facData,venueStudentsMap,
 
 /* ═══════════════════════════════════════════
    PENDING STUDENTS TABLE
-   Rows = (faculty, student) pairs where faculty hasn't entered that student
 ═══════════════════════════════════════════ */
 function renderPendingStudents(data){
   const tbody=$id('pendingTableBody');
@@ -1057,10 +1281,7 @@ function renderPendingStudents(data){
   tbody.innerHTML=data.map((p,i)=>{
     return`<tr>
       <td style="color:var(--muted);font-size:11px;">${i+1}</td>
-      <td>
-        <div style="font-weight:700;color:var(--red);font-size:11px;">${p.faculty_id}</div>
-        <div style="font-size:10px;color:var(--muted);">${p.faculty_name}</div>
-      </td>
+      <td><div style="font-weight:700;color:var(--red);font-size:11px;">${p.faculty_id}</div><div style="font-size:10px;color:var(--muted);">${p.faculty_name}</div></td>
       <td style="font-weight:600;color:var(--royal);">${p.student_id}</td>
       <td>${p.student_name||'—'}</td>
       <td><span class="pill pill-blue">${p.team||'—'}</span></td>
@@ -1080,13 +1301,7 @@ function filterPending(){
   if(d!=='all') data=data.filter(p=>p.dept===d);
   if(v!=='all') data=data.filter(p=>p.venue===v);
   if(fac!=='all') data=data.filter(p=>p.faculty_id===fac);
-  if(q) data=data.filter(p=>
-    p.student_id.toLowerCase().includes(q)||
-    (p.student_name||'').toLowerCase().includes(q)||
-    p.faculty_id.toLowerCase().includes(q)||
-    (p.faculty_name||'').toLowerCase().includes(q)||
-    p.venue.toLowerCase().includes(q)
-  );
+  if(q) data=data.filter(p=>p.student_id.toLowerCase().includes(q)||(p.student_name||'').toLowerCase().includes(q)||p.faculty_id.toLowerCase().includes(q)||(p.faculty_name||'').toLowerCase().includes(q)||p.venue.toLowerCase().includes(q));
   renderPendingStudents(data);
 }
 
@@ -1094,6 +1309,167 @@ function populateDeptDropdown(depts){ const sel=$id('deptSelect');sel.innerHTML=
 function populatePendingDeptFilter(depts){ const sel=$id('pendingDeptFilter');sel.innerHTML='<option value="all">All Depts</option>';depts.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;sel.appendChild(o);}); }
 function populatePendingVenueFilter(venues){ const sel=$id('pendingVenueFilter');sel.innerHTML='<option value="all">All Venues</option>';venues.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);}); }
 function populatePendingFacultyFilter(facData){ const sel=$id('pendingFacultyFilter');sel.innerHTML='<option value="all">All Faculty</option>';facData.filter(f=>f.missing.length>0).forEach(f=>{const o=document.createElement('option');o.value=f.Faculty_ID;o.textContent=`${f.Faculty_ID} (${f.missing.length} missing)`;sel.appendChild(o);}); }
+
+function populateAbsFilters(depts, venues){
+  const dSel=$id('absDeptFilter');
+  dSel.innerHTML='<option value="ALL">All Departments</option>';
+  depts.forEach(d=>{const o=document.createElement('option');o.value=d;o.textContent=d;dSel.appendChild(o);});
+
+  const vSel=$id('absVenueFilter');
+  vSel.innerHTML='<option value="ALL">All Venues</option>';
+  venues.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;vSel.appendChild(o);});
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ABSENTEES PANEL — FULL IMPLEMENTATION
+═══════════════════════════════════════════════════════════ */
+
+/** Sync batch filter label when changed */
+function reloadAbsentees(){
+  const batch = $id('absBatchFilter').value;
+  $id('absBatchLabel').textContent = batch;
+  // Switch currentBatch and reload
+  currentBatch = batch;
+  document.querySelectorAll('.batch-tab').forEach(b=>{
+    b.classList.toggle('active', b.textContent.trim() === batch);
+  });
+  showToast('⏳ Reloading for batch ' + batch + '…');
+  loadDashboard();
+}
+
+/** Get filtered absentees list based on current filter controls */
+function getFilteredAbsentees(){
+  const dept  = $id('absDeptFilter')  ? $id('absDeptFilter').value  : 'ALL';
+  const venue = $id('absVenueFilter') ? $id('absVenueFilter').value : 'ALL';
+  const q     = ($id('absSearch')     ? $id('absSearch').value      : '').toLowerCase().trim();
+
+  return _absenteesList.filter(a => {
+    if(dept  !== 'ALL' && a.dept  !== dept)  return false;
+    if(venue !== 'ALL' && a.venue !== venue) return false;
+    if(q && !a.student_id.toLowerCase().includes(q) && !(a.student_name||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+/** Render the absentees panel with collapsible dept sections */
+function renderAbsenteesPanel(){
+  const body  = $id('absenteesPreviewBody');
+  const chips = $id('absSummaryChips');
+  if(!body) return;
+
+  const list  = getFilteredAbsentees();
+
+  $id('absBatchLabel').textContent = $id('absBatchFilter').value;
+  $id('absPreviewCount').textContent = list.length + ' student' + (list.length!==1?'s':'');
+
+  // Update hero KPIs with filtered counts
+  $id('absKpiTotal').textContent = _absenteesList.length;
+  $id('absKpiDepts').textContent = new Set(_absenteesList.map(a=>a.dept).filter(Boolean)).size;
+  $id('absKpiVenues').textContent = new Set(_absenteesList.map(a=>a.venue).filter(Boolean)).size;
+
+  if(!list.length){
+    body.innerHTML=`<div class="abs-empty-state">
+      <div class="abs-empty-icon">🎉</div>
+      <div class="abs-empty-title">No Absentees Found</div>
+      <div class="abs-empty-sub">No students match the selected filters.</div>
+      <div style="margin-top:18px;background:#f8f9ff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;text-align:left;max-width:480px;margin-left:auto;margin-right:auto;">
+        <div style="font-size:11px;font-weight:700;color:var(--royal);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">📊 Data Diagnostics</div>
+        <div style="font-size:11px;color:var(--muted);line-height:1.8;">
+          Scores loaded: <strong style="color:var(--royal);">${allScores.length}</strong><br>
+          Absent in Scores (Total='Absent'): <strong style="color:#c00;">${allScores.filter(m=>norm(String(m.Total)).toLowerCase()==='absent').length}</strong><br>
+          Attendance records loaded: <strong style="color:var(--royal);">${allAttendance.length}</strong><br>
+          Absent in Attendance sheet: <strong style="color:#c00;">${allAttendance.filter(a=>a.Attedance.toLowerCase()==='absent').length}</strong><br>
+          Total unique absentees (all filters): <strong style="color:#c00;">${_absenteesList.length}</strong><br>
+          <span style="font-size:10px;color:var(--muted);">Check browser console (F12) for full debug logs</span>
+        </div>
+      </div>
+    </div>`;
+    chips.innerHTML='';
+    return;
+  }
+
+  // Group by dept
+  const groups={};
+  list.forEach(a=>{
+    const k=a.dept||'Unknown';
+    if(!groups[k]) groups[k]=[];
+    groups[k].push(a);
+  });
+
+  let html='';
+  let sno=0;
+  Object.keys(groups).sort().forEach((dept,di)=>{
+    const secId='absDeptSec_'+dept.replace(/\W/g,'_');
+    const bodyId='absDeptBody_'+dept.replace(/\W/g,'_');
+    html+=`
+      <div class="abs-dept-section" id="${secId}">
+        <div class="abs-dept-header-row" onclick="toggleDeptSection('${bodyId}',this)">
+          <div class="abs-dept-title">
+            📚 ${dept}
+            <span class="abs-dept-count">${groups[dept].length} absent</span>
+          </div>
+          <span class="abs-dept-toggle open">▼</span>
+        </div>
+        <div class="abs-dept-body" id="${bodyId}">
+          <table class="abs-table">
+            <thead><tr><th>S.No</th><th>Roll No.</th><th>Student Name</th><th>Venue</th><th>Dept</th></tr></thead>
+            <tbody>
+              ${groups[dept].map(a=>{
+                sno++;
+                const srcBadge = a.source === 'attendance'
+                  ? `<span style="font-size:9px;background:rgba(124,92,252,.1);color:#4a2ab0;border-radius:4px;padding:1px 5px;margin-left:4px;">ATT</span>`
+                  : a.source === 'all-zero'
+                  ? `<span style="font-size:9px;background:rgba(255,166,0,.1);color:#7a4a00;border-radius:4px;padding:1px 5px;margin-left:4px;">0s</span>`
+                  : `<span style="font-size:9px;background:rgba(255,71,87,.1);color:#a00;border-radius:4px;padding:1px 5px;margin-left:4px;">SCR</span>`;
+                return`<tr>
+                  <td>${sno}</td>
+                  <td><span class="abs-roll-no">${a.student_id}${srcBadge}</span></td>
+                  <td class="abs-name">${a.student_name||'—'}</td>
+                  <td><span class="pill pill-purple" style="font-size:10px;">${a.venue||'—'}</span></td>
+                  <td><span class="pill pill-blue" style="font-size:10px;">${a.dept||'—'}</span></td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`;
+  });
+  body.innerHTML=html;
+
+  // Summary chips
+  chips.innerHTML=`
+    <span class="abs-chip chip-total">
+      <span class="abs-chip-dot"></span>
+      Total: ${list.length}
+    </span>
+    ${Object.keys(groups).sort().map(d=>`
+      <span class="abs-chip" onclick="filterAbsByDept('${d}')">
+        <span class="abs-chip-dot"></span>
+        ${d}: ${groups[d].length}
+      </span>
+    `).join('')}`;
+}
+
+function toggleDeptSection(bodyId, headerEl){
+  const body = document.getElementById(bodyId);
+  if(!body) return;
+  const toggle = headerEl.querySelector('.abs-dept-toggle');
+  const isOpen = toggle.classList.contains('open');
+  if(isOpen){
+    body.style.maxHeight = body.scrollHeight + 'px';
+    requestAnimationFrame(()=>{ body.style.maxHeight='0'; });
+    toggle.classList.remove('open');
+  } else {
+    body.style.maxHeight = body.scrollHeight + 'px';
+    setTimeout(()=>{ body.style.maxHeight='none'; },300);
+    toggle.classList.add('open');
+  }
+}
+
+function filterAbsByDept(dept){
+  $id('absDeptFilter').value = dept;
+  renderAbsenteesPanel();
+}
 
 /* ═══════════════════════════════════════════
    LOCK / UNLOCK
@@ -1136,93 +1512,764 @@ async function uploadSheet(inputId,functionName){
 }
 
 /* ═══════════════════════════════════════════
-   PDF/CSV REPORTS
+   LOGO HELPER — Image element approach (reliable cross-browser)
+   Cached after first call so all PDFs reuse same data
 ═══════════════════════════════════════════ */
+let _logoCache = undefined; // undefined = not tried yet
+
+async function getLogoData(){
+  // Return cached result (null means previously failed)
+  if(_logoCache !== undefined) return _logoCache;
+
+  return new Promise((resolve)=>{
+    const img = new Image();
+    // Try both .jpeg and .png extensions as fallback
+    img.crossOrigin = 'anonymous';
+    img.src = 'logo.jpeg';
+
+    img.onload = function(){
+      _logoCache = { img: img, w: img.naturalWidth, h: img.naturalHeight };
+      console.log('[KCET] Logo loaded:', img.naturalWidth, 'x', img.naturalHeight);
+      resolve(_logoCache);
+    };
+
+    img.onerror = function(){
+      console.warn('[KCET] logo.jpeg failed, trying logo.png…');
+      const img2 = new Image();
+      img2.crossOrigin = 'anonymous';
+      img2.src = 'logo.png';
+      img2.onload = function(){
+        _logoCache = { img: img2, w: img2.naturalWidth, h: img2.naturalHeight };
+        console.log('[KCET] Logo (png) loaded:', img2.naturalWidth, 'x', img2.naturalHeight);
+        resolve(_logoCache);
+      };
+      img2.onerror = function(){
+        console.warn('[KCET] Logo not found (tried .jpeg and .png). PDF will generate without logo.');
+        _logoCache = null;
+        resolve(null);
+      };
+    };
+  });
+}
+
+/** Draw standard page header with logo + title block. Returns next Y position */
+async function drawPdfHeader(doc, title, subtitle, logoCache){
+  const pw = doc.internal.pageSize.getWidth();
+  let y = 18;
+  const logo = logoCache;
+
+  if(logo){
+    // Fit logo to max 220×60
+    const maxW=220, maxH=60;
+    const ratio = Math.min(maxW/logo.w, maxH/logo.h);
+    const lw = logo.w*ratio, lh = logo.h*ratio;
+    doc.addImage(logo.data, 'JPEG', (pw-lw)/2, y, lw, lh);
+    y += lh + 10;
+  }
+
+  // Divider
+  doc.setDrawColor(0,63,163);
+  doc.setLineWidth(1);
+  doc.line(40, y, pw-40, y);
+  y += 8;
+
+  doc.setFont('times','bold');
+  doc.setFontSize(15);
+  doc.setTextColor(0,31,91);
+  doc.text(title, pw/2, y, {align:'center'});
+  y += 14;
+
+  if(subtitle){
+    doc.setFont('times','normal');
+    doc.setFontSize(10);
+    doc.setTextColor(90,106,138);
+    doc.text(subtitle, pw/2, y, {align:'center'});
+    y += 10;
+  }
+
+  // Second divider
+  doc.setDrawColor(0,63,163);
+  doc.setLineWidth(0.5);
+  doc.line(40, y, pw-40, y);
+  y += 12;
+
+  doc.setTextColor(0,0,0);
+  return y;
+}
+
 function addPageNumbers(doc){
   const pc=doc.internal.getNumberOfPages(),pw=doc.internal.pageSize.getWidth(),ph=doc.internal.pageSize.getHeight();
-  for(let i=1;i<=pc;i++){doc.setPage(i);doc.setFontSize(9);doc.setFont('times','normal');doc.text(`Page ${i} of ${pc}`,pw/2,ph-20,{align:'center'});}
+  for(let i=1;i<=pc;i++){
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setFont('times','normal');
+    doc.setTextColor(90,106,138);
+    doc.text(`Page ${i} of ${pc}`,pw/2,ph-14,{align:'center'});
+    doc.text(new Date().toLocaleDateString('en-IN'),40,ph-14);
+    doc.setTextColor(0,0,0);
+  }
 }
-async function getLogoData(){
-  try{const r=await fetch('logo.jpeg');if(!r.ok)throw new Error();const blob=await r.blob();const bm=await createImageBitmap(blob);const cv=document.createElement('canvas');cv.width=bm.width;cv.height=bm.height;cv.getContext('2d').drawImage(bm,0,0);return cv.toDataURL('image/jpeg');}catch(e){return null;}
+
+/** Get jsPDF constructor — checks it loaded correctly */
+function getJsPDF(){
+  const lib = window.jspdf || window.jsPDF;
+  if(!lib) throw new Error('jsPDF library not loaded. Check your internet connection and refresh the page.');
+  const ctor = lib.jsPDF || lib;
+  if(typeof ctor !== 'function') throw new Error('jsPDF constructor not found in library object.');
+  // Verify autoTable plugin
+  if(typeof ctor.prototype.autoTable !== 'function' && typeof window.jspdfAutoTable === 'undefined'){
+    console.warn('[KCET] jspdf-autotable may not be loaded yet');
+  }
+  return ctor;
 }
+
+/** Reliable PDF download — uses blob URL + anchor to bypass async popup-blocker */
+function savePdf(doc, filename){
+  try{
+    // Verify the PDF has content before saving
+    const blob = doc.output('blob');
+    if(!blob || blob.size < 100){
+      throw new Error('Generated PDF is empty (' + (blob ? blob.size : 0) + ' bytes). jsPDF may have failed silently.');
+    }
+    console.log('[KCET] PDF blob size:', blob.size, 'bytes → saving as:', filename);
+
+    // Use jsPDF's native .save() — most reliable cross-browser method
+    doc.save(filename);
+
+    console.log('[KCET] doc.save() called for:', filename);
+  }catch(e){
+    console.error('[KCET] savePdf error:', e);
+    showToast('❌ PDF Error: ' + e.message);
+    alert('PDF download failed: ' + e.message + '\n\nTry:\n1. Press F12 → Console tab for details\n2. Allow pop-ups for this site\n3. Check internet connection (jsPDF CDN needed)');
+  }
+}
+
 function gf(m,k){return m[k]||m[k.toLowerCase()]||'';}
 
+/* ═══════════════════════════════════════════
+   MARKS REPORTS
+═══════════════════════════════════════════ */
 async function downloadDeptReport(){
-  const dept=$id('deptSelect').value,batch=$id('reportBatch').value;
+
+  const dept  = $id('deptSelect').value;
+  const batch = $id('reportBatch').value;
+
   showToast('⏳ Generating PDF...');
-  const marksResp=await postData('getMarks',{batch});
-  const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
-  const filtered=dept==='ALL'?marks:marks.filter(m=>norm(gf(m,'Dept')||gf(m,'Department')).toLowerCase()===dept.toLowerCase());
-  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
-  const {jsPDF}=window.jspdf;const doc=new jsPDF('landscape','pt','a4');
-  const pw=doc.internal.pageSize.getWidth();const logoData=await getLogoData();const gd=new Date().toLocaleString();
-  doc.setFont('times','bold');doc.setFontSize(18);doc.text('SEMINAR DAY EVALUATION REPORT',pw/2,100,{align:'center'});
-  doc.setFontSize(12);doc.text(`Department: ${dept}`,60,120);doc.text(`Batch: ${batch}`,pw-120,120);
-  const head=[['Faculty ID','Team ID','Student ID','Student Name','Dept','Venue','LvI Problem','LvI Methodology','LvI Pictorial','LvI Response','LvII Determination','LvII Communication','Total']];
-  filtered.sort((a,b)=>norm(gf(a,'Student_ID')).localeCompare(norm(gf(b,'Student_ID'))));
-  const body=filtered.map(m=>[gf(m,'Faculty_ID'),gf(m,'TeamID'),gf(m,'Student_ID'),gf(m,'Student_Name'),gf(m,'Dept')||gf(m,'Department'),gf(m,'Venue'),gf(m,'LevelI_Problem'),gf(m,'LevelI_Methodology'),gf(m,'LevelI_Pictorial'),gf(m,'LevelI_Response'),gf(m,'LevelII_Determination'),gf(m,'LevelII_Communication'),gf(m,'Total')]);
-  doc.autoTable({head,body,startY:150,theme:'grid',styles:{font:'times',fontSize:10,textColor:0,cellPadding:4,lineColor:0,lineWidth:.5,halign:'center',valign:'middle'},headStyles:{fillColor:[255,255,255],textColor:0,lineColor:0,lineWidth:.5,halign:'center',valign:'middle'},columnStyles:{3:{halign:'left'}},didDrawPage:d=>{if(d.pageNumber===1&&logoData)doc.addImage(logoData,'JPEG',(pw-250)/2,20,250,50);}});
-  const fy=doc.lastAutoTable.finalY+60;
-  doc.setFontSize(12);doc.setFont('times','bold');
-  if(dept==='ALL'){doc.text('Dean Academic Courses',pw-40,fy+20,{align:'right'});}
-  else{doc.text('HoD',pw-740,fy+20);doc.text('Dean Academic Courses',pw-40,fy+20,{align:'right'});}
-  doc.setFont('times','normal');doc.text(`Generated on: ${gd}`,pw-200,fy+40);
-  addPageNumbers(doc);doc.save(`${dept}_${batch}_Seminar_Report.pdf`);
+
+  const marksResp = await postData('getMarks',{batch});
+  const marks = Array.isArray(marksResp) ? marksResp : marksResp?.data || [];
+
+  const filtered = dept==='ALL'
+    ? marks
+    : marks.filter(m =>
+        norm(gf(m,'Dept')||gf(m,'Department')).toLowerCase() === dept.toLowerCase()
+      );
+
+  if(!filtered.length){
+    showToast('⚠️ No marks data found.');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('landscape','pt','a4');
+
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+
+  const logo = await getLogoData();
+  const gd   = new Date().toLocaleString('en-IN');
+
+  let y = 20;
+
+  /* =====================================
+     LOGO (TOP CENTER)
+  ===================================== */
+
+  if(logo && logo.w && logo.h){
+
+    const maxW = 220;
+    const maxH = 70;
+
+    const ratio = Math.min(maxW/logo.w, maxH/logo.h);
+    const lw = logo.w * ratio;
+    const lh = logo.h * ratio;
+
+    doc.addImage(logo.img,'JPEG',(pw-lw)/2,y,lw,lh);
+
+    y += lh + 15;
+  }
+
+  /* =====================================
+     COLLEGE HEADER
+  ===================================== */
+
+  doc.setFont('times','bold');
+  doc.setFontSize(16);
+  doc.text('KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY', pw/2, y, {align:'center'});
+  y += 22;
+
+  doc.setFontSize(11);
+  doc.text('(An Autonomous Institution)', pw/2, y, {align:'center'});
+  y += 28;
+
+  doc.setFontSize(14);
+  doc.text('SEMINAR DAY EVALUATION REPORT', pw/2, y, {align:'center'});
+  y += 20;
+
+  /* Divider Line */
+  doc.setLineWidth(1);
+  doc.line(40, y, pw-40, y);
+  y += 18;
+
+  /* Department + Batch */
+  doc.setFont('times','normal');
+  doc.setFontSize(12);
+  doc.text(`Department : ${dept}`, 60, y);
+  doc.text(`Batch : ${batch}`, pw-160, y);
+  y += 25;
+
+  /* =====================================
+     TABLE DATA
+  ===================================== */
+
+  const head=[[
+    'Faculty ID','Team ID','Student ID','Student Name',
+    'Dept','Venue',
+    'LvI Problem','LvI Methodology','LvI Pictorial','LvI Response',
+    'LvII Determination','LvII Communication','Total'
+  ]];
+
+  filtered.sort((a,b)=>
+    norm(gf(a,'Student_ID')).localeCompare(norm(gf(b,'Student_ID')))
+  );
+
+  const body = filtered.map(m=>[
+    gf(m,'Faculty_ID'),
+    gf(m,'TeamID'),
+    gf(m,'Student_ID'),
+    gf(m,'Student_Name'),
+    gf(m,'Dept')||gf(m,'Department'),
+    gf(m,'Venue'),
+    gf(m,'LevelI_Problem'),
+    gf(m,'LevelI_Methodology'),
+    gf(m,'LevelI_Pictorial'),
+    gf(m,'LevelI_Response'),
+    gf(m,'LevelII_Determination'),
+    gf(m,'LevelII_Communication'),
+    gf(m,'Total')
+  ]);
+
+  doc.autoTable({
+    head,
+    body,
+    startY: y,
+    theme:'grid',
+    margin:{left:30,right:30},
+    styles:{
+      font:'times',
+      fontSize:9,
+      textColor:0,
+      cellPadding:4,
+      lineColor:0,
+      lineWidth:0.5,
+      halign:'center',
+      valign:'middle'
+    },
+    headStyles:{
+      fillColor:[0,31,91],
+      textColor:255,
+      fontStyle:'bold'
+    },
+    columnStyles:{
+      3:{halign:'left'}
+    },
+    didDrawPage: function(data){
+
+      // Repeat mini header on additional pages
+      if(data.pageNumber > 1){
+
+        doc.setFont('times','bold');
+        doc.setFontSize(12);
+        doc.text('Seminar Day Evaluation Report', pw/2, 25, {align:'center'});
+
+        doc.setFontSize(10);
+        doc.text(`Department: ${dept}`, 40, 40);
+        doc.text(`Batch: ${batch}`, pw-140, 40);
+      }
+    }
+  });
+
+  /* =====================================
+     SIGNATURE SECTION
+  ===================================== */
+
+  const finalY = doc.lastAutoTable.finalY + 50;
+
+  doc.setFont('times','bold');
+  doc.setFontSize(12);
+
+  if(dept==='ALL'){
+    doc.text('Dean Academic Courses', pw-60, finalY, {align:'right'});
+  }else{
+    doc.text('HoD', 60, finalY);
+    doc.text('Dean Academic Courses', pw-60, finalY, {align:'right'});
+  }
+
+  doc.setFont('times','normal');
+  doc.setFontSize(10);
+  doc.text(`Generated on : ${gd}`, pw/2, finalY+25, {align:'center'});
+
+  addPageNumbers(doc);
+
+  doc.save(`${dept}_${batch}_Seminar_Report.pdf`);
+
   showToast('✅ PDF downloaded!');
 }
 
 async function downloadDeptReportCSV(){
-  const dept=$id('deptSelect').value,batch=$id('reportBatch').value;
+  const dept=$id('deptSelect').value, batch=$id('reportBatch').value;
   showToast('⏳ Generating CSV...');
-  const marksResp=await postData('getMarks',{batch});const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
+  const marksResp=await postData('getMarks',{batch});
+  const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
   const filtered=dept==='ALL'?marks:marks.filter(m=>norm(gf(m,'Dept')||gf(m,'Department')).toLowerCase()===dept.toLowerCase());
   if(!filtered.length){showToast('⚠️ No marks data found.');return;}
   const hdr=['Faculty_ID','TeamID','Student_ID','Student_Name','Dept','Venue','LevelI_Problem','LevelI_Methodology','LevelI_Pictorial','LevelI_Response','LevelII_Determination','LevelII_Communication','Total','Batch'];
   let csv=hdr.join(',')+'\n';
   filtered.forEach(m=>{csv+=[gf(m,'Faculty_ID'),gf(m,'TeamID'),gf(m,'Student_ID'),gf(m,'Student_Name'),gf(m,'Dept')||gf(m,'Department'),gf(m,'Venue'),gf(m,'LevelI_Problem'),gf(m,'LevelI_Methodology'),gf(m,'LevelI_Pictorial'),gf(m,'LevelI_Response'),gf(m,'LevelII_Determination'),gf(m,'LevelII_Communication'),gf(m,'Total'),batch].join(',')+'\n';});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=`${dept}_${batch}_Seminar_Report.csv`;a.click();
-  showToast('✅ CSV downloaded!');
-}
-
-async function downloadTotalDeptReportCSV(){
-  const dept=$id('deptSelect').value,batch=$id('reportBatch').value;
-  showToast('⏳ Generating CSV...');
-  const marksResp=await postData('getMarks',{batch});const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
-  const filtered=dept==='ALL'?marks:marks.filter(m=>norm(gf(m,'Dept')||gf(m,'Department')).toLowerCase()===dept.toLowerCase());
-  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
-  const grouped={};
-  filtered.forEach(m=>{const sid=norm(gf(m,'Student_ID'));if(!sid)return;if(!grouped[sid])grouped[sid]={Student_ID:sid,Student_Name:norm(gf(m,'Student_Name')),Dept:gf(m,'Dept')||gf(m,'Department'),Marks:[]};grouped[sid].Marks.push(Number(gf(m,'Total'))||0);});
-  let rows=Object.values(grouped).map(s=>{const m1=s.Marks[0]||0,m2=s.Marks[1]||0;const avg=m1===0&&m2===0?'Absent':(m1+m2)/2;return[s.Student_ID,s.Student_Name,s.Dept,m1,m2,avg];});
-  rows.sort((a,b)=>a[0].toLowerCase().localeCompare(b[0].toLowerCase(),undefined,{numeric:true}));
-  const hdr=['Student_ID','Student_Name','Dept','Mark1','Mark2','Average'];
-  let csv=hdr.join(',')+'\n';rows.forEach(r=>{csv+=r.join(',')+'\n';});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=`${dept}_${batch}_Total_Seminar_Report.csv`;a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download=`${dept}_${batch}_Seminar_Report.csv`;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
   showToast('✅ CSV downloaded!');
 }
 
 async function downloadTotalDeptReport(){
-  const dept=$id('deptSelect').value,batch=$id('reportBatch').value;
+
+  const dept  = $id('deptSelect').value;
+  const batch = $id('reportBatch').value;
+
   showToast('⏳ Generating PDF...');
-  const marksResp=await postData('getMarks',{batch});const marks=Array.isArray(marksResp)?marksResp:marksResp?.data||[];
-  const filtered=dept==='ALL'?marks:marks.filter(m=>norm(gf(m,'Dept')||gf(m,'Department')).toLowerCase()===dept.toLowerCase());
-  if(!filtered.length){showToast('⚠️ No marks data found.');return;}
-  const grouped={};
-  filtered.forEach(m=>{const sid=norm(gf(m,'Student_ID'));if(!sid)return;if(!grouped[sid])grouped[sid]={Student_ID:sid,Student_Name:norm(gf(m,'Student_Name')),Dept:gf(m,'Dept')||gf(m,'Department'),Marks:[]};grouped[sid].Marks.push(Number(gf(m,'Total'))||0);});
-  const combined=Object.values(grouped).sort((a,b)=>a.Student_ID.localeCompare(b.Student_ID)).map(s=>{const m1=s.Marks[0]||0,m2=s.Marks[1]||0;let avg=((m1+m2)/2).toFixed(2);if(+avg===0)avg='Absent';return[s.Student_ID,s.Student_Name,s.Dept,m1,m2,avg];});
-  const {jsPDF}=window.jspdf;const doc=new jsPDF();const pw=doc.internal.pageSize.getWidth();
-  const logoData=await getLogoData();const gd=new Date().toLocaleString();
-  doc.setFont('times','bold');doc.setFontSize(18);doc.text('SEMINAR DAY TOTAL REPORT',pw/2,40,{align:'center'});
-  doc.setFontSize(12);doc.text(`Department: ${dept}`,20,50);doc.text(`Batch: ${batch}`,pw-40,50);
-  const head=[['Student ID','Student Name','Dept','Mark 1','Mark 2','Average']];
-  doc.autoTable({head,body:combined,startY:60,theme:'grid',styles:{font:'times',fontSize:10,textColor:0,cellPadding:2,lineColor:0,lineWidth:.5,halign:'center',valign:'middle'},headStyles:{fillColor:[255,255,255],textColor:0,lineColor:0,lineWidth:.5,halign:'center',valign:'middle',fontStyle:'bold'},columnStyles:{1:{halign:'left'}},didDrawPage:d=>{if(d.pageNumber===1&&logoData)doc.addImage(logoData,'JPEG',(pw-100)/2,20,100,20);}});
-  const fy=doc.lastAutoTable.finalY+60;
-  doc.setFontSize(12);doc.setFont('times','bold');
-  if(dept==='ALL'){doc.text('Dean Academic Courses',pw-27,fy,{align:'right'});}
-  else{doc.text('HoD',30,fy);doc.text('Dean Academic Courses',pw-27,fy,{align:'right'});}
-  doc.setFont('times','normal');doc.setFontSize(10);doc.text(`Generated on: ${gd}`,pw-75,fy+10);
-  addPageNumbers(doc);doc.save(`${dept}_${batch}_Total_Seminar_Report.pdf`);
-  showToast('✅ PDF downloaded!');
+
+  const marksResp = await postData('getMarks',{batch});
+  const marks = Array.isArray(marksResp) ? marksResp : marksResp?.data || [];
+
+  const filtered = dept==='ALL'
+    ? marks
+    : marks.filter(m =>
+        norm(gf(m,'Dept')||gf(m,'Department')).toLowerCase() === dept.toLowerCase()
+      );
+
+  if(!filtered.length){
+    showToast('⚠️ No marks data found.');
+    return;
+  }
+
+  /* ===============================
+     GROUP MARKS PROPERLY
+  =============================== */
+
+  const grouped = {};
+
+  filtered.forEach(m=>{
+
+    const sid = norm(gf(m,'Student_ID'));
+    if(!sid) return;
+
+    if(!grouped[sid]){
+      grouped[sid] = {
+        Student_ID   : sid,
+        Student_Name : norm(gf(m,'Student_Name')),
+        Dept         : gf(m,'Dept') || gf(m,'Department'),
+        Marks        : []
+      };
+    }
+
+    const totalRaw = gf(m,'Total');
+
+    // Allow numeric only
+    if(totalRaw !== null && totalRaw !== '' && !isNaN(totalRaw)){
+      grouped[sid].Marks.push(Number(totalRaw));
+    }
+  });
+
+  /* ===============================
+     PREPARE TABLE DATA
+  =============================== */
+
+  const combined = Object.values(grouped)
+    .sort((a,b)=>a.Student_ID.localeCompare(b.Student_ID))
+    .map((s,index)=>{
+
+      const m1 = s.Marks[0] !== undefined ? s.Marks[0] : '-';
+      const m2 = s.Marks[1] !== undefined ? s.Marks[1] : '-';
+
+      let avg = '-';
+
+      if(s.Marks.length >= 2){
+        avg = ((s.Marks[0] + s.Marks[1]) / 2).toFixed(2);
+      }
+
+      return [
+        index + 1,
+        s.Student_ID,
+        s.Student_Name,
+        s.Dept,
+        m1,
+        m2,
+        avg
+      ];
+    });
+
+  /* ===============================
+     PDF SECTION
+  =============================== */
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('portrait','pt','a4');
+
+  const pw = doc.internal.pageSize.getWidth();
+  const logo = await getLogoData();
+  const gd = new Date().toLocaleString('en-IN');
+
+  let y = 20;
+
+  if(logo){
+    const maxW=150, maxH=60;
+    const ratio=Math.min(maxW/logo.w,maxH/logo.h);
+    const lw=logo.w*ratio, lh=logo.h*ratio;
+    doc.addImage(logo.img,'JPEG',(pw-lw)/2,y,lw,lh);
+    y+=lh+12;
+  }
+
+  doc.setFont('times','bold');
+  doc.setFontSize(16);
+  doc.text('KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY', pw/2, y, {align:'center'});
+  y+=18;
+
+  doc.setFontSize(12);
+  doc.text('(An Autonomous Institution)', pw/2, y, {align:'center'});
+  y+=20;
+
+  doc.setFontSize(14);
+  doc.text('SEMINAR DAY TOTAL REPORT', pw/2, y, {align:'center'});
+  y+=18;
+
+  doc.line(40,y,pw-40,y);
+  y+=18;
+
+  doc.setFont('times','normal');
+  doc.setFontSize(11);
+  doc.text(`Department : ${dept}`, 60, y);
+  doc.text(`Batch : ${batch}`, pw-140, y);
+  y+=20;
+
+  doc.text(`Generated on : ${gd}`, pw/2, y, {align:'center'});
+  y+=25;
+
+  /* ===============================
+     TABLE
+  =============================== */
+
+  const head=[['S.No.','Student ID','Student Name','Dept','Mark 1','Mark 2','Average']];
+
+  doc.autoTable({
+    head,
+    body:combined,
+    startY:y,
+    theme:'grid',
+    margin:{left:40,right:40},
+    styles:{
+      font:'times',
+      fontSize:10,
+      cellPadding:5,
+      halign:'center',
+      valign:'middle'
+    },
+    headStyles:{
+      fillColor:[0,32,96],
+      textColor:255,
+      fontStyle:'bold'
+    },
+    columnStyles:{
+      2:{halign:'left'}
+    }
+  });
+
+  const fy = doc.lastAutoTable.finalY + 60;
+
+  doc.setFont('times','bold');
+  doc.text('Head of the Department', 60, fy);
+  doc.text('Dean – Academic Courses', pw-180, fy);
+
+  addPageNumbers(doc);
+
+  doc.save(`${dept}_${batch}_Total_Report.pdf`);
+
+  showToast('✅ Total Report PDF Downloaded!');
 }
+/* ═══════════════════════════════════════════════════════════
+   ABSENTEES — PDF EXPORT
+   Single unified table, dept group rows inline.
+   Logo on every page via didDrawPage hook.
+   Signature line on last page only.
+═══════════════════════════════════════════════════════════ */
+async function downloadAbsenteesReportPDF(){
+
+  const list  = getFilteredAbsentees();
+  const dept  = $id('absDeptFilter').value;
+  const batch = $id('absBatchFilter').value;
+
+  if(!list.length){
+    showToast('⚠️ No absentees to export.');
+    return;
+  }
+
+  showToast('⏳ Generating Absentees PDF…');
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF('portrait','pt','a4');
+
+  const pw = doc.internal.pageSize.getWidth();
+  const ph = doc.internal.pageSize.getHeight();
+  const logo = await getLogoData();
+  const gd = new Date().toLocaleString('en-IN');
+  const batchLbl = batch==='FN'?'Forenoon (FN)':'Afternoon (AN)';
+
+  /* ======================================
+     GET TOTAL STUDENTS
+  ====================================== */
+
+  const allStudentsResp = await postData('getStudents',{batch});
+  const allStudents = Array.isArray(allStudentsResp)
+    ? allStudentsResp
+    : allStudentsResp?.data || [];
+
+  const totalStudents = dept==='ALL'
+    ? allStudents.length
+    : allStudents.filter(s=>s.dept===dept).length;
+
+  const totalAbsentees = list.length;
+
+  const attendancePercent = totalStudents>0
+    ? (((totalStudents-totalAbsentees)/totalStudents)*100).toFixed(2)
+    : 0;
+
+  const absentPercent = totalStudents>0
+    ? ((totalAbsentees/totalStudents)*100).toFixed(2)
+    : 0;
+
+  let y = 20;
+
+  /* ======================================
+     HEADER SECTION
+  ====================================== */
+
+  if(logo && logo.w && logo.h){
+    const maxW=150,maxH=60;
+    const ratio=Math.min(maxW/logo.w,maxH/logo.h);
+    const lw=logo.w*ratio, lh=logo.h*ratio;
+    doc.addImage(logo.img,'JPEG',(pw-lw)/2,y,lw,lh);
+    y+=lh+12;
+  }
+
+  doc.setFont('times','bold');
+  doc.setFontSize(18);
+  doc.text('KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY', pw/2, y, {align:'center'});
+  y+=20;
+
+  doc.setFontSize(12);
+  doc.text('(An Autonomous Institution)', pw/2, y, {align:'center'});
+  y+=18;
+
+  doc.setLineWidth(1);
+  doc.line(40,y,pw-40,y);
+  y+=18;
+
+  doc.setFontSize(14);
+  doc.text('SEMINAR DAY — CONSOLIDATED ABSENTEES REPORT', pw/2, y, {align:'center'});
+  y+=18;
+
+  doc.setFont('times','normal');
+  doc.setFontSize(11);
+  doc.text(`Batch : ${batchLbl}`, 50, y);
+  doc.text(`Generated on : ${gd}`, pw-50, y, {align:'right'});
+  y+=25;
+
+  /* ======================================
+     OVERALL SUMMARY TABLE
+  ====================================== */
+
+  doc.setFont('times','bold');
+  doc.text('Overall Attendance Summary', 50, y);
+  y+=10;
+
+  doc.autoTable({
+    body:[
+      ['Total Students', totalStudents],
+      ['Total Absentees', totalAbsentees],
+      ['Attendance Percentage (%)', attendancePercent + ' %'],
+      ['Absentees Percentage (%)', absentPercent + ' %']
+    ],
+    startY:y,
+    theme:'grid',
+    styles:{
+      font:'times',
+      fontSize:11,
+      lineWidth:0.8,
+      lineColor:[0,0,0]
+    },
+    columnStyles:{
+      0:{halign:'left'},
+      1:{halign:'center'}
+    }
+  });
+
+  y = doc.lastAutoTable.finalY + 25;
+
+  /* ======================================
+     DEPARTMENT SUMMARY
+  ====================================== */
+
+  const deptCounts = {};
+  list.forEach(a=>{
+    const d = a.dept || 'Unknown';
+    if(!deptCounts[d]) deptCounts[d] = 0;
+    deptCounts[d]++;
+  });
+
+  const summaryBody = Object.keys(deptCounts)
+    .sort()
+    .map((d,i)=>{
+
+      const deptTotal = allStudents.filter(s=>s.dept===d).length;
+      const deptAbsent = deptCounts[d];
+
+      const deptPercent = deptTotal>0
+        ? ((deptAbsent/deptTotal)*100).toFixed(2)
+        : 0;
+
+      return [i+1, d, deptTotal, deptAbsent, deptPercent+' %'];
+    });
+
+  doc.setFont('times','bold');
+  doc.text('Department-wise Absentees Summary', 50, y);
+  y+=10;
+
+  doc.autoTable({
+    head:[['S.No','Department','Total Students','Absent','Absent %']],
+    body:summaryBody,
+    startY:y,
+    theme:'grid',
+    styles:{
+      font:'times',
+      fontSize:10,
+      lineWidth:0.8,
+      lineColor:[0,0,0]
+    },
+    headStyles:{
+      fillColor:[220,220,220],
+      textColor:0,
+      lineWidth:1,
+      lineColor:[0,0,0]
+    },
+    columnStyles:{1:{halign:'left'}}
+  });
+
+  y = doc.lastAutoTable.finalY + 30;
+
+  /* ======================================
+     DETAILED LIST
+  ====================================== */
+
+  const tableBody = list
+    .sort((a,b)=>(a.dept||'').localeCompare(b.dept||''))
+    .map((a,index)=>[
+      index+1,
+      a.student_id,
+      a.student_name||'-',
+      a.venue||'-',
+      a.dept||'-'
+    ]);
+
+  doc.setFont('times','bold');
+  doc.text('Detailed Absentees List', 50, y);
+  y+=10;
+
+  doc.autoTable({
+    head:[['S.No','Roll No.','Student Name','Venue','Dept']],
+    body:tableBody,
+    startY:y,
+    theme:'grid',
+    styles:{
+      font:'times',
+      fontSize:10,
+      lineWidth:0.8,
+      lineColor:[0,0,0]
+    },
+    headStyles:{
+      fillColor:[220,220,220],
+      textColor:0,
+      lineWidth:1,
+      lineColor:[0,0,0]
+    },
+    columnStyles:{2:{halign:'left'}}
+  });
+
+  /* ======================================
+     PRINCIPAL SIGNATURE
+  ====================================== */
+
+  const fy = doc.lastAutoTable.finalY + 60;
+
+  doc.setFont('times','bold');
+  doc.setFontSize(12);
+  doc.text('Principal', pw-60, fy, {align:'right'});
+
+  /* ======================================
+     PAGE NUMBERS
+  ====================================== */
+
+  const pageCount = doc.internal.getNumberOfPages();
+  for(let i=1;i<=pageCount;i++){
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.text(`Page ${i} of ${pageCount}`, pw-60, ph-20);
+  }
+
+  doc.save(`Absentees_Consolidated_${batch}.pdf`);
+
+  showToast('✅ Absentees PDF downloaded!');
+}
+
+/* ── CSV EXPORT ── */
+function downloadAbsenteesReportCSV(){
+  const list  = getFilteredAbsentees();
+  const dept  = $id('absDeptFilter').value;
+  const batch = $id('absBatchFilter').value;
+
+  if(!list.length){ showToast('⚠️ No absentees to export.'); return; }
+
+  const hdr=['S.No','Roll No.','Student Name','Venue','Dept'];
+  let csv=hdr.join(',')+'\n';
+  const groups={};
+  list.forEach(a=>{const k=a.dept||'Unknown';if(!groups[k])groups[k]=[];groups[k].push(a);});
+  let sno=0;
+  Object.keys(groups).sort().forEach(d=>{
+    groups[d].forEach(a=>{
+      sno++;
+      csv+=[sno, a.student_id, `"${(a.student_name||'').replace(/"/g,'""')}"`, a.venue||'', a.dept].join(',')+'\n';
+    });
+  });
+
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download=`Absentees_${dept==='ALL'?'AllDepts':dept}_${batch}.csv`;
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+  showToast('✅ Absentees CSV downloaded!');
+}
+
+/* ── DIAGNOSTIC: minimal PDF test ── */
+
 </script>
 </body>
 </html>
