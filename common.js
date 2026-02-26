@@ -1,6 +1,6 @@
 // common.js
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOnq-T1b1Km-NL091ubHVs7oLiCLoZWS8YVZfwfugHFQCZwnAZZVumjUQpUpipQ6t5/exec";
-
+//const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxOnq-T1b1Km-NL091ubHVs7oLiCLoZWS8YVZfwfugHFQCZwnAZZVumjUQpUpipQ6t5/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwS2OKtgY3-96mDFd8lnmCl0a7kv-Uu3jUknDOMvgfaJtyJhz9eUh2MNT7ssnNhG-ot/exec";
 /**
  * Universal API POST helper
  * payload = { action: "someAction", ...params }
@@ -43,6 +43,7 @@ function setupLogout() {
     }
   });
 }
+
 
 
 
