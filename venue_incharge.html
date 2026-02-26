@@ -497,6 +497,44 @@
       font-size: 18px; font-weight: 700; color: var(--blue);
     }
 
+    /* Average mark strip */
+    .sac-avg-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 8px; padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(18,70,181,0.04);
+      border: 1px solid rgba(18,70,181,0.10);
+      font-size: 11px; color: var(--muted); font-weight: 600;
+    }
+
+    .sac-avg-label {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px; color: var(--blue-mid);
+    }
+
+    .sac-avg-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-weight: 700; color: var(--blue);
+    }
+
+    /* Absent full-card style */
+    .sac-absent {
+      border-color: rgba(220,38,38,0.22) !important;
+      background: rgba(220,38,38,0.02);
+    }
+    .sac-absent::before { background: var(--danger) !important; }
+
+    .sac-absent-banner {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 10px; padding: 8px 12px;
+      background: rgba(220,38,38,0.07);
+      border: 1px solid rgba(220,38,38,0.22);
+      border-radius: 9px;
+      font-size: 11px; font-weight: 800;
+      color: var(--danger); text-transform: uppercase; letter-spacing: 1.2px;
+    }
+
     .entries-badge {
       font-size: 11px; font-weight: 700;
       padding: 2px 8px; border-radius: 6px;
@@ -1274,18 +1312,44 @@
         const statusLabel = count >= 2 ? 'Complete' : count === 1 ? 'Partial' : 'Not Entered';
         const statusBadge = count >= 2 ? 'status-complete' : count === 1 ? 'status-partial' : 'status-missing';
 
-        // Build faculty rows — always show 2 slots (entered + missing)
+        // ── Check absent: any entered row marked Absent ──
+        const enteredRows  = (s.rows || []);
+        const absentRows   = enteredRows.filter(r => String(r.Total).trim().toLowerCase() === 'absent' || r.Total === 'Absent');
+        const isAllAbsent  = enteredRows.length > 0 && absentRows.length === enteredRows.length;
+        const isSomeAbsent = absentRows.length > 0 && !isAllAbsent;
+
+        // ── Compute average from numeric totals ──
+        const numericTotals = enteredRows
+          .map(r => parseFloat(r.Total))
+          .filter(v => !isNaN(v) && v > 0);
+        const avgMark = numericTotals.length
+          ? (numericTotals.reduce((a, b) => a + b, 0) / numericTotals.length).toFixed(1)
+          : null;
+
+        // ── Best total for display ──
+        const bestRow  = s.bestRow || {};
+        const total    = bestRow.Total || '—';
+        const isAbsent = !bestRow.Total || String(bestRow.Total).trim().toLowerCase() === 'absent';
+
+        const ebClass  = count >= 2 ? 'eb-2' : count === 1 ? 'eb-1' : 'eb-0';
+        const absentCardClass = isAllAbsent ? 'sac-absent' : '';
+
+        // ── Build faculty rows ──
         let facHtml = '';
-        // Show entered faculty
         (s.faculties).forEach(fid => {
+          // Check if this faculty's row is absent
+          const facRow = enteredRows.find(r => (r.Faculty_ID||'').trim() === fid);
+          const facAbsent = facRow && String(facRow.Total).trim().toLowerCase() === 'absent';
           facHtml += `
             <div class="sac-faculty-item">
-              <div class="fac-icon fac-entered">✅</div>
+              <div class="fac-icon fac-entered">${facAbsent ? '⚠️' : '✅'}</div>
               <span class="fac-id">${fid}</span>
-              <span class="fac-label-entered">Entered</span>
+              <span class="fac-label-entered" style="${facAbsent ? 'color:var(--warning);' : ''}">
+                ${facAbsent ? 'Absent' : 'Entered'}
+              </span>
             </div>`;
         });
-        // Show missing slots
+        // Missing slots
         const missingCount = Math.max(0, 2 - s.faculties.length);
         for (let i = 0; i < missingCount; i++) {
           facHtml += `
@@ -1296,14 +1360,23 @@
             </div>`;
         }
 
-        const bestRow  = s.bestRow || {};
-        const total    = bestRow.Total || '—';
-        const isAbsent = !bestRow.Total || bestRow.Total === 'Absent';
+        // ── Absent banner (shown when all or some entries are absent) ──
+        const absentBanner = isAllAbsent
+          ? `<div class="sac-absent-banner">🚫 Student Absent — All Faculty Marked Absent</div>`
+          : isSomeAbsent
+            ? `<div class="sac-absent-banner" style="background:rgba(217,119,6,0.07);border-color:rgba(217,119,6,0.25);color:var(--warning);">⚠️ Partial Absent — ${absentRows.length} of ${enteredRows.length} Faculty Marked Absent</div>`
+            : '';
 
-        const ebClass  = count >= 2 ? 'eb-2' : count === 1 ? 'eb-1' : 'eb-0';
+        // ── Average mark strip ──
+        const avgStrip = (avgMark !== null && !isAllAbsent)
+          ? `<div class="sac-avg-row">
+               <span class="sac-avg-label">📊 Avg. Mark</span>
+               <span class="sac-avg-val">${avgMark}</span>
+             </div>`
+          : '';
 
         grid.insertAdjacentHTML('beforeend', `
-          <div class="student-analysis-card ${statusClass}">
+          <div class="student-analysis-card ${statusClass} ${absentCardClass}">
             <div class="sac-head">
               <div>
                 <div class="sac-name">${s.Student_Name || '—'}</div>
@@ -1312,13 +1385,13 @@
               <span class="sac-status ${statusBadge}">${statusLabel}</span>
             </div>
             <div class="sac-faculty-list">${facHtml}</div>
+            ${absentBanner}
+            ${avgStrip}
             <div class="sac-total-row">
-              <span>
-                <span class="entries-badge ${ebClass}">${count}/2 entries</span>
-              </span>
+              <span><span class="entries-badge ${ebClass}">${count}/2 entries</span></span>
               <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);">
                 Total:
-                ${isAbsent
+                ${isAbsent || isAllAbsent
                   ? `<span class="absent-badge" style="font-size:10px;">Absent</span>`
                   : `<span class="sac-total-val">${total}</span>`}
               </span>
