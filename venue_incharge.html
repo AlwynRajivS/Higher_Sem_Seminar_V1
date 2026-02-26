@@ -1069,6 +1069,7 @@
           <table id="marksTable">
             <thead>
               <tr>
+                <th>Faculty ID</th>
                 <th>Team ID</th>
                 <th>Student ID</th>
                 <th>Student Name</th>
@@ -1081,7 +1082,6 @@
                 <th>LII – Determination</th>
                 <th>LII – Communication</th>
                 <th>Total</th>
-                <th>Faculty Entries</th>
               </tr>
             </thead>
             <tbody id="marksBody"></tbody>
@@ -1175,43 +1175,90 @@
     }
 
     // ── FETCH MARKS ──
-    let allStudents = [];
+    let allStudents    = [];   // grouped by Student_ID from marks (for analysis)
+    let allRawRows     = [];   // every mark row (for table & PDF)
+    let assignedStudents = []; // flat list of all students assigned to this venue from Students sheet
+
     async function fetchVenueMarks() {
       const batch = document.getElementById('batchSelect').value;
       if (!batch) { showToast('Please select a batch first!','error'); return; }
       setLoading(true);
       try {
-        const res   = await postData('getVenueMarks', {batch});
-        const marks = Array.isArray(res) ? res : res.data || [];
-        const filtered = marks.filter(m=>(m.Venue||'').trim().toLowerCase()===venue.trim().toLowerCase());
+        // ── 1. Fetch assigned students from Students sheet ──
+        // Students sheet: TeamID, Student1_ID, Student1_Name, Student2_ID, Student2_Name, Dept, Title, Venue, Batch
+        const sRes = await postData('getStudents', { venue, batch });
+        const sData = Array.isArray(sRes) ? sRes : sRes.data || [];
 
-        // Deduplicate into student groups
+        // Flatten each team row into individual students
+        assignedStudents = [];
+        sData.forEach(row => {
+          // Normalize keys (backend returns lowercase headers from getStudents)
+          const teamId = row['teamid'] || row['TeamID'] || row['team_id'] || '';
+          const dept   = row['dept']   || row['Dept']   || '';
+          const venueV = row['venue']  || row['Venue']  || '';
+          const batchV = row['batch']  || row['Batch']  || '';
+
+          const s1id   = String(row['student1_id']   || row['Student1_ID']   || '').trim();
+          const s1name = String(row['student1_name'] || row['Student1_Name'] || '').trim();
+          const s2id   = String(row['student2_id']   || row['Student2_ID']   || '').trim();
+          const s2name = String(row['student2_name'] || row['Student2_Name'] || '').trim();
+
+          if (s1id) assignedStudents.push({ Student_ID: s1id, Student_Name: s1name, TeamID: teamId, Dept: dept, Venue: venueV, Batch: batchV });
+          if (s2id) assignedStudents.push({ Student_ID: s2id, Student_Name: s2name, TeamID: teamId, Dept: dept, Venue: venueV, Batch: batchV });
+        });
+
+        // ── 2. Fetch marks ──
+        const res    = await postData('getVenueMarks', { batch });
+        const marks  = Array.isArray(res) ? res : res.data || [];
+        const filtered = marks.filter(m => (m.Venue||'').trim().toLowerCase() === venue.trim().toLowerCase());
+
+        // All raw rows → table & PDF (both faculty entries shown)
+        allRawRows = filtered;
+
+        // Grouped by Student_ID → analysis cards
         allStudents = groupByStudent(filtered);
 
-        const complete = allStudents.filter(s => s.faculties.length >= 2).length;
-        const partial  = allStudents.filter(s => s.faculties.length === 1).length;
-        const missing  = allStudents.filter(s => s.faculties.length === 0).length;
+        // ── 3. Build analysis against ASSIGNED students (not just who has marks) ──
+        // For each assigned student, find their marks group (if any)
+        const marksMap = new Map(allStudents.map(s => [s.Student_ID.trim(), s]));
+        const analysisStudents = assignedStudents.map(as => {
+          const found = marksMap.get(as.Student_ID.trim());
+          return found || {
+            Student_ID:   as.Student_ID,
+            Student_Name: as.Student_Name,
+            TeamID:       as.TeamID,
+            Dept:         as.Dept,
+            Venue:        as.Venue,
+            faculties:    [],
+            rows:         [],
+            bestRow:      null
+          };
+        });
 
-        if (allStudents.length) {
-          document.getElementById('statTotal').textContent    = allStudents.length;
-          document.getElementById('statComplete').textContent = complete;
-          document.getElementById('statPartial').textContent  = partial;
-          document.getElementById('statAbsent').textContent   = missing;
-          document.getElementById('statsRow').style.display   = 'grid';
-        }
+        const totalAssigned = assignedStudents.length;
+        const complete = analysisStudents.filter(s => s.faculties.length >= 2).length;
+        const partial  = analysisStudents.filter(s => s.faculties.length === 1).length;
+        const missing  = analysisStudents.filter(s => s.faculties.length === 0).length;
 
-        renderAnalysis(allStudents, batch);
-        renderTable(allStudents, batch);
+        document.getElementById('statTotal').textContent    = totalAssigned;
+        document.getElementById('statComplete').textContent = complete;
+        document.getElementById('statPartial').textContent  = partial;
+        document.getElementById('statAbsent').textContent   = missing;
+        document.getElementById('statsRow').style.display   = 'grid';
 
-        if (allStudents.length) {
-          showToast(`Loaded ${allStudents.length} unique students for Venue ${venue}`, 'success');
-        }
-      } catch(e) { showToast('Failed to fetch marks. Try again.','error'); }
+        renderAnalysis(analysisStudents, batch, totalAssigned);
+        renderTable(allRawRows, totalAssigned, batch);
+
+        showToast(`Loaded ${totalAssigned} assigned students · ${allRawRows.length} mark entries for Venue ${venue}`, 'success');
+      } catch(err) {
+        console.error(err);
+        showToast('Failed to fetch marks. Try again.','error');
+      }
       finally { setLoading(false); }
     }
 
     // ── RENDER FACULTY ANALYSIS CARDS ──
-    function renderAnalysis(students, batch) {
+    function renderAnalysis(students, batch, totalAssigned) {
       const section = document.getElementById('analysisSection');
       const grid    = document.getElementById('analysisGrid');
       grid.innerHTML = '';
@@ -1219,7 +1266,7 @@
       if (!students.length) { section.style.display = 'none'; return; }
 
       document.getElementById('analysisSub').textContent =
-        `Venue: ${venue} · Batch: ${batch} · ${students.length} unique student${students.length!==1?'s':''}`;
+        `Venue: ${venue} · Batch: ${batch} · ${totalAssigned} assigned student${totalAssigned!==1?'s':''}`;
 
       students.forEach(s => {
         const count = s.faculties.length;
@@ -1282,12 +1329,12 @@
       section.style.display = 'block';
     }
 
-    // ── RENDER TABLE (unique students, best row for scores) ──
-    function renderTable(students, batch) {
+    // ── RENDER TABLE — all raw rows (both faculty entries per student) ──
+    function renderTable(rows, uniqueCount, batch) {
       const tbody = document.getElementById('marksBody');
       tbody.innerHTML = '';
 
-      if (!students.length) {
+      if (!rows.length) {
         tbody.innerHTML = `<tr><td colspan="13"><div class="empty-state">
           <div class="empty-ico">📋</div>
           <h3>No Records Found</h3>
@@ -1299,23 +1346,19 @@
         return;
       }
 
-      students.forEach(s => {
-        const m = s.bestRow || {};
+      rows.forEach(m => {
         const isAbsent = !m.Total || m.Total === 'Absent';
         const totalCell = isAbsent
           ? `<span class="absent-badge">Absent</span>`
           : `<span class="total-cell">${m.Total}</span>`;
         const sc = v => `<span class="score-pill">${v ?? 0}</span>`;
 
-        const fCount   = s.faculties.length;
-        const fcClass  = fCount >= 2 ? 'fcp-full' : fCount === 1 ? 'fcp-partial' : 'fcp-none';
-        const fcLabel  = fCount >= 2 ? `✅ ${fCount}/2` : fCount === 1 ? `⏳ ${fCount}/2` : `❌ 0/2`;
-
         tbody.insertAdjacentHTML('beforeend', `
           <tr>
+            <td><span style="font-weight:700;color:var(--navy);font-size:12px;">${m.Faculty_ID||'—'}</span></td>
             <td>${m.TeamID||'—'}</td>
-            <td>${s.Student_ID||'—'}</td>
-            <td>${s.Student_Name||'—'}</td>
+            <td>${m.Student_ID||'—'}</td>
+            <td style="text-align:left;font-weight:700;color:var(--navy);">${m.Student_Name||'—'}</td>
             <td><span class="dept-tag">${m.Dept||'—'}</span></td>
             <td><span class="venue-tag">${m.Venue||'—'}</span></td>
             <td>${sc(m.LevelI_Problem)}</td>
@@ -1325,13 +1368,12 @@
             <td>${sc(m.LevelII_Determination)}</td>
             <td>${sc(m.LevelII_Communication)}</td>
             <td>${totalCell}</td>
-            <td><span class="fac-count-pill ${fcClass}">${fcLabel}</span></td>
           </tr>`);
       });
 
       document.getElementById('tableSection').style.display = 'block';
       document.getElementById('tableSub').textContent =
-        `Venue: ${venue} · Batch: ${batch} · ${students.length} unique student${students.length!==1?'s':''}`;
+        `Venue: ${venue} · Batch: ${batch} · ${uniqueCount} unique student${uniqueCount!==1?'s':''} · ${rows.length} total entr${rows.length!==1?'ies':'y'}`;
     }
 
     // ── SEARCH ──
@@ -1378,8 +1420,22 @@
         const filtered = marks.filter(m=>(m.Venue||'').trim().toLowerCase()===venue.trim().toLowerCase());
         if (!filtered.length) { showToast(`No marks for ${venue} (${batch})`,'error'); return; }
 
-        // Deduplicate for PDF too
-        const students = groupByStudent(filtered);
+        // PDF shows ALL raw rows — both faculty entries per student
+        const rawRows = filtered;
+
+        // For summary stats, use assigned students count
+        const totalAssigned  = assignedStudents.length || groupByStudent(filtered).length;
+        const groupedForStat = groupByStudent(filtered);
+        const marksMap       = new Map(groupedForStat.map(s=>[s.Student_ID.trim(),s]));
+        const complete = assignedStudents.length
+          ? assignedStudents.filter(a=>(marksMap.get(a.Student_ID.trim())?.faculties||[]).length>=2).length
+          : groupedForStat.filter(s=>s.faculties.length>=2).length;
+        const partial  = assignedStudents.length
+          ? assignedStudents.filter(a=>(marksMap.get(a.Student_ID.trim())?.faculties||[]).length===1).length
+          : groupedForStat.filter(s=>s.faculties.length===1).length;
+        const missing  = assignedStudents.length
+          ? assignedStudents.filter(a=>!(marksMap.get(a.Student_ID.trim()))).length
+          : groupedForStat.filter(s=>s.faculties.length===0).length;
 
         const {jsPDF} = window.jspdf;
         const doc     = new jsPDF('landscape','pt','a4');
@@ -1417,21 +1473,17 @@
 
         const tableStartY = logoBottomY + 92;
 
-        // PDF table — unique students, Faculty Entries column added
-        const head = [['Team ID','Student ID','Student Name','Dept','Venue',
-          'LI-Problem','LI-Method','LI-Pictorial','LI-Response','LII-Determination','LII-Comm.','Total','Faculty Entries']];
+        // PDF table — ALL raw rows, Faculty ID shown, both entries per student appear
+        const head = [['Faculty ID','Team ID','Student ID','Student Name','Dept','Venue',
+          'LI-Problem','LI-Method','LI-Pictorial','LI-Response','LII-Determination','LII-Comm.','Total']];
 
-        const body = students.map(s => {
-          const m = s.bestRow || {};
-          return [
-            m.TeamID||'—', s.Student_ID||'—', s.Student_Name||'—',
-            m.Dept||'—', m.Venue||'—',
-            m.LevelI_Problem??0, m.LevelI_Methodology??0, m.LevelI_Pictorial??0, m.LevelI_Response??0,
-            m.LevelII_Determination??0, m.LevelII_Communication??0,
-            m.Total||0,
-            `${s.faculties.length}/2`
-          ];
-        });
+        const body = rawRows.map(m => [
+          m.Faculty_ID||'—', m.TeamID||'—', m.Student_ID||'—', m.Student_Name||'—',
+          m.Dept||'—', m.Venue||'—',
+          m.LevelI_Problem??0, m.LevelI_Methodology??0, m.LevelI_Pictorial??0, m.LevelI_Response??0,
+          m.LevelII_Determination??0, m.LevelII_Communication??0,
+          m.Total||0
+        ]);
 
         doc.autoTable({
           head, body,
@@ -1458,9 +1510,8 @@
           },
           alternateRowStyles:{ fillColor:[248,251,255] },
           columnStyles:{
-            2:{ halign:'left', fontStyle:'bold', textColor:[10,30,70] },
-            11:{ fontStyle:'bold', textColor:[10,40,100], fontSize:9 },
-            12:{ fontStyle:'bold' }
+            3:{ halign:'left', fontStyle:'bold', textColor:[10,30,70] },
+            12:{ fontStyle:'bold', textColor:[10,40,100], fontSize:9 }
           },
           margin:{ left:30, right:30 },
           didDrawPage: (data) => {
@@ -1476,10 +1527,7 @@
 
         const lastY = doc.lastAutoTable.finalY;
 
-        // Summary box in PDF
-        const complete = students.filter(s=>s.faculties.length>=2).length;
-        const partial  = students.filter(s=>s.faculties.length===1).length;
-        const missing  = students.filter(s=>s.faculties.length===0).length;
+        // Summary box
         const sumY = lastY + 14;
         if (sumY < ph - 50) {
           doc.setFillColor(245,249,255);
@@ -1490,7 +1538,7 @@
           doc.setFontSize(8.5);
           doc.setTextColor(10,40,100);
           doc.text(
-            `Unique Students: ${students.length}   |   Both Entered: ${complete}   |   Partial (1/2): ${partial}   |   Not Entered: ${missing}`,
+            `Total Students: ${totalAssigned}   |   Both Entered: ${complete}   |   Partial (1/2): ${partial}   |   Not Entered: ${missing}   |   Total Entries: ${rawRows.length}`,
             pw/2, sumY+16, {align:'center'}
           );
         }
