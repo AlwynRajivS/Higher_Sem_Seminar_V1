@@ -24,6 +24,7 @@
       --muted:     #64748b;
       --line:      rgba(18,70,181,0.12);
       --success:   #059669;
+      --warning:   #d97706;
       --danger:    #dc2626;
     }
 
@@ -315,8 +316,9 @@
 
     .si-b { background: rgba(18,70,181,0.08); }
     .si-g { background: rgba(5,150,105,0.08); }
-    .si-a { background: rgba(217,119,6,0.08); }
+    .si-o { background: rgba(217,119,6,0.08); }
     .si-r { background: rgba(220,38,38,0.08); }
+    .si-p { background: rgba(124,58,237,0.08); }
 
     .stat-label {
       font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
@@ -329,6 +331,180 @@
     }
 
     .stat-sub { font-size: 12px; color: var(--silver); margin-top: 5px; font-weight: 500; }
+
+    /* ── FACULTY ANALYSIS PANEL ── */
+    .analysis-section {
+      background: white;
+      border: 1.5px solid var(--line);
+      border-radius: 22px;
+      margin-bottom: 26px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(18,70,181,0.07);
+      animation: slideUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.16s both;
+    }
+
+    .analysis-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px 18px;
+      border-bottom: 1.5px solid var(--line);
+      flex-wrap: wrap; gap: 12px;
+      background: linear-gradient(90deg, rgba(18,70,181,0.03), rgba(45,140,240,0.03));
+    }
+
+    .analysis-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 700; color: var(--navy);
+    }
+
+    .analysis-sub {
+      font-size: 12px; color: var(--muted); margin-top: 2px; font-weight: 500;
+    }
+
+    .analysis-legend {
+      display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .legend-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+
+    .ld-complete { background: var(--success); }
+    .ld-partial  { background: var(--warning); }
+    .ld-missing  { background: var(--danger); }
+
+    /* Faculty grid cards */
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+      padding: 22px 28px;
+    }
+
+    .student-analysis-card {
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      padding: 16px 18px;
+      background: var(--frost);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .student-analysis-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      border-radius: 14px 0 0 14px;
+    }
+
+    .sac-complete::before { background: var(--success); }
+    .sac-partial::before  { background: var(--warning); }
+    .sac-missing::before  { background: var(--danger); }
+
+    .student-analysis-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(18,70,181,0.1);
+      border-color: rgba(18,70,181,0.2);
+    }
+
+    .sac-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .sac-name {
+      font-weight: 700; font-size: 13px; color: var(--navy);
+      line-height: 1.3;
+    }
+
+    .sac-id {
+      font-size: 11px; color: var(--muted); margin-top: 2px; font-weight: 500;
+    }
+
+    .sac-status {
+      flex-shrink: 0;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 10px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+
+    .status-complete {
+      background: rgba(5,150,105,0.1);
+      border: 1px solid rgba(5,150,105,0.3);
+      color: var(--success);
+    }
+
+    .status-partial {
+      background: rgba(217,119,6,0.1);
+      border: 1px solid rgba(217,119,6,0.3);
+      color: var(--warning);
+    }
+
+    .status-missing {
+      background: rgba(220,38,38,0.1);
+      border: 1px solid rgba(220,38,38,0.3);
+      color: var(--danger);
+    }
+
+    .sac-faculty-list {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+
+    .sac-faculty-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px; border-radius: 8px;
+      font-size: 12px; background: white;
+      border: 1px solid var(--line);
+    }
+
+    .fac-icon {
+      width: 22px; height: 22px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
+    }
+
+    .fac-entered  { background: rgba(5,150,105,0.1); }
+    .fac-missing  { background: rgba(220,38,38,0.08); }
+
+    .fac-id {
+      font-weight: 700; color: var(--navy); flex: 1; font-size: 11px;
+    }
+
+    .fac-label-entered {
+      font-size: 10px; font-weight: 700; color: var(--success);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .fac-label-missing {
+      font-size: 10px; font-weight: 700; color: var(--danger);
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .sac-total-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 10px; padding-top: 10px;
+      border-top: 1px dashed var(--line);
+      font-size: 11px; color: var(--muted); font-weight: 600;
+    }
+
+    .sac-total-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 700; color: var(--blue);
+    }
+
+    .entries-badge {
+      font-size: 11px; font-weight: 700;
+      padding: 2px 8px; border-radius: 6px;
+    }
+
+    .eb-2 { background: rgba(5,150,105,0.1); color: var(--success); }
+    .eb-1 { background: rgba(217,119,6,0.1); color: var(--warning); }
+    .eb-0 { background: rgba(220,38,38,0.1); color: var(--danger); }
 
     /* ── CONTROLS ── */
     .controls-panel {
@@ -503,6 +679,17 @@
       font-size: 12px; font-weight: 700;
     }
 
+    /* Faculty entry indicator in table */
+    .fac-count-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700;
+    }
+
+    .fcp-full     { background: rgba(5,150,105,0.1);  border: 1px solid rgba(5,150,105,0.3);  color: var(--success); }
+    .fcp-partial  { background: rgba(217,119,6,0.1);  border: 1px solid rgba(217,119,6,0.3);  color: var(--warning); }
+    .fcp-none     { background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.25); color: var(--danger); }
+
     /* ── EMPTY STATE ── */
     .empty-state { text-align: center; padding: 80px 20px; }
     .empty-ico { font-size: 54px; margin-bottom: 18px; opacity: 0.28; }
@@ -666,6 +853,7 @@
       .hero-right { border-left: none; border-top: 1px solid rgba(255,255,255,0.08); align-items: flex-start; padding-top: 24px; }
       .venue-big { font-size: 70px; }
       .stats-row { grid-template-columns: repeat(2,1fr); }
+      .analysis-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
       .page { padding: 0 16px 80px; }
@@ -779,31 +967,31 @@
       </div>
     </div>
 
-    <!-- STATS -->
+    <!-- STATS — 4 cards: Total (unique), Complete, Partial, Absent -->
     <div class="stats-row" id="statsRow" style="display:none;">
       <div class="stat-card">
         <div class="stat-icon si-b">👥</div>
         <div class="stat-label">Total Students</div>
         <div class="stat-value" id="statTotal">—</div>
-        <div class="stat-sub">Evaluated this batch</div>
+        <div class="stat-sub">Unique students (no duplicates)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon si-g">🏆</div>
-        <div class="stat-label">Highest Score</div>
-        <div class="stat-value" id="statHigh">—</div>
-        <div class="stat-sub">Top performer</div>
+        <div class="stat-icon si-g">✅</div>
+        <div class="stat-label">Both Entered</div>
+        <div class="stat-value" id="statComplete">—</div>
+        <div class="stat-sub">2 of 2 faculty submitted</div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon si-a">📊</div>
-        <div class="stat-label">Average Score</div>
-        <div class="stat-value" id="statAvg">—</div>
-        <div class="stat-sub">Class average</div>
+        <div class="stat-icon si-o">⏳</div>
+        <div class="stat-label">Partial Entry</div>
+        <div class="stat-value" id="statPartial">—</div>
+        <div class="stat-sub">Only 1 faculty submitted</div>
       </div>
       <div class="stat-card">
         <div class="stat-icon si-r">⚠️</div>
-        <div class="stat-label">Absent</div>
+        <div class="stat-label">Not Entered</div>
         <div class="stat-value" id="statAbsent">—</div>
-        <div class="stat-sub">Not evaluated</div>
+        <div class="stat-sub">No faculty submitted</div>
       </div>
     </div>
 
@@ -829,6 +1017,37 @@
       </div>
     </div>
 
+    <!-- FACULTY ENTRY ANALYSIS -->
+    <div id="analysisSection" style="display:none;">
+      <div class="sec-divider">
+        <div class="sec-divider-lbl">Faculty Entry Analysis</div>
+        <div class="sec-divider-line"></div>
+      </div>
+      <div class="analysis-section">
+        <div class="analysis-header">
+          <div>
+            <div class="analysis-title">Faculty Submission Status</div>
+            <div class="analysis-sub" id="analysisSub">Each student requires marks from 2 faculty members</div>
+          </div>
+          <div class="analysis-legend">
+            <div class="legend-item">
+              <div class="legend-dot ld-complete"></div>
+              Both Entered
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot ld-partial"></div>
+              Partial (1/2)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot ld-missing"></div>
+              Not Entered
+            </div>
+          </div>
+        </div>
+        <div class="analysis-grid" id="analysisGrid"></div>
+      </div>
+    </div>
+
     <!-- TABLE -->
     <div id="tableSection" style="display:none;">
       <div class="sec-divider">
@@ -850,7 +1069,6 @@
           <table id="marksTable">
             <thead>
               <tr>
-                <th>Faculty ID</th>
                 <th>Team ID</th>
                 <th>Student ID</th>
                 <th>Student Name</th>
@@ -863,6 +1081,7 @@
                 <th>LII – Determination</th>
                 <th>LII – Communication</th>
                 <th>Total</th>
+                <th>Faculty Entries</th>
               </tr>
             </thead>
             <tbody id="marksBody"></tbody>
@@ -904,7 +1123,6 @@
       t.className = `toast toast-${type} show`;
       document.getElementById('toastIco').textContent = ico[type];
       document.getElementById('toastMsg').textContent = msg;
-      // reset progress bar
       const p = document.getElementById('toastProg');
       p.style.animation = 'none';
       void p.offsetWidth;
@@ -926,58 +1144,178 @@
       document.getElementById('venueBig').textContent    = venue || '—';
     }
 
+    // ── DEDUPLICATE & GROUP BY STUDENT ──
+    // Groups all raw rows by Student_ID and collects which faculty IDs entered marks
+    function groupByStudent(marks) {
+      const map = new Map();
+      marks.forEach(m => {
+        const sid = (m.Student_ID || '').trim();
+        if (!sid) return;
+        if (!map.has(sid)) {
+          map.set(sid, {
+            Student_ID:   m.Student_ID,
+            Student_Name: m.Student_Name,
+            TeamID:       m.TeamID,
+            Dept:         m.Dept,
+            Venue:        m.Venue,
+            faculties:    [],  // list of faculty_ids who entered
+            rows:         []   // all raw rows for this student
+          });
+        }
+        const entry = map.get(sid);
+        const fid = (m.Faculty_ID || '').trim();
+        if (fid && !entry.faculties.includes(fid)) entry.faculties.push(fid);
+        entry.rows.push(m);
+        // prefer most-complete row for score display
+        if (!entry.bestRow || (parseFloat(m.Total) || 0) > (parseFloat(entry.bestRow.Total) || 0)) {
+          entry.bestRow = m;
+        }
+      });
+      return Array.from(map.values());
+    }
+
     // ── FETCH MARKS ──
-    let allRows = [];
+    let allStudents = [];
     async function fetchVenueMarks() {
       const batch = document.getElementById('batchSelect').value;
       if (!batch) { showToast('Please select a batch first!','error'); return; }
       setLoading(true);
       try {
-        const res  = await postData('getVenueMarks',{batch});
+        const res   = await postData('getVenueMarks', {batch});
         const marks = Array.isArray(res) ? res : res.data || [];
         const filtered = marks.filter(m=>(m.Venue||'').trim().toLowerCase()===venue.trim().toLowerCase());
-        allRows = filtered;
-        renderTable(filtered,batch);
-        if (filtered.length) {
-          const totals  = filtered.map(m=>parseFloat(m.Total)||0);
-          const absents = filtered.filter(m=>!m.Total||m.Total==='Absent').length;
-          document.getElementById('statTotal').textContent  = filtered.length;
-          document.getElementById('statHigh').textContent   = Math.max(...totals);
-          document.getElementById('statAvg').textContent    = (totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1);
-          document.getElementById('statAbsent').textContent = absents;
-          document.getElementById('statsRow').style.display = 'grid';
-          showToast(`Loaded ${filtered.length} records for Venue ${venue}`,'success');
+
+        // Deduplicate into student groups
+        allStudents = groupByStudent(filtered);
+
+        const complete = allStudents.filter(s => s.faculties.length >= 2).length;
+        const partial  = allStudents.filter(s => s.faculties.length === 1).length;
+        const missing  = allStudents.filter(s => s.faculties.length === 0).length;
+
+        if (allStudents.length) {
+          document.getElementById('statTotal').textContent    = allStudents.length;
+          document.getElementById('statComplete').textContent = complete;
+          document.getElementById('statPartial').textContent  = partial;
+          document.getElementById('statAbsent').textContent   = missing;
+          document.getElementById('statsRow').style.display   = 'grid';
+        }
+
+        renderAnalysis(allStudents, batch);
+        renderTable(allStudents, batch);
+
+        if (allStudents.length) {
+          showToast(`Loaded ${allStudents.length} unique students for Venue ${venue}`, 'success');
         }
       } catch(e) { showToast('Failed to fetch marks. Try again.','error'); }
       finally { setLoading(false); }
     }
 
-    function renderTable(data,batch) {
+    // ── RENDER FACULTY ANALYSIS CARDS ──
+    function renderAnalysis(students, batch) {
+      const section = document.getElementById('analysisSection');
+      const grid    = document.getElementById('analysisGrid');
+      grid.innerHTML = '';
+
+      if (!students.length) { section.style.display = 'none'; return; }
+
+      document.getElementById('analysisSub').textContent =
+        `Venue: ${venue} · Batch: ${batch} · ${students.length} unique student${students.length!==1?'s':''}`;
+
+      students.forEach(s => {
+        const count = s.faculties.length;
+        const statusClass = count >= 2 ? 'sac-complete' : count === 1 ? 'sac-partial' : 'sac-missing';
+        const statusLabel = count >= 2 ? 'Complete' : count === 1 ? 'Partial' : 'Not Entered';
+        const statusBadge = count >= 2 ? 'status-complete' : count === 1 ? 'status-partial' : 'status-missing';
+
+        // Build faculty rows — always show 2 slots (entered + missing)
+        let facHtml = '';
+        // Show entered faculty
+        (s.faculties).forEach(fid => {
+          facHtml += `
+            <div class="sac-faculty-item">
+              <div class="fac-icon fac-entered">✅</div>
+              <span class="fac-id">${fid}</span>
+              <span class="fac-label-entered">Entered</span>
+            </div>`;
+        });
+        // Show missing slots
+        const missingCount = Math.max(0, 2 - s.faculties.length);
+        for (let i = 0; i < missingCount; i++) {
+          facHtml += `
+            <div class="sac-faculty-item">
+              <div class="fac-icon fac-missing">❌</div>
+              <span class="fac-id" style="color:var(--silver);">Pending Faculty</span>
+              <span class="fac-label-missing">Not Entered</span>
+            </div>`;
+        }
+
+        const bestRow  = s.bestRow || {};
+        const total    = bestRow.Total || '—';
+        const isAbsent = !bestRow.Total || bestRow.Total === 'Absent';
+
+        const ebClass  = count >= 2 ? 'eb-2' : count === 1 ? 'eb-1' : 'eb-0';
+
+        grid.insertAdjacentHTML('beforeend', `
+          <div class="student-analysis-card ${statusClass}">
+            <div class="sac-head">
+              <div>
+                <div class="sac-name">${s.Student_Name || '—'}</div>
+                <div class="sac-id">${s.Student_ID} · <span class="dept-tag" style="font-size:10px;padding:1px 7px;">${s.Dept||'—'}</span></div>
+              </div>
+              <span class="sac-status ${statusBadge}">${statusLabel}</span>
+            </div>
+            <div class="sac-faculty-list">${facHtml}</div>
+            <div class="sac-total-row">
+              <span>
+                <span class="entries-badge ${ebClass}">${count}/2 entries</span>
+              </span>
+              <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);">
+                Total:
+                ${isAbsent
+                  ? `<span class="absent-badge" style="font-size:10px;">Absent</span>`
+                  : `<span class="sac-total-val">${total}</span>`}
+              </span>
+            </div>
+          </div>`);
+      });
+
+      section.style.display = 'block';
+    }
+
+    // ── RENDER TABLE (unique students, best row for scores) ──
+    function renderTable(students, batch) {
       const tbody = document.getElementById('marksBody');
       tbody.innerHTML = '';
-      if (!data.length) {
+
+      if (!students.length) {
         tbody.innerHTML = `<tr><td colspan="13"><div class="empty-state">
           <div class="empty-ico">📋</div>
           <h3>No Records Found</h3>
           <p>No marks found for Venue <strong>${venue}</strong> (${batch})</p>
         </div></td></tr>`;
-        document.getElementById('statsRow').style.display = 'none';
+        document.getElementById('statsRow').style.display    = 'none';
         document.getElementById('tableSection').style.display = 'block';
-        document.getElementById('tableSub').textContent = '';
+        document.getElementById('tableSub').textContent      = '';
         return;
       }
-      data.forEach(m => {
-        const isAbsent = !m.Total || m.Total==='Absent';
+
+      students.forEach(s => {
+        const m = s.bestRow || {};
+        const isAbsent = !m.Total || m.Total === 'Absent';
         const totalCell = isAbsent
           ? `<span class="absent-badge">Absent</span>`
           : `<span class="total-cell">${m.Total}</span>`;
-        const sc = v => `<span class="score-pill">${v??0}</span>`;
-        tbody.insertAdjacentHTML('beforeend',`
+        const sc = v => `<span class="score-pill">${v ?? 0}</span>`;
+
+        const fCount   = s.faculties.length;
+        const fcClass  = fCount >= 2 ? 'fcp-full' : fCount === 1 ? 'fcp-partial' : 'fcp-none';
+        const fcLabel  = fCount >= 2 ? `✅ ${fCount}/2` : fCount === 1 ? `⏳ ${fCount}/2` : `❌ 0/2`;
+
+        tbody.insertAdjacentHTML('beforeend', `
           <tr>
-            <td>${m.Faculty_ID||'—'}</td>
             <td>${m.TeamID||'—'}</td>
-            <td>${m.Student_ID||'—'}</td>
-            <td>${m.Student_Name||'—'}</td>
+            <td>${s.Student_ID||'—'}</td>
+            <td>${s.Student_Name||'—'}</td>
             <td><span class="dept-tag">${m.Dept||'—'}</span></td>
             <td><span class="venue-tag">${m.Venue||'—'}</span></td>
             <td>${sc(m.LevelI_Problem)}</td>
@@ -987,11 +1325,13 @@
             <td>${sc(m.LevelII_Determination)}</td>
             <td>${sc(m.LevelII_Communication)}</td>
             <td>${totalCell}</td>
+            <td><span class="fac-count-pill ${fcClass}">${fcLabel}</span></td>
           </tr>`);
       });
+
       document.getElementById('tableSection').style.display = 'block';
       document.getElementById('tableSub').textContent =
-        `Venue: ${venue} · Batch: ${batch} · ${data.length} record${data.length!==1?'s':''}`;
+        `Venue: ${venue} · Batch: ${batch} · ${students.length} unique student${students.length!==1?'s':''}`;
     }
 
     // ── SEARCH ──
@@ -1027,15 +1367,6 @@
       }
     }
 
-
-
-
-
-
-
-
-
-
     // ── DOWNLOAD PDF ──
     async function downloadVenueReport() {
       const batch = document.getElementById('batchSelect').value;
@@ -1047,6 +1378,9 @@
         const filtered = marks.filter(m=>(m.Venue||'').trim().toLowerCase()===venue.trim().toLowerCase());
         if (!filtered.length) { showToast(`No marks for ${venue} (${batch})`,'error'); return; }
 
+        // Deduplicate for PDF too
+        const students = groupByStudent(filtered);
+
         const {jsPDF} = window.jspdf;
         const doc     = new jsPDF('landscape','pt','a4');
         const pw      = doc.internal.pageSize.getWidth();
@@ -1054,50 +1388,50 @@
         const logo    = await getLogoData();
         const genDate = new Date().toLocaleString('en-IN');
 
-        // ── WHITE background ──
         doc.setFillColor(255,255,255);
         doc.rect(0,0,pw,ph,'F');
 
-        // ── LOGO centered ──
         let logoBottomY = 20;
         if (logo) {
           doc.addImage(logo,'JPEG',(pw-200)/2, 16, 200, 44);
           logoBottomY = 20;
         }
 
-        // ── Thin top border line ──
         doc.setDrawColor(180,200,230);
         doc.setLineWidth(0.8);
         doc.line(40, 14, pw-40, 14);
 
-                // ── Report Title ──
         doc.setFont('times','bold');
         doc.setFontSize(14);
         doc.setTextColor(10,40,100);
         doc.text('SEMINAR DAY EVALUATION REPORT', pw/2, logoBottomY+62, {align:'center'});
 
-        // ── Info line ──
         doc.setFont('times','normal');
         doc.setFontSize(9);
         doc.setTextColor(60,80,120);
         doc.text(`Venue: ${venue}   |   Batch: ${batch}   |   Generated: ${genDate}`, pw/2, logoBottomY+76, {align:'center'});
 
-        // ── Thin line under info ──
         doc.setDrawColor(200,215,235);
         doc.setLineWidth(0.5);
         doc.line(40, logoBottomY+83, pw-40, logoBottomY+83);
 
         const tableStartY = logoBottomY + 92;
 
-        // ── TABLE ──
-        const head = [['Faculty ID','Team ID','Student ID','Student Name','Dept','Venue',
-          'LI-Problem','LI-Method','LI-Pictorial','LI-Response','LII-Determination','LII-Comm.','Total']];
-        const body = filtered.map(m=>[
-          m.Faculty_ID||'—', m.TeamID||'—', m.Student_ID||'—', m.Student_Name||'—',
-          m.Dept||'—', m.Venue||'—',
-          m.LevelI_Problem??0, m.LevelI_Methodology??0, m.LevelI_Pictorial??0, m.LevelI_Response??0,
-          m.LevelII_Determination??0, m.LevelII_Communication??0, m.Total||0
-        ]);
+        // PDF table — unique students, Faculty Entries column added
+        const head = [['Team ID','Student ID','Student Name','Dept','Venue',
+          'LI-Problem','LI-Method','LI-Pictorial','LI-Response','LII-Determination','LII-Comm.','Total','Faculty Entries']];
+
+        const body = students.map(s => {
+          const m = s.bestRow || {};
+          return [
+            m.TeamID||'—', s.Student_ID||'—', s.Student_Name||'—',
+            m.Dept||'—', m.Venue||'—',
+            m.LevelI_Problem??0, m.LevelI_Methodology??0, m.LevelI_Pictorial??0, m.LevelI_Response??0,
+            m.LevelII_Determination??0, m.LevelII_Communication??0,
+            m.Total||0,
+            `${s.faculties.length}/2`
+          ];
+        });
 
         doc.autoTable({
           head, body,
@@ -1124,16 +1458,15 @@
           },
           alternateRowStyles:{ fillColor:[248,251,255] },
           columnStyles:{
-            3:{ halign:'left', fontStyle:'bold', textColor:[10,30,70] },
-            12:{ fontStyle:'bold', textColor:[10,40,100], fontSize:9 }
+            2:{ halign:'left', fontStyle:'bold', textColor:[10,30,70] },
+            11:{ fontStyle:'bold', textColor:[10,40,100], fontSize:9 },
+            12:{ fontStyle:'bold' }
           },
           margin:{ left:30, right:30 },
           didDrawPage: (data) => {
-            // page footer line
             doc.setDrawColor(180,200,230);
             doc.setLineWidth(0.5);
             doc.line(30, ph-26, pw-30, ph-26);
-            // footer text
             doc.setFont('times','normal');
             doc.setFontSize(8);
             doc.setTextColor(120,140,170);
@@ -1143,11 +1476,12 @@
 
         const lastY = doc.lastAutoTable.finalY;
 
-        // ── Summary stats line ──
-        /*const totals = filtered.map(m=>parseFloat(m.Total)||0).filter(t=>t>0);
-        if (totals.length) {
-          const avg = (totals.reduce((a,b)=>a+b,0)/totals.length).toFixed(1);
-          const sumY = lastY + 14;
+        // Summary box in PDF
+        const complete = students.filter(s=>s.faculties.length>=2).length;
+        const partial  = students.filter(s=>s.faculties.length===1).length;
+        const missing  = students.filter(s=>s.faculties.length===0).length;
+        const sumY = lastY + 14;
+        if (sumY < ph - 50) {
           doc.setFillColor(245,249,255);
           doc.setDrawColor(180,205,235);
           doc.setLineWidth(0.5);
@@ -1156,25 +1490,20 @@
           doc.setFontSize(8.5);
           doc.setTextColor(10,40,100);
           doc.text(
-            `Total Students: ${filtered.length}   |   Highest Score: ${Math.max(...totals)}   |   Class Average: ${avg}   |   Absent: ${filtered.length-totals.length}`,
+            `Unique Students: ${students.length}   |   Both Entered: ${complete}   |   Partial (1/2): ${partial}   |   Not Entered: ${missing}`,
             pw/2, sumY+16, {align:'center'}
           );
-        }*/
+        }
 
-        // ── Signature section ──
-        const sigY = lastY + 58;
+        const sigY = lastY + 68;
         if (sigY < ph - 50) {
           doc.setDrawColor(120,140,180);
           doc.setLineWidth(0.7);
-
-          // Left sig
           doc.line(50, sigY, 200, sigY);
           doc.setFont('times','normal');
           doc.setFontSize(8.5);
           doc.setTextColor(50,70,120);
           doc.text('Faculty Signature', 125, sigY+12, {align:'center'});
-
-          // Right sig
           doc.line(pw-200, sigY, pw-50, sigY);
           doc.text('Venue Incharge Signature', pw-125, sigY+12, {align:'center'});
         }
@@ -1190,7 +1519,3 @@
   </script>
 </body>
 </html>
-
-
-
-
