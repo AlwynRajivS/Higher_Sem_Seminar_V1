@@ -2052,16 +2052,7 @@ async function downloadAbsenteesReportPDF(){
     y+=lh+12;
   }
 
-  doc.setFont('times','bold');
-  doc.setFontSize(18);
-  doc.text('KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY', pw/2, y, {align:'center'});
-  y+=20;
-
-  doc.setFontSize(12);
-  doc.text('(An Autonomous Institution)', pw/2, y, {align:'center'});
-  y+=18;
-
-  doc.setLineWidth(1);
+    doc.setLineWidth(1);
   doc.line(40,y,pw-40,y);
   y+=18;
 
@@ -2256,4 +2247,5 @@ function downloadAbsenteesReportCSV(){
 </script>
 </body>
 </html>
+
 
