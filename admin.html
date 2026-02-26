@@ -1703,16 +1703,7 @@ async function downloadDeptReport(){
      COLLEGE HEADER
   ===================================== */
 
-  doc.setFont('times','bold');
-  doc.setFontSize(16);
-  doc.text('KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY', pw/2, y, {align:'center'});
-  y += 22;
-
-  doc.setFontSize(11);
-  doc.text('(An Autonomous Institution)', pw/2, y, {align:'center'});
-  y += 28;
-
-  doc.setFontSize(14);
+    doc.setFontSize(14);
   doc.text('SEMINAR DAY EVALUATION REPORT', pw/2, y, {align:'center'});
   y += 20;
 
@@ -1938,15 +1929,7 @@ async function downloadTotalDeptReport(){
     y+=lh+12;
   }
 
-  doc.setFont('times','bold');
-  doc.setFontSize(16);
-  doc.text('KAMARAJ COLLEGE OF ENGINEERING AND TECHNOLOGY', pw/2, y, {align:'center'});
-  y+=18;
-
-  doc.setFontSize(12);
-  doc.text('(An Autonomous Institution)', pw/2, y, {align:'center'});
-  y+=20;
-
+  
   doc.setFontSize(14);
   doc.text('SEMINAR DAY TOTAL REPORT', pw/2, y, {align:'center'});
   y+=18;
@@ -2273,3 +2256,4 @@ function downloadAbsenteesReportCSV(){
 </script>
 </body>
 </html>
+
