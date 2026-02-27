@@ -1,4 +1,4 @@
-# KCET -- Seminar Mark Management System
+# KCET - Seminar Mark Management System
 
 A premium, secure, and role-based web portal developed for managing
 **Seminar Day evaluations** at KCET.
@@ -120,6 +120,6 @@ Institutional Use -- KCET Seminar Portal\
 
 ## 👨‍💻 Developed By
 
-Mr. S. Alwyn Rajiv\
-Seminar Mark System Architect\
+Mr. S. Alwyn Rajiv
+Assistant Professor
 KCET
