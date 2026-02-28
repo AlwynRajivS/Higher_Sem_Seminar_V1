@@ -1800,10 +1800,10 @@ doc.setFont('times','bold');
   doc.setFontSize(12);
 
   if(dept==='ALL'){
-    doc.text('Dean Academic Courses', pw-60, finalY, {align:'right'});
+    doc.text('Principal', pw-60, finalY, {align:'right'});
   }else{
     doc.text('HoD', 60, finalY);
-    doc.text('Dean Academic Courses', pw-60, finalY, {align:'right'});
+    doc.text('Principal', pw-60, finalY, {align:'right'});
   }
 
   doc.setFont('times','normal');
@@ -1979,7 +1979,7 @@ async function downloadTotalDeptReport(){
 
   doc.setFont('times','bold');
   doc.text('Head of the Department', 60, fy);
-  doc.text('Dean – Academic Courses', pw-180, fy);
+  doc.text('Principal', pw-180, fy);
 
   addPageNumbers(doc);
 
@@ -2247,6 +2247,7 @@ function downloadAbsenteesReportCSV(){
 </script>
 </body>
 </html>
+
 
 
 
